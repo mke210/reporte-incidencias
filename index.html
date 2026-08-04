@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora de Incidencias · Reporte Escolar (Oaxaca)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============ SISTEMA DE DISEÑO ============ */
+:root{
+  --green-950:#082a20; --green-900:#0c3b2e; --green-800:#11513c; --green-700:#166b4f; --green-100:#dcebe2;
+  --gold:#c08514; --gold-dark:#9a6a0d; --gold-soft:#f4e4bd; --gold-paper:#faf3e0;
+  --paper:#fbf8f0; --card:#ffffff; --line:#ddd7c6; --line-soft:#ece7d8;
+  --ink:#1d2a24; --muted:#6d7468; --red:#b3261e; --red-soft:#fdecea;
+  --shadow:0 2px 6px rgba(24,42,34,.07), 0 14px 34px -18px rgba(24,42,34,.28);
+  --r:10px;
+  --disp:'Archivo',sans-serif; --body:'IBM Plex Sans',sans-serif; --doc:'IBM Plex Serif',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--paper);
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(192,133,20,.05), transparent 40%),
+    repeating-linear-gradient(45deg, rgba(17,81,60,.022) 0 1px, transparent 1px 9px);
+  min-height:100vh;
+}
+::selection{background:var(--gold-soft)}
+h1,h2,h3{font-family:var(--disp)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:.94rem;color:var(--ink)}
+
+/* ============ MEMBRETE SUPERIOR ============ */
+.masthead{
+  background:
+    repeating-linear-gradient(135deg, rgba(244,228,189,.05) 0 2px, transparent 2px 14px),
+    linear-gradient(120deg, var(--green-950), var(--green-800) 62%, var(--green-700));
+  color:#f3efe2; border-bottom:4px solid var(--gold);
+  position:relative; overflow:hidden;
+}
+.masthead::after{content:"";position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;
+  border:2px dashed rgba(244,228,189,.18); pointer-events:none;}
+.mast-inner{max-width:1240px;margin:0 auto;padding:26px 28px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;position:relative;z-index:1}
+.seal{width:74px;height:74px;flex:none;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35));animation:sealIn .9s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes sealIn{from{transform:rotate(-14deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.mast-text{flex:1;min-width:260px}
+.inst-kicker{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-soft);font-weight:600}
+.mast-text h1{font-size:clamp(1.35rem,3vw,2.05rem);font-weight:900;line-height:1.08;margin:.2rem 0 .45rem;text-transform:uppercase;letter-spacing:.01em}
+.mast-meta{font-size:.82rem;color:#d8d4c2;display:flex;flex-wrap:wrap;gap:.35rem .9rem}
+.mast-meta b{color:#fff;font-weight:600}
+.stamp{
+  flex:none;background:var(--gold-paper);color:var(--green-900);
+  border:3px double var(--gold-dark);border-radius:6px;padding:.7rem 1.2rem;text-align:center;
+  transform:rotate(-2.4deg);box-shadow:0 8px 22px -8px rgba(0,0,0,.5);
+  transition:transform .25s;
+}
+.stamp:hover{transform:rotate(0deg) scale(1.04)}
+.stamp small{display:block;font-size:.62rem;letter-spacing:.24em;font-weight:700;color:var(--gold-dark);text-transform:uppercase}
+.stamp b{font-family:var(--disp);font-weight:900;font-size:2rem;letter-spacing:.06em;display:block;line-height:1}
+.stamp.bump{animation:bump .5s}
+@keyframes bump{30%{transform:rotate(-2.4deg) scale(1.15)}}
+.stats-strip{background:rgba(8,42,32,.6);border-top:1px solid rgba(244,228,189,.15)}
+.stats-inner{max-width:1240px;margin:0 auto;padding:.55rem 28px;display:flex;gap:2rem;flex-wrap:wrap;font-size:.8rem;color:#e6e2d1}
+.stats-inner b{color:var(--gold-soft);font-family:var(--disp);font-size:1rem;margin-right:.3rem}
+.stats-inner .lock{margin-left:auto;color:#cbd8cf}
+
+/* ============ TABS ============ */
+.tabs{position:sticky;top:0;z-index:40;background:rgba(251,248,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.tabs-inner{max-width:1240px;margin:0 auto;padding:0 28px;display:flex;gap:.25rem}
+.tab{
+  background:none;border:none;padding:.95rem 1.3rem;font-family:var(--disp);font-weight:700;font-size:.95rem;
+  color:var(--muted);position:relative;transition:color .2s;letter-spacing:.02em;
+}
+.tab:hover{color:var(--green-800)}
+.tab::after{content:"";position:absolute;left:14%;right:14%;bottom:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .28s cubic-bezier(.6,0,.2,1)}
+.tab.active{color:var(--green-900)}
+.tab.active::after{transform:scaleX(1)}
+.tab .count{background:var(--green-800);color:#fff;font-size:.68rem;padding:.1rem .45rem;border-radius:99px;margin-left:.4rem;vertical-align:middle}
+
+/* ============ LAYOUT GENERAL ============ */
+main{max-width:1240px;margin:0 auto;padding:30px 28px 90px}
+.tab-panel{display:none;animation:panelIn .35s ease both}
+.tab-panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============ TARJETAS / SECCIONES ============ */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:26px;overflow:hidden;
+  opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.card.in{opacity:1;transform:none}
+.card-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line-soft);
+  background:linear-gradient(90deg,var(--green-100),transparent 65%)}
+.card-num{font-family:var(--disp);font-weight:900;font-size:.85rem;background:var(--green-900);color:var(--gold-soft);
+  padding:.3rem .6rem;border-radius:5px;letter-spacing:.08em}
+.card-head h3{font-size:1.05rem;font-weight:800;color:var(--green-900)}
+.card-head p{font-size:.78rem;color:var(--muted);margin-top:2px;font-weight:400;font-family:var(--body)}
+.card-body{padding:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 22px}
+.span2{grid-column:1/-1}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.field label{display:block;font-weight:600;font-size:.83rem;margin-bottom:.35rem;color:var(--green-900)}
+.field label .req{color:var(--red)}
+.field input[type=text],.field input[type=number],.field input[type=date],.field input[type=time],
+.field input[type=datetime-local],.field input[type=tel],.field input[type=password],.field select,.field textarea{
+  width:100%;padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fffef9;
+  transition:border-color .2s, box-shadow .2s, background .2s;
+}
+.field textarea{min-height:110px;resize:vertical;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(192,133,20,.18)}
+.field.invalid input,.field.invalid textarea,.field.invalid select{border-color:var(--red);background:var(--red-soft)}
+.field.flash{animation:flashField 1.2s ease 2;border-radius:8px}
+@keyframes flashField{50%{box-shadow:0 0 0 6px rgba(192,133,20,.4);background:var(--gold-paper)}}
+.hint{font-size:.72rem;color:var(--muted);margin-top:.3rem;line-height:1.4}
+.hint::before{content:"◈ ";color:var(--gold)}
+
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-block;padding:.42rem .85rem;border:1px solid var(--line);border-radius:99px;font-size:.8rem;background:#fffef9;
+  transition:all .18s;user-select:none}
+.chip input:checked + span{background:var(--green-900);color:var(--gold-soft);border-color:var(--green-900);box-shadow:0 3px 10px -4px rgba(12,59,46,.5)}
+.chip input:focus-visible + span{box-shadow:0 0 0 3px rgba(192,133,20,.3)}
+.chip:hover span{border-color:var(--green-700);transform:translateY(-1px)}
+.chip.danger input:checked + span{background:var(--red);border-color:var(--red);color:#fff}
+
+.radio-row{display:flex;gap:1.4rem;flex-wrap:wrap;padding:.5rem 0}
+.radio-row label{display:flex;align-items:center;gap:.45rem;font-size:.88rem;cursor:pointer}
+.radio-row input{accent-color:var(--green-800);width:16px;height:16px}
+
+.check-line{display:flex;align-items:flex-start;gap:.55rem;font-size:.86rem;padding:.35rem 0;cursor:pointer}
+.check-line input{accent-color:var(--green-800);width:17px;height:17px;margin-top:1px;flex:none}
+
+/* Alertas */
+.alerta{display:none;border-left:5px solid var(--red);background:var(--red-soft);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-top:16px;animation:panelIn .3s both}
+.alerta.on{display:block}
+.alerta b{color:var(--red);font-family:var(--disp);letter-spacing:.03em}
+.alerta p{font-size:.83rem;margin-top:.3rem;line-height:1.5}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(179,38,30,.12)}}
+
+/* Testigos */
+.testigo-row{display:grid;grid-template-columns:1fr 170px auto auto;gap:10px;align-items:center;margin-bottom:10px;animation:panelIn .25s both}
+.testigo-row input[type=text],.testigo-row select{padding:.55rem .65rem;border:1px solid var(--line);border-radius:7px;background:#fffef9}
+.btn-mini-x{background:none;border:1px solid var(--line);border-radius:6px;width:34px;height:34px;color:var(--red);font-size:1rem;transition:.2s}
+.btn-mini-x:hover{background:var(--red);color:#fff;border-color:var(--red)}
+@media(max-width:760px){.testigo-row{grid-template-columns:1fr 1fr;}}
+
+.mini-ai-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+/* ============ LAYOUT FORMULARIO + ASIDE ============ */
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+@media(max-width:1000px){.form-layout{grid-template-columns:1fr}.aside{order:-1}}
+.aside{position:sticky;top:70px;display:flex;flex-direction:column;gap:16px}
+.aside .mini{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
+.aside .mini h4{font-family:var(--disp);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:.8rem}
+.folio-live{text-align:center;border:3px double var(--gold-dark);background:var(--gold-paper);border-radius:8px;transform:rotate(-1.2deg)}
+.folio-live small{font-size:.62rem;letter-spacing:.25em;font-weight:700;color:var(--gold-dark)}
+.folio-live b{display:block;font-family:var(--disp);font-weight:900;font-size:2.6rem;color:var(--green-900);line-height:1.05}
+.folio-live em{font-style:normal;font-size:.68rem;color:var(--muted)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:.6rem;font-size:.83rem;padding:.32rem 0;color:var(--muted);transition:color .3s}
+.checklist li .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:.62rem;color:#fff;transition:.3s}
+.checklist li.ok{color:var(--green-900);font-weight:600}
+.checklist li.ok .dot{background:var(--green-700);border-color:var(--green-700)}
+.checklist li.ok .dot::after{content:"✓"}
+.legal-note{font-size:.75rem;line-height:1.55;color:var(--muted)}
+.legal-note b{color:var(--green-900)}
+.legal-note .tel{display:block;margin-top:.6rem;padding:.5rem .7rem;background:var(--green-100);border-radius:6px;color:var(--green-900);font-weight:600;font-size:.78rem}
+
+/* ============ BOTONES ============ */
+.btn{border:none;border-radius:8px;padding:.8rem 1.5rem;font-weight:700;font-family:var(--disp);font-size:.92rem;letter-spacing:.02em;
+  display:inline-flex;align-items:center;gap:.5rem;transition:transform .15s, box-shadow .2s, background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn-gold{background:var(--gold);color:#241a04;box-shadow:0 6px 18px -6px rgba(192,133,20,.6)}
+.btn-gold:hover{background:#d69a22;box-shadow:0 10px 24px -8px rgba(192,133,20,.7)}
+.btn-green{background:var(--green-900);color:var(--gold-soft);box-shadow:0 6px 18px -8px rgba(12,59,46,.7)}
+.btn-green:hover{background:var(--green-800)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--green-700);color:var(--green-900)}
+.btn-red{background:transparent;border:1px solid var(--line);color:var(--red)}
+.btn-red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:.45rem .9rem;font-size:.8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.actions-bar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:20px 22px;border-top:2px solid var(--gold);background:var(--gold-paper)}
+
+/* ============ HISTORIAL ═══════════════ */
+.hist-tools{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.hist-tools input{flex:1;min-width:220px;padding:.65rem .9rem;border:1px solid var(--line);border-radius:8px;background:#fffef9}
+table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.hist th{background:var(--green-900);color:var(--gold-soft);font-family:var(--disp);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.8rem 1rem;text-align:left}
+.hist td{padding:.85rem 1rem;border-top:1px solid var(--line-soft);font-size:.86rem;vertical-align:middle}
+.hist tbody tr{transition:background .15s}
+.hist tbody tr:hover{background:var(--gold-paper)}
+.folio-tag{font-family:var(--disp);font-weight:800;color:var(--green-900);background:var(--green-100);padding:.2rem .55rem;border-radius:5px;font-size:.82rem}
+.tipo-tag{display:inline-block;font-size:.7rem;background:var(--gold-soft);color:var(--gold-dark);padding:.15rem .5rem;border-radius:99px;margin:.1rem .15rem .1rem 0;font-weight:600}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty .big{font-size:3rem;opacity:.4}
+.empty p{margin-top:10px;font-size:.9rem}
+.row-acts{display:flex;gap:.4rem}
+.icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;font-size:.9rem;transition:.18s}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--green-700)}
+.icon-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ============ CONFIGURACIÓN ============ */
+.persona-item{display:flex;align-items:center;gap:12px;padding:.7rem .9rem;border:1px solid var(--line-soft);border-radius:8px;margin-bottom:8px;background:#fffef9;animation:panelIn .25s both}
+.persona-item b{font-size:.9rem}
+.persona-item span{font-size:.75rem;color:var(--gold-dark);background:var(--gold-soft);padding:.15rem .55rem;border-radius:99px;font-weight:600}
+.persona-item .x{margin-left:auto}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.add-row input,.add-row select{padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fffef9;flex:1;min-width:150px}
+
+/* ============ ASISTENTE IA FLOTANTE (YOLIA) ============ */
+#ai-fab{position:fixed;right:22px;bottom:22px;z-index:95;width:66px;height:66px;border-radius:50%;
+  background:#fff;display:none;place-items:center;padding:5px;
+  box-shadow:0 10px 30px -6px rgba(8,42,32,.55);cursor:grab;
+  border:2px solid var(--gold);transition:transform .2s;touch-action:none}
+#ai-fab.show{display:grid;animation:panelIn .3s both}
+#ai-fab:hover{transform:scale(1.1) rotate(-6deg)}
+#ai-fab:active{cursor:grabbing}
+#ai-fab svg{width:100%;height:100%;border-radius:50%;display:block;pointer-events:none}
+#ai-fab::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px dashed rgba(192,133,20,.55);animation:spin 14s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+#ai-panel{position:fixed;z-index:96;width:370px;max-width:calc(100vw - 20px);background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 24px 60px -12px rgba(8,42,32,.5);display:none;flex-direction:column;overflow:hidden}
+#ai-panel.open{display:flex;animation:panelIn .25s both}
+#ai-head{display:flex;align-items:center;gap:9px;padding:10px 13px;
+  background:repeating-linear-gradient(135deg, rgba(244,228,189,.05) 0 2px, transparent 2px 12px),linear-gradient(120deg,var(--green-950),var(--green-800));
+  color:#f3efe2;cursor:grab;user-select:none;touch-action:none}
+#ai-head:active{cursor:grabbing}
+#ai-head b{font-family:var(--disp);letter-spacing:.03em;font-size:1rem}
+#ai-head small{opacity:.75;font-size:.63rem}
+#ai-head .spacer{flex:1}
+.ai-av{width:34px;height:34px;flex:none;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px rgba(244,228,189,.55)}
+.ai-av svg{width:100%;height:100%;display:block}
+#ai-min{background:none;border:1px solid rgba(244,228,189,.4);color:var(--gold-soft);border-radius:6px;width:28px;height:26px;font-weight:800;transition:.18s}
+#ai-min:hover{background:var(--gold);color:#241a04}
+.ai-dot{width:9px;height:9px;border-radius:50%;background:#7fe3a1;box-shadow:0 0 9px #7fe3a1;flex:none;animation:pulse 2s infinite}
+#ai-msgs{height:300px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:#f6f4ec}
+.ai-msg{max-width:88%;padding:.55rem .8rem;border-radius:10px;font-size:.82rem;line-height:1.5;animation:panelIn .25s both;white-space:pre-wrap;word-wrap:break-word}
+.ai-msg.user{align-self:flex-end;background:var(--green-800);color:var(--gold-soft);border-bottom-right-radius:3px}
+.ai-msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px}
+.ai-msg.err{align-self:flex-start;background:var(--red-soft);border:1px solid #e5b3ae;color:#7c1d17}
+.ai-msg.typing{color:var(--muted);font-style:italic}
+.ai-tools{display:flex;gap:.35rem;margin-top:.55rem;flex-wrap:wrap}
+.ai-tools button{font-size:.68rem;padding:.22rem .55rem;border-radius:5px;border:1px solid var(--line);background:#faf8f0;cursor:pointer;transition:.15s;font-weight:600}
+.ai-tools button:hover{background:var(--gold-soft);border-color:var(--gold-dark);transform:translateY(-1px)}
+#ai-actions{display:flex;gap:6px;padding:9px 10px;border-top:1px solid var(--line-soft);flex-wrap:wrap;background:#fff}
+#ai-actions button{font-size:.72rem;font-weight:600;padding:.38rem .65rem;border-radius:99px;border:1px solid var(--line);background:#fffef9;transition:.18s}
+#ai-actions button:hover{border-color:var(--gold);background:var(--gold-paper);transform:translateY(-1px)}
+#ai-actions button.voz-on{background:var(--green-800);color:var(--gold-soft);border-color:var(--green-800)}
+#ai-actions button.guia-on{background:var(--gold);color:#241a04;border-color:var(--gold)}
+#ai-input-row{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line-soft);align-items:flex-end;background:#fff}
+#ai-input{flex:1;resize:none;min-height:42px;max-height:120px;padding:.55rem .7rem;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:#fffef9}
+#ai-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(192,133,20,.15)}
+#ai-mic,#ai-send{width:42px;height:42px;border-radius:50%;border:none;display:grid;place-items:center;font-size:1.05rem;transition:.18s;flex:none}
+#ai-mic{background:#f0ede1;border:1px solid var(--line)}
+#ai-mic:hover{background:var(--gold-soft)}
+#ai-mic.rec-on{background:var(--red);color:#fff;border-color:var(--red);animation:pulse 1.1s infinite}
+#ai-send{background:var(--gold);color:#241a04}
+#ai-send:hover{transform:scale(1.08)}
+
+/* ============ VISTA PREVIA / IMPRESIÓN ============ */
+#overlay{position:fixed;inset:0;z-index:100;background:rgba(8,42,32,.72);backdrop-filter:blur(4px);display:none;flex-direction:column}
+#overlay.open{display:flex;animation:panelIn .25s both}
+.ov-bar{background:var(--green-950);color:#f3efe2;padding:.8rem 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid var(--gold)}
+.ov-bar .title{font-family:var(--disp);font-weight:800;letter-spacing:.04em}
+.ov-bar .tag{font-size:.68rem;background:var(--gold);color:#241a04;font-weight:700;padding:.2rem .6rem;border-radius:99px}
+.ov-bar .spacer{flex:1}
+.ov-scroll{flex:1;overflow:auto;padding:34px 16px}
+.doc-sheet{
+  max-width:850px;margin:0 auto;background:var(--paper);color:#161f1a;font-family:var(--doc);
+  padding:44px 50px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);position:relative;font-size:.9rem;line-height:1.5;
+}
+.doc-sheet::before{content:"";position:absolute;inset:12px;border:1px solid rgba(192,133,20,.4);pointer-events:none}
+.doc-topline{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-align:center;color:#5c665c;font-family:var(--body)}
+.doc-inst{text-align:center;margin:.5rem 0 .2rem;font-family:var(--disp);font-weight:900;font-size:1.45rem;color:var(--green-900);text-transform:uppercase}
+.doc-meta{text-align:center;font-size:.78rem;color:#40503f;font-family:var(--body)}
+.doc-title-row{display:flex;justify-content:space-between;align-items:center;margin:20px 0 6px;gap:14px}
+.doc-title{font-family:var(--disp);font-weight:900;font-size:1.15rem;letter-spacing:.08em;color:var(--green-950);border-top:3px solid var(--green-900);border-bottom:1px solid var(--green-900);padding:.5rem 0;flex:1;text-align:center}
+.doc-folio{border:2px double var(--gold-dark);padding:.4rem .8rem;text-align:center;font-size:.62rem;letter-spacing:.2em;color:var(--gold-dark);font-family:var(--body);font-weight:700;transform:rotate(-1.5deg);background:var(--gold-paper);flex:none}
+.doc-folio b{display:block;font-family:var(--disp);font-size:1.5rem;color:var(--green-900);letter-spacing:.06em}
+.doc-subtitle{text-align:center;font-family:var(--body);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:#40503f;margin:4px 0 8px}
+.doc-seguro{border:1px solid #b9b094;background:#fffdf6;font-size:.72rem;padding:.45rem .7rem;text-align:center;margin-bottom:10px;font-family:var(--body)}
+.doc-conf{background:#f0ebdb;border-left:4px solid var(--gold-dark);font-size:.72rem;padding:.55rem .8rem;margin:12px 0 20px;font-style:italic;color:#544c33}
+.doc-sec{margin-bottom:18px;break-inside:avoid}
+.doc-sec > h3{font-family:var(--disp);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green-900);
+  border-bottom:2px solid var(--gold);padding-bottom:.25rem;margin-bottom:.7rem}
+.doc-kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem;font-size:.85rem}
+.doc-kv dt{font-weight:700;color:#3c4a3f;font-family:var(--body);font-size:.78rem}
+.doc-kv dd{border-bottom:1px dotted #c9c2ab;padding-bottom:.15rem}
+.doc-box{border:1px solid #b9b094;background:#fffdf6;padding:.7rem .9rem;min-height:52px;white-space:pre-wrap;font-size:.86rem}
+.doc-checks{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-size:.82rem}
+.doc-checks .off{color:#9a947e}
+.sigs{display:grid;grid-template-columns:1fr 1fr;gap:34px 40px;margin-top:34px}
+.sig{text-align:center;font-size:.76rem;break-inside:avoid}
+.sig .line{border-top:1.5px solid #2a352d;margin-bottom:.3rem;padding-top:.35rem}
+.sig b{display:block;font-size:.82rem}
+.sig i{color:#6b7268;font-style:normal}
+.sello{border:2px dashed #b9b094;border-radius:50%;width:130px;height:130px;display:grid;place-items:center;color:#a99f7e;
+  font-size:.62rem;text-transform:uppercase;letter-spacing:.14em;text-align:center;margin:20px auto 0;font-family:var(--body)}
+.doc-legal{margin-top:26px;padding-top:12px;border-top:1px solid #c9c2ab;font-size:.62rem;color:#7b7661;line-height:1.6;font-family:var(--body)}
+.anexo{margin-top:26px;border-top:3px double var(--gold-dark);padding-top:14px}
+.anexo h3{color:var(--gold-dark)}
+@media(max-width:700px){.doc-sheet{padding:26px 20px}.sigs{grid-template-columns:1fr}}
+
+/* ============ TOAST ============ */
+#toasts{position:fixed;bottom:22px;left:22px;z-index:200;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--green-900);color:#f3efe2;padding:.85rem 1.2rem;border-radius:8px;border-left:5px solid var(--gold);
+  box-shadow:0 12px 30px -8px rgba(0,0,0,.4);font-size:.86rem;animation:toastIn .35s cubic-bezier(.2,.9,.3,1.2) both;max-width:340px}
+.toast.err{background:#5c1410;border-left-color:#ff8a80}
+@keyframes toastIn{from{transform:translateX(-60px);opacity:0}to{transform:none;opacity:1}}
+.toast.out{transition:.4s;opacity:0;transform:translateX(-60px)}
+
+/* ============ IMPRESIÓN ============ */
+@media print{
+  @page{size:Letter;margin:11mm}
+  body.preview-open{background:#fff}
+  body.preview-open .masthead,
+  body.preview-open .tabs,
+  body.preview-open main,
+  body.preview-open #toasts,
+  body.preview-open #ai-fab,
+  body.preview-open #ai-panel{display:none!important}
+  body.preview-open #overlay{position:static!important;display:block!important;background:none!important;backdrop-filter:none!important}
+  body.preview-open .ov-bar{display:none!important}
+  body.preview-open .ov-scroll{overflow:visible!important;padding:0!important;flex:none!important}
+  body.preview-open .doc-sheet{box-shadow:none!important;max-width:none!important;margin:0!important;padding:0!important}
+  body.preview-open .doc-sheet::before{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ MEMBRETE ══════════ -->
+<header class="masthead">
+  <div class="mast-inner">
+    <svg class="seal" viewBox="0 0 74 74" fill="none">
+      <circle cx="37" cy="37" r="34" stroke="#f4e4bd" stroke-width="2"/>
+      <circle cx="37" cy="37" r="28" stroke="#f4e4bd" stroke-width="1" stroke-dasharray="3 4"/>
+      <path d="M22 44c5-3 10-3 15-1 5-2 10-2 15 1V28c-5-3-10-3-15-1-5-2-10-2-15 1v16z" stroke="#f4e4bd" stroke-width="2" fill="rgba(244,228,189,.12)"/>
+      <path d="M37 27v18" stroke="#f4e4bd" stroke-width="2"/>
+      <path d="M37 15l2.4 4.6L44 20l-4.6 2.4L37 27l-2.4-4.6L30 20l4.6-.4L37 15z" fill="#f4e4bd"/>
+    </svg>
+    <div class="mast-text">
+      <div class="inst-kicker" id="mh-autoridad">Instituto Estatal de Educación Pública de Oaxaca</div>
+      <h1 id="mh-nombre">— Configure la escuela —</h1>
+      <div class="mast-meta">
+        <span>CCT <b id="mh-cct">—</b></span><span>Zona <b id="mh-zona">—</b></span>
+        <span>Sector <b id="mh-sector">—</b></span><span id="mh-nivel"></span>
+        <span>Ciclo <b id="mh-ciclo">—</b></span><span id="mh-muni"></span>
+      </div>
+    </div>
+    <div class="stamp" id="stamp-mast">
+      <small>Próximo folio</small><b id="mh-folio">0001</b><small>Bitácora oficial</small>
+    </div>
+  </div>
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <span><b id="st-total">0</b>incidencias registradas</span>
+      <span><b id="st-ultimo">—</b>último folio emitido</span>
+      <span><b id="st-directivos">0</b>directivos · <b id="st-docentes">0</b>docentes en plantilla</span>
+      <span class="lock">🔒 Manejo estrictamente confidencial · Interés Superior del Menor</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ TABS ══════════ -->
+<nav class="tabs">
+  <div class="tabs-inner">
+    <button class="tab active" data-tab="form">✎ Nuevo Reporte</button>
+    <button class="tab" data-tab="hist">📚 Bitácora <span class="count" id="tab-count">0</span></button>
+    <button class="tab" data-tab="config">⚙ Configuración</button>
+  </div>
+</nav>
+
+<main>
+<!-- ══════════ PANEL: NUEVO REPORTE ══════════ -->
+<section class="tab-panel active" id="tab-form">
+  <div class="form-layout">
+    <form id="rep-form" autocomplete="off" novalidate>
+
+      <!-- 01 CONTROL -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">01</span>
+          <div><h3>Encabezado y control del reporte</h3><p>Folio automático, fecha/hora exacta y lugar de los hechos.</p></div></div>
+        <div class="card-body grid3">
+          <div class="field"><label>Folio único de incidencia</label>
+            <input type="text" id="f_folio" readonly style="font-weight:800;font-family:var(--disp);letter-spacing:.1em;background:var(--gold-paper)">
+            <div class="hint">Se asigna automáticamente al guardar. Garantiza el seguimiento sin exponer el nombre del menor.</div></div>
+          <div class="field"><label>Fecha del incidente <span class="req">*</span></label>
+            <input type="date" id="f_fecha"><div class="hint">Día exacto en que ocurrió el incidente.</div></div>
+          <div class="field"><label>Hora aproximada</label>
+            <input type="time" id="f_hora"><div class="hint">Hora en que ocurrieron los hechos.</div></div>
+          <div class="field"><label>Fecha y hora en que se enteró la escuela</label>
+            <input type="datetime-local" id="f_fechaEnt"><div class="hint">Si el reporte no fue en flagrancia: cuándo ocurrió o cuándo se enteraron.</div></div>
+          <div class="field"><label>Lugar de los hechos</label>
+            <select id="f_lugar">
+              <option value="">— Seleccionar —</option><option>Aula</option><option>Patio / cancha</option>
+              <option>Baños</option><option>Pasillos</option><option>Entrada / salida</option><option>Alrededores del plantel</option>
+              <option>Ciberespacio (redes / mensajería)</option><option>Otro</option>
+            </select><div class="hint">Ubicación general donde sucedió.</div></div>
+          <div class="field"><label>Especificación del lugar</label>
+            <input type="text" id="f_lugarDetalle" placeholder="p. ej. aula de 2º B, segundo piso…"><div class="hint">Detalle puntual del sitio.</div></div>
+          <div class="field span2"><label>Modo de detección</label>
+            <div class="radio-row">
+              <label><input type="radio" name="modo" value="Flagrancia"> Flagrancia (se presenció)</label>
+              <label><input type="radio" name="modo" value="Reporte"> Reporte (tercero informó)</label>
+              <label><input type="radio" name="modo" value="Sospecha"> Sospecha / indicios</label>
+            </div>
+            <div class="hint">Marque cómo llegó el conocimiento del hecho a la autoridad escolar.</div></div>
+        </div>
+      </div>
+
+      <!-- 02 IDENTIFICACIÓN -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">02</span>
+          <div><h3>Datos de identificación <em style="font-style:normal;color:var(--red);font-size:.7rem;letter-spacing:.1em">· CONFIDENCIAL</em></h3>
+          <p>Protegidos por la Ley de Transparencia del Estado de Oaxaca. Nunca difundir públicamente.</p></div></div>
+        <div class="card-body grid3">
+          <div class="field span2"><label>Nombre completo del alumno(a) <span class="req">*</span></label>
+            <input type="text" id="a_nombre" placeholder="Apellidos y nombres completos">
+            <div class="hint">En el expediente se registra completo; en listados públicos solo se usará el folio.</div></div>
+          <div class="field"><label>Edad</label><input type="number" id="a_edad" min="3" max="21" placeholder="años"></div>
+          <div class="field"><label>Condición</label>
+            <div class="radio-row">
+              <label><input type="radio" name="sexo" value="Niña"> Niña</label>
+              <label><input type="radio" name="sexo" value="Niño"> Niño</label>
+              <label><input type="radio" name="sexo" value="Adolescente"> Adolescente</label>
+            </div></div>
+          <div class="field"><label>Grado y grupo</label>
+            <div style="display:flex;gap:10px"><input type="text" id="a_grado" placeholder="Grado" style="width:45%">
+            <input type="text" id="a_grupo" placeholder="Grupo"></div></div>
+          <div class="field"><label>Turno</label>
+            <select id="a_turno"><option value="">—</option><option>Matutino</option><option>Vespertino</option><option>Tiempo completo</option></select></div>
+          <div class="field"><label>¿Es hablante de lengua indígena?</label>
+            <div class="check-line"><input type="checkbox" id="a_lengua"> Sí habla lengua indígena</div>
+            <input type="text" id="a_lenguaCual" placeholder="¿Cuál? (zapoteco, mixteco, mixe…)" style="margin-top:6px">
+            <div class="hint">Garantía de intérprete en todo procedimiento que le involucre.</div></div>
+          <div class="field"><label>¿Requiere intérprete?</label>
+            <div class="check-line"><input type="checkbox" id="a_interprete"> Sí, solicitar intérprete / mediador lingüístico</div></div>
+          <div class="field"><label>Discapacidad o condición de salud relevante</label>
+            <input type="text" id="a_discapacidad" placeholder="Solo si aplica y es pertinente">
+            <div class="hint">Considerar ajustes razonables y perspectiva de inclusión.</div></div>
+          <div class="field span2" style="border-top:1px dashed var(--line);padding-top:14px">
+            <label style="letter-spacing:.08em;font-size:.75rem;text-transform:uppercase;color:var(--gold-dark)">Padre / Madre / Tutor</label></div>
+          <div class="field"><label>Nombre completo</label><input type="text" id="p_nombre" placeholder="Nombre del padre, madre o tutor"></div>
+          <div class="field"><label>Parentesco</label>
+            <select id="p_parentesco"><option value="">—</option><option>Madre</option><option>Padre</option><option>Tutor(a)</option><option>Abuelo(a)</option><option>Otro familiar</option></select></div>
+          <div class="field"><label>Teléfono de contacto verificado</label><input type="tel" id="p_tel" placeholder="10 dígitos">
+            <div class="check-line" style="margin-top:6px"><input type="checkbox" id="p_verificado"> Contacto verificado este ciclo escolar</div></div>
+        </div>
+      </div>
+
+      <!-- 03 NARRATIVA -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">03</span>
+          <div><h3>Narrativa objetiva de los hechos</h3><p>Cronología sin juicios de valor, tipificación y testigos. Puede dictar o mejorar la redacción con Yolia.</p></div></div>
+        <div class="card-body">
+          <div class="field"><label>Descripción de los hechos <span class="req">*</span></label>
+            <textarea id="n_descripcion" placeholder="¿Qué sucedió? ¿Cómo supieron de la situación? ¿Qué vimos, qué dijeron? ¿Quiénes participaron? ¿A qué hora fue y en qué lugar?"></textarea>
+            <div class="mini-ai-btns">
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-ai-narr">✨ Mejorar redacción con IA</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-mic-narr">🎤 Dictar por voz</button>
+            </div>
+            <div class="hint">Redacte solo hechos observables o testimonios textuales. El dictado requiere internet (la voz se procesa en línea). Yolia conserva todos los hechos al mejorar la redacción.</div></div>
+          <div class="field" style="margin-top:16px"><label>Tipificación de la conducta</label>
+            <div class="chips" id="chips-tipos">
+              <label class="chip"><input type="checkbox" name="tipos" value="fisica"><span>Violencia física</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="verbal"><span>Violencia verbal</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="psicologica"><span>Violencia psicológica</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="digital"><span>Ciberacoso / violencia digital</span></label>
+              <label class="chip danger"><input type="checkbox" name="tipos" value="sexual"><span>Violencia sexual</span></label>
+              <label class="chip danger"><input type="checkbox" name="tipos" value="delito"><span>Presunto delito grave</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="sustancias"><span>Consumo de sustancias</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="patrimonial"><span>Robo / daño a bienes</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="discriminacion"><span>Discriminación</span></label>
+              <label class="chip"><input type="checkbox" name="tipos" value="otra"><span>Otra</span></label>
+            </div>
+            <input type="text" id="n_tipoOtro" placeholder="Si marcó «Otra», especifique la conducta" style="margin-top:10px;padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fffef9;width:100%">
+            <div class="hint">Clasificación conforme al Protocolo de Erradicación del Acoso Escolar en Oaxaca.</div>
+          </div>
+          <div class="alerta pulse" id="alerta-fiscalia">
+            <b>⚠ PROTOCOLO DE AVISO INMEDIATO</b>
+            <p>La conducta tipificada puede constituir delito. <strong>Este reporte NO sustituye la denuncia.</strong> Active de inmediato el aviso a la <strong>Fiscalía General del Estado de Oaxaca</strong> y/o al <strong>DIF</strong>, y registre la notificación en el apartado de canalización.</p>
+            <div class="check-line" style="margin-top:8px"><input type="checkbox" id="n_autoridad"> Se dio aviso a la autoridad competente</div>
+            <input type="text" id="n_autoridadDetalle" placeholder="¿A quién, cuándo y por qué medio? (p. ej. Fiscalía, oficio 123, 14/05 10:20 h)" style="margin-top:8px;padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fff;width:100%">
+          </div>
+          <div class="field" style="margin-top:20px"><label>Testigos de los hechos</label>
+            <div id="testigos-list"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-testigo">+ Agregar testigo</button>
+            <div class="hint">Si existe riesgo para el testigo, marque «Reservar identidad»; su nombre no aparecerá en el documento impreso.</div></div>
+        </div>
+      </div>
+
+      <!-- 04 ACCIONES -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">04</span>
+          <div><h3>Acciones inmediatas y medidas de protección</h3><p>Deber de cuidado · Ley General de los Derechos de NNA.</p></div></div>
+        <div class="card-body">
+          <div class="field"><label>Intervención al momento</label>
+            <div class="chips">
+              <label class="chip"><input type="checkbox" name="acc" value="separacion"><span>Separación de involucrados</span></label>
+              <label class="chip"><input type="checkbox" name="acc" value="contencion"><span>Contención emocional</span></label>
+              <label class="chip"><input type="checkbox" name="acc" value="primeros"><span>Primeros auxilios</span></label>
+              <label class="chip"><input type="checkbox" name="acc" value="medico"><span>Atención médica</span></label>
+              <label class="chip"><input type="checkbox" name="acc" value="resguardo"><span>Resguardo del menor</span></label>
+              <label class="chip"><input type="checkbox" name="acc" value="otra"><span>Otra</span></label>
+            </div>
+            <textarea id="acc_detalle" placeholder="Detalle de la intervención (p. ej. se canalizó a enfermería, se contuvo al alumno en dirección…)" style="margin-top:10px"></textarea></div>
+          <div class="grid3" style="margin-top:18px;border-top:1px dashed var(--line);padding-top:16px">
+            <div class="field span2"><label style="letter-spacing:.08em;font-size:.75rem;text-transform:uppercase;color:var(--gold-dark)">Notificación a padres / tutores · Seguro Escolar</label></div>
+            <div class="field"><label>Hora de la llamada</label><input type="time" id="notif_llamada"></div>
+            <div class="field"><label>Hora de respuesta</label><input type="time" id="notif_respuesta"></div>
+            <div class="field"><label>Hora de llegada de los padres</label><input type="time" id="notif_llegada"></div>
+            <div class="field"><label>Seguro escolar</label>
+              <select id="notif_seguro"><option value="">—</option><option>Se informó y se ACEPTÓ el seguro escolar</option>
+              <option>Se informó y NO se aceptó el seguro escolar</option><option>En espera de respuesta</option>
+              <option>No fue necesario / no aplicó</option></select>
+              <div class="hint">Hacer hincapié siempre en mencionar el seguro escolar; registre la actitud de los padres.</div></div>
+            <div class="field span2"><label>Observaciones de la atención a padres</label>
+              <textarea id="notif_obs" placeholder="Cómo llegaron los padres, actitud durante y después del incidente, acuerdos verbales…"></textarea></div>
+          </div>
+          <div class="field" style="margin-top:16px"><label>Canalización a servicios</label>
+            <div class="chips">
+              <label class="chip"><input type="checkbox" name="canal" value="ninguna"><span>Ninguna</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="dif"><span>DIF Municipal / Estatal</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="fiscalia"><span>Fiscalía General del Estado</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="salud"><span>Centro de Salud / Jurisdicción Sanitaria</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="usaer"><span>USAER</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="orientacion"><span>Depto. de Orientación Educativa</span></label>
+              <label class="chip"><input type="checkbox" name="canal" value="otra"><span>Otra</span></label>
+            </div>
+            <input type="text" id="canal_detalle" placeholder="Detalle de la derivación (institución, persona que recibe, oficio…)" style="margin-top:10px;padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fffef9;width:100%"></div>
+        </div>
+      </div>
+
+      <!-- 05 ANTECEDENTES -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">05</span>
+          <div><h3>Antecedentes y reincidencia</h3><p>Historial previo y cumplimiento de compromisos anteriores.</p></div></div>
+        <div class="card-body grid2">
+          <div class="field"><label>Incidencias previas del alumno(a)</label>
+            <textarea id="h_previas" placeholder="Fechas y tipos de falta anteriores (consulte la bitácora)…"></textarea></div>
+          <div class="field"><label>Compromisos anteriores y su cumplimiento</label>
+            <textarea id="h_compromisos" placeholder="Compromisos firmados previamente y si se cumplieron…" style="min-height:78px"></textarea>
+            <select id="h_cumplimiento" style="margin-top:8px"><option value="">Grado de cumplimiento — seleccionar</option>
+              <option>No aplica (sin antecedentes)</option><option>Cumplido</option><option>Parcial</option><option>Incumplido</option></select></div>
+        </div>
+      </div>
+
+      <!-- 06 ACUERDOS -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">06</span>
+          <div><h3>Acuerdos, compromisos y medidas formativas</h3><p>Acta de compromiso · sanciones proporcionales y formativas, nunca humillantes.</p></div></div>
+        <div class="card-body">
+          <div class="grid3">
+            <div class="field"><label>Compromisos del alumno(a)</label>
+              <textarea id="g_alumno" placeholder="Acciones concretas de reparación del daño o mejora de conducta…"></textarea></div>
+            <div class="field"><label>Compromisos de los padres / tutores</label>
+              <textarea id="g_padres" placeholder="Acompañamiento en casa, asistencia a citas, seguimiento…"></textarea></div>
+            <div class="field"><label>Medidas de la escuela</label>
+              <textarea id="g_escuela" placeholder="Seguimiento pedagógico/psicológico, medida disciplinaria formativa…"></textarea></div>
+          </div>
+          <div class="grid3" style="margin-top:18px;border-top:1px dashed var(--line);padding-top:16px">
+            <div class="field"><label>Docente que atiende el incidente</label>
+              <select id="qui_docente"><option value="">— Seleccionar de plantilla —</option></select>
+              <div class="hint">Al seleccionar, el nombre y asignatura se llenan automáticamente en el documento y firmas.</div></div>
+            <div class="field"><label>Directivo que atiende el incidente</label>
+              <select id="qui_directivo"><option value="">— Seleccionar de plantilla —</option></select></div>
+            <div class="field"><label>Otro personal (especifique)</label>
+              <input type="text" id="qui_otro" placeholder="p. ej. Orientador(a), USAER…"></div>
+            <div class="field span2"><label>Nombre de quien realiza el reporte</label>
+              <input type="text" id="persona_reporta" placeholder="Nombre completo y cargo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANEXO -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">A1</span>
+          <div><h3>Anexo 1 · Ampliación de la incidencia <em style="font-size:.7rem;color:var(--muted);font-style:normal">(opcional)</em></h3>
+          <p>Se anexa para completar la incidencia con fecha posterior, conservando el mismo folio.</p></div></div>
+        <div class="card-body">
+          <label class="check-line" style="margin-bottom:14px"><input type="checkbox" id="x_activar"> Se elabora anexo para completar esta incidencia</label>
+          <div id="anexo-fields" style="display:none">
+            <div class="grid3">
+              <div class="field"><label>Fecha del anexo</label><input type="date" id="x_fecha"></div>
+              <div class="field span2"><label>Descripción complementaria</label><textarea id="x_descripcion" style="min-height:70px"></textarea></div>
+              <div class="field"><label>Observaciones adicionales</label><textarea id="x_observaciones" style="min-height:70px"></textarea></div>
+              <div class="field span2"><label>Acuerdos del anexo</label><textarea id="x_acuerdos" style="min-height:70px"></textarea></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="opacity:1;transform:none">
+        <div class="actions-bar">
+          <button type="button" class="btn btn-gold" id="btn-preview">👁 Vista previa</button>
+          <button type="button" class="btn btn-green" id="btn-save">💾 Guardar en bitácora</button>
+          <button type="button" class="btn btn-ghost" id="btn-clear">Limpiar formulario</button>
+          <span id="edit-badge" style="display:none;font-size:.78rem;background:var(--gold-soft);color:var(--gold-dark);padding:.3rem .8rem;border-radius:99px;font-weight:700">✎ Editando folio <b id="edit-folio"></b></span>
+        </div>
+      </div>
+    </form>
+
+    <!-- ASIDE -->
+    <aside class="aside">
+      <div class="mini folio-live">
+        <small>FOLIO ASIGNADO</small><b id="aside-folio">0001</b><em>progresivo · se fija al guardar</em>
+      </div>
+      <div class="mini">
+        <h4>Avance del reporte</h4>
+        <ul class="checklist" id="checklist">
+          <li data-sec="s1"><span class="dot"></span>Control del reporte</li>
+          <li data-sec="s2"><span class="dot"></span>Identificación del alumno(a)</li>
+          <li data-sec="s3"><span class="dot"></span>Narrativa y tipificación</li>
+          <li data-sec="s4"><span class="dot"></span>Acciones y notificación</li>
+          <li data-sec="s5"><span class="dot"></span>Antecedentes</li>
+          <li data-sec="s6"><span class="dot"></span>Acuerdos y firmas</li>
+        </ul>
+      </div>
+      <div class="mini legal-note">
+        <h4>Recordatorios legales</h4>
+        <b>Interés Superior del Menor:</b> las medidas deben ser formativas, nunca humillantes.<br><br>
+        <b>Reserva de identidad:</b> prohibido exponer nombres en actos públicos o redes sociales.<br><br>
+        <b>Perspectiva de género e interculturalidad:</b> considere factores agravantes culturales o de género.
+        <span class="tel">☎ Seguro Escolar: <span id="aside-tel">—</span></span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══════════ PANEL: BITÁCORA ══════════ -->
+<section class="tab-panel" id="tab-hist">
+  <div class="hist-tools">
+    <input type="search" id="hist-search" placeholder="Buscar por folio o tipo de conducta…">
+    <button class="btn btn-ghost btn-sm" id="btn-export">⬇ Descargar respaldo (.json)</button>
+    <button class="btn btn-ghost btn-sm" id="btn-import">⬆ Importar respaldo</button>
+    <input type="file" id="import-file" accept=".json" hidden>
+  </div>
+  <div id="hist-body"></div>
+</section>
+
+<!-- ══════════ PANEL: CONFIGURACIÓN ══════════ -->
+<section class="tab-panel" id="tab-config">
+  <div class="form-layout">
+    <div>
+      <div class="card">
+        <div class="card-head"><span class="card-num">ESC</span><div><h3>Datos de la escuela (membrete oficial)</h3><p>Aparecen automáticamente en el encabezado de cada reporte.</p></div></div>
+        <div class="card-body grid2">
+          <div class="field span2"><label>Nombre de la escuela <span class="req">*</span></label><input type="text" id="c_nombre"></div>
+          <div class="field"><label>Clave del Centro de Trabajo (CCT)</label><input type="text" id="c_cct" placeholder="p. ej. 20DES0001X"></div>
+          <div class="field"><label>Nivel / modalidad</label>
+            <select id="c_nivel"><option>Preescolar</option><option>Primaria</option><option>Secundaria General</option>
+            <option>Secundaria Técnica</option><option>Telesecundaria</option><option>Educación Indígena</option><option>Otro</option></select></div>
+          <div class="field"><label>Zona escolar</label><input type="text" id="c_zona"></div>
+          <div class="field"><label>Sector</label><input type="text" id="c_sector"></div>
+          <div class="field"><label>Municipio y estado</label><input type="text" id="c_muni" placeholder="p. ej. San Juan Bautista Tuxtepec, Oax."></div>
+          <div class="field"><label>Ciclo escolar</label><input type="text" id="c_ciclo" placeholder="2024–2025"></div>
+          <div class="field span2"><label>Domicilio del plantel</label><input type="text" id="c_dir"></div>
+          <div class="field"><label>Teléfono de la escuela</label><input type="tel" id="c_tel"></div>
+          <div class="field"><label>Centro de atención telefónica / Seguro Escolar</label><input type="text" id="c_telSeguro" placeholder="Teléfonos del seguro escolar">
+            <div class="hint">Aparece en el documento impreso, conforme al formato oficial.</div></div>
+        </div>
+      </div>
+
+      <!-- ASISTENTE IA -->
+      <div class="card">
+        <div class="card-head"><span class="card-num">IA</span><div><h3>Asistente IA «Yolia» · Groq (gratuito)</h3><p>Mejora redacciones, llena el reporte paso a paso, con dictado y voz. Se activa al abrir la app.</p></div></div>
+        <div class="card-body">
+          <label class="check-line"><input type="checkbox" id="ia_on"> <span><b>Activar asistente flotante</b> al abrir la aplicación</span></label>
+          <div class="grid2" style="margin-top:12px">
+            <div class="field"><label>API Key de Groq</label>
+              <div style="display:flex;gap:8px">
+                <input type="password" id="ia_key" placeholder="gsk_…" style="flex:1">
+                <button type="button" class="btn btn-ghost btn-sm" id="ia-show" title="Mostrar/ocultar">👁</button>
+              </div>
+              <div class="hint">Se guarda solo en este navegador. Obtenga una gratis en <b>console.groq.com/keys</b></div></div>
+            <div class="field"><label>Modelo (activos y gratuitos)</label>
+              <select id="ia_model"></select>
+              <div class="hint">Llama 3.3 70B ofrece la mejor calidad de redacción; 8B Instant es más rápido.</div></div>
+          </div>
+          <button type="button" class="btn btn-green btn-sm" id="btn-test-ia" style="margin-top:14px">🔌 Probar conexión</button>
+          <span id="ia-test-result" style="font-size:.8rem;margin-left:10px"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-num">DIR</span><div><h3>Directivos (Directores y Subdirectores)</h3><p>Se cargan automáticamente en el campo «Directivo que atiende» y en las firmas.</p></div></div>
+        <div class="card-body">
+          <div id="cfg-directivos"></div>
+          <div class="add-row">
+            <input type="text" id="nd_nombre" placeholder="Nombre completo con grado (Mtro./Lic.)">
+            <select id="nd_cargo" style="max-width:220px"><option>Director(a) Escolar</option><option>Subdirector(a)</option><option>Supervisor(a)</option></select>
+            <button type="button" class="btn btn-green btn-sm" id="btn-add-dir">+ Dar de alta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-num">DOC</span><div><h3>Plantilla docente</h3><p>Nombre del profesor(a) y asignatura; se autocompletan donde estén ubicados en el reporte.</p></div></div>
+        <div class="card-body">
+          <div id="cfg-docentes"></div>
+          <div class="add-row">
+            <input type="text" id="nt_nombre" placeholder="Nombre completo del/la docente">
+            <input type="text" id="nt_asig" placeholder="Asignatura / grupo que atiende" style="max-width:260px">
+            <button type="button" class="btn btn-green btn-sm" id="btn-add-doc">+ Dar de alta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="opacity:1;transform:none">
+        <div class="actions-bar">
+          <button type="button" class="btn btn-gold" id="btn-save-cfg">💾 Guardar configuración</button>
+          <button type="button" class="btn btn-red" id="btn-wipe">🗑 Vaciar bitácora</button>
+        </div>
+      </div>
+    </div>
+    <aside class="aside">
+      <div class="mini legal-note">
+        <h4>Sobre esta bitácora</h4>
+        Los datos se guardan en <b>este navegador</b>. Use <b>«Descargar respaldo»</b> periódicamente.<br><br>
+        Cada reporte conserva su <b>folio único consecutivo</b> (0001, 0002…) aun si se edita después.
+      </div>
+    </aside>
+  </div>
+</section>
+</main>
+
+<!-- ══════════ VISTA PREVIA ══════════ -->
+<div id="overlay">
+  <div class="ov-bar">
+    <span class="title">VISTA PREVIA DEL DOCUMENTO OFICIAL</span>
+    <span class="tag" id="ov-tag">SIN GUARDAR</span>
+    <div class="spacer"></div>
+    <button class="btn btn-gold btn-sm" id="ov-print">🖨 Imprimir</button>
+    <button class="btn btn-green btn-sm" id="ov-save">💾 Guardar</button>
+    <button class="btn btn-ghost btn-sm" id="ov-close" style="border-color:#5a6b5f;color:#d8d4c2">✕ Cerrar</button>
+  </div>
+  <div class="ov-scroll"><div class="doc-sheet" id="doc"></div></div>
+</div>
+
+<!-- ══════════ ASISTENTE FLOTANTE (YOLIA) ══════════ -->
+<div id="ai-fab" title="Yolia · Asistente escolar (arrástrame para moverme)"></div>
+<div id="ai-panel">
+  <div id="ai-head">
+    <span class="ai-av" id="ai-avatar"></span>
+    <b>Yolia</b><small>Asistente escolar · <span id="ai-model-tag">Groq</span></small>
+    <span class="spacer"></span>
+    <button id="ai-min" title="Minimizar">—</button>
+  </div>
+  <div id="ai-msgs"></div>
+  <div id="ai-actions">
+    <button id="ai-guia">🧭 Llenar paso a paso</button>
+    <button id="ai-improve-report">✨ Mejorar narrativa</button>
+    <button id="ai-voz-toggle" class="voz-on">🔊 Voz</button>
+  </div>
+  <div id="ai-input-row">
+    <button id="ai-mic" title="Dictar por voz">🎤</button>
+    <textarea id="ai-input" placeholder="Escribe o dicta tu respuesta…"></textarea>
+    <button id="ai-send" title="Enviar">➤</button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ═══════════════ ESTADO Y ALMACÉN ═══════════════ */
+const LS={cfg:'oax_inc_cfg_v1',folio:'oax_inc_folio_v1',regs:'oax_inc_regs_v1',aiPos:'oax_inc_ai_pos_v1',aiFab:'oax_inc_ai_fab_v1'};
+const load=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const pad=n=>String(n).padStart(4,'0');
+const pad2=n=>String(n).padStart(2,'0');
+const esc=s=>(s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const DEFAULT_CFG={
+  escuela:{nombre:'Escuela Secundaria General «Benito Juárez García»',cct:'20DES0001X',nivel:'Secundaria General',
+    zona:'01',sector:'03',muni:'Oaxaca de Juárez, Oax.',ciclo:'2024–2025',dir:'',tel:'',
+    telSeguro:'(722) 232 48 45 · 232 47 60 · 232 47 96 · 232 47 73 · 232 31 78',
+    autoridad:'Instituto Estatal de Educación Pública de Oaxaca'},
+  directivos:[{id:1,nombre:'Mtra. María Ejemplo López',cargo:'Director(a) Escolar'}],
+  docentes:[{id:1,nombre:'Prof. Juan Ejemplo Pérez',asignatura:'Formación Cívica y Ética'}],
+  ia:{on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true}
+};
+let cfg=load(LS.cfg,null)||JSON.parse(JSON.stringify(DEFAULT_CFG));
+if(!cfg.ia)cfg.ia={};
+cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
+let nextFolio=load(LS.folio,1);
+let regs=load(LS.regs,[]);
+let editId=null, previewMode='new';
+let vozOn=cfg.ia.voz!==false;
+
+const TIPOS={fisica:'Violencia física',verbal:'Violencia verbal',psicologica:'Violencia psicológica',digital:'Ciberacoso / violencia digital',
+  sexual:'Violencia sexual',delito:'Presunto delito grave',sustancias:'Consumo de sustancias',patrimonial:'Robo / daño a bienes',
+  discriminacion:'Discriminación',otra:'Otra'};
+const ACCS={separacion:'Separación de involucrados',contencion:'Contención emocional',primeros:'Primeros auxilios',
+  medico:'Atención médica',resguardo:'Resguardo del menor',otra:'Otra'};
+const CANALES={ninguna:'Ninguna',dif:'DIF Municipal / Estatal',fiscalia:'Fiscalía General del Estado',
+  salud:'Centro de Salud / Jurisdicción Sanitaria',usaer:'USAER',orientacion:'Depto. de Orientación Educativa',otra:'Otra'};
+const GROQ_MODELS=[
+  {id:'llama-3.3-70b-versatile',label:'Llama 3.3 70B Versatile (recomendado)'},
+  {id:'llama-3.1-8b-instant',label:'Llama 3.1 8B Instant (más rápido)'},
+  {id:'meta-llama/llama-4-scout-17b-16e-instruct',label:'Llama 4 Scout 17B'},
+  {id:'openai/gpt-oss-120b',label:'GPT-OSS 120B'},
+  {id:'openai/gpt-oss-20b',label:'GPT-OSS 20B'},
+  {id:'gemma2-9b-it',label:'Gemma 2 9B'}
+];
+const $=id=>document.getElementById(id);
+
+/* Avatar de Yolia (asistente femenina a color) */
+const AVATAR=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="yvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#f4845f"/></linearGradient></defs>
+<circle cx="32" cy="32" r="32" fill="url(#yvbg)"/>
+<path d="M10 64c2.5-13 11-18 22-18s19.5 5 22 18z" fill="#0c3b2e"/>
+<rect x="27" y="40" width="10" height="9" rx="4" fill="#e8a06f"/>
+<circle cx="32" cy="27" r="15.5" fill="#40291c"/>
+<circle cx="32" cy="12" r="6" fill="#40291c"/>
+<path d="M28 10q4-3 8 0" stroke="#ffd166" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<circle cx="32" cy="29" r="11.8" fill="#f6b98d"/>
+<path d="M20.5 26.5c.6-8 5.4-12.5 11.5-12.5s10.9 4.5 11.5 12.5c-2.6-5.4-6.7-7.4-11.5-7.4s-8.9 2-11.5 7.4z" fill="#40291c"/>
+<circle cx="27.3" cy="29.6" r="1.7" fill="#241811"/>
+<circle cx="36.7" cy="29.6" r="1.7" fill="#241811"/>
+<path d="M25.3 26.6q2-1.5 3.9-.5M34.8 26.1q1.9-1 3.9.5" stroke="#40291c" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+<path d="M28 34.6q4 3.2 8 0" stroke="#c96f4a" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+<circle cx="23.6" cy="32.2" r="2" fill="#f08c66" opacity=".55"/>
+<circle cx="40.4" cy="32.2" r="2" fill="#f08c66" opacity=".55"/>
+<circle cx="20.8" cy="32.8" r="1.3" fill="#ffd166"/>
+<circle cx="43.2" cy="32.8" r="1.3" fill="#ffd166"/>
+<path d="M17.5 27c0-9 6.5-15 14.5-15s14.5 6 14.5 15" stroke="#0f766e" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+<rect x="14.6" y="24.5" width="5.6" height="9.5" rx="2.8" fill="#0f766e"/>
+<rect x="43.8" y="24.5" width="5.6" height="9.5" rx="2.8" fill="#0f766e"/>
+<path d="M46.5 34c.5 5.5-6.5 8-12.5 7.6" stroke="#0f766e" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<circle cx="33.6" cy="41.6" r="2.4" fill="#ffd166" stroke="#0c3b2e" stroke-width=".8"/>
+</svg>`;
+
+/* ═══════════════ TOAST ═══════════════ */
+function toast(msg,type='ok'){
+  const t=document.createElement('div');t.className='toast'+(type==='err'?' err':'');t.textContent=msg;
+  $('toasts').appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),450)},4200);
+}
+
+/* ═══════════════ RECOLECCIÓN DEL FORMULARIO ═══════════════ */
+function checks(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i=>i.value)}
+function radios(name){const r=document.querySelector(`input[name="${name}"]:checked`);return r?r.value:''}
+function collect(){
+  const g=id=>$(id).value.trim();
+  return {
+    folio:null, fecha:g('f_fecha'),hora:g('f_hora'),fechaEnt:g('f_fechaEnt'),lugar:g('f_lugar'),lugarDetalle:g('f_lugarDetalle'),modo:radios('modo'),
+    a_nombre:g('a_nombre'),a_edad:g('a_edad'),sexo:radios('sexo'),a_grado:g('a_grado'),a_grupo:g('a_grupo'),a_turno:g('a_turno'),
+    a_lengua:$('a_lengua').checked,a_lenguaCual:g('a_lenguaCual'),a_interprete:$('a_interprete').checked,a_discapacidad:g('a_discapacidad'),
+    p_nombre:g('p_nombre'),p_parentesco:g('p_parentesco'),p_tel:g('p_tel'),p_verificado:$('p_verificado').checked,
+    n_descripcion:g('n_descripcion'),tipos:checks('tipos'),n_tipoOtro:g('n_tipoOtro'),
+    n_autoridad:$('n_autoridad').checked,n_autoridadDetalle:g('n_autoridadDetalle'),
+    testigos:[...document.querySelectorAll('#testigos-list .testigo-row')].map(r=>({
+      nom:r.querySelector('.t_nom').value.trim(),cal:r.querySelector('.t_cal').value,res:r.querySelector('.t_res').checked})).filter(t=>t.nom),
+    acc:checks('acc'),acc_detalle:g('acc_detalle'),
+    notif_llamada:g('notif_llamada'),notif_respuesta:g('notif_respuesta'),notif_llegada:g('notif_llegada'),
+    notif_seguro:g('notif_seguro'),notif_obs:g('notif_obs'),
+    canal:checks('canal'),canal_detalle:g('canal_detalle'),
+    h_previas:g('h_previas'),h_compromisos:g('h_compromisos'),h_cumplimiento:g('h_cumplimiento'),
+    g_alumno:g('g_alumno'),g_padres:g('g_padres'),g_escuela:g('g_escuela'),
+    qui_docente:g('qui_docente'),qui_directivo:g('qui_directivo'),qui_otro:g('qui_otro'),persona_reporta:g('persona_reporta'),
+    x_activar:$('x_activar').checked,x_fecha:g('x_fecha'),x_descripcion:g('x_descripcion'),x_observaciones:g('x_observaciones'),x_acuerdos:g('x_acuerdos')
+  };
+}
+function setVal(id,v){$(id).value=v||''}
+function setCampo(id,v){const el=$(id);if(!el)return;el.value=v;el.dispatchEvent(new Event('input'))}
+function fillForm(d){
+  ['f_fecha','f_hora','f_fechaEnt','f_lugar','f_lugarDetalle','a_nombre','a_edad','a_grado','a_grupo','a_turno','a_lenguaCual','a_discapacidad',
+   'p_nombre','p_parentesco','p_tel','n_descripcion','n_tipoOtro','n_autoridadDetalle','acc_detalle','notif_llamada','notif_respuesta','notif_llegada',
+   'notif_seguro','notif_obs','canal_detalle','h_previas','h_compromisos','h_cumplimiento','g_alumno','g_padres','g_escuela','qui_docente','qui_directivo',
+   'qui_otro','persona_reporta','x_fecha','x_descripcion','x_observaciones','x_acuerdos'].forEach(id=>setVal(id,d[id]));
+  document.querySelectorAll('input[name=modo]').forEach(r=>r.checked=r.value===d.modo);
+  document.querySelectorAll('input[name=sexo]').forEach(r=>r.checked=r.value===d.sexo);
+  document.querySelectorAll('input[name=tipos]').forEach(c=>c.checked=(d.tipos||[]).includes(c.value));
+  document.querySelectorAll('input[name=acc]').forEach(c=>c.checked=(d.acc||[]).includes(c.value));
+  document.querySelectorAll('input[name=canal]').forEach(c=>c.checked=(d.canal||[]).includes(c.value));
+  ['a_lengua','a_interprete','p_verificado','n_autoridad','x_activar'].forEach(id=>$(id).checked=!!d[id]);
+  $('testigos-list').innerHTML='';(d.testigos||[]).forEach(t=>addTestigoRow(t));
+  updateAlerta();updateChecklist();
+}
+function resetForm(){
+  document.getElementById('rep-form').reset();
+  $('testigos-list').innerHTML='';editId=null;$('edit-badge').style.display='none';
+  $('f_fecha').value=new Date().toISOString().slice(0,10);
+  setFolioDisplay();updateChecklist();updateAlerta();
+}
+
+/* ═══════════════ TESTIGOS ═══════════════ */
+function addTestigoRow(t={}){
+  const div=document.createElement('div');div.className='testigo-row';
+  div.innerHTML=`<input type="text" class="t_nom" placeholder="Nombre del testigo">
+    <select class="t_cal"><option>Alumno(a)</option><option>Docente</option><option>Personal de apoyo</option><option>Padre/Madre</option><option>Otro</option></select>
+    <label class="check-line" style="margin:0;white-space:nowrap"><input type="checkbox" class="t_res"> Reservar</label>
+    <button type="button" class="btn-mini-x" title="Quitar">✕</button>`;
+  div.querySelector('.t_nom').value=t.nom||'';div.querySelector('.t_cal').value=t.cal||'Alumno(a)';
+  div.querySelector('.t_res').checked=!!t.res;
+  div.querySelector('.btn-mini-x').onclick=()=>div.remove();
+  $('testigos-list').appendChild(div);
+}
+$('btn-testigo').onclick=()=>addTestigoRow();
+
+/* ═══════════════ VALIDACIÓN ═══════════════ */
+function validate(d){
+  const errs=[];
+  const req=[
+    {key:'a_nombre',      id:'a_nombre',      label:'nombre del alumno'},
+    {key:'fecha',         id:'f_fecha',       label:'fecha del incidente'},
+    {key:'n_descripcion', id:'n_descripcion', label:'descripción de los hechos'}
+  ];
+  let firstInvalid=null;
+  req.forEach(({key,id,label})=>{
+    const f=$(id).closest('.field');
+    const bad=!d[key];
+    f.classList.toggle('invalid',bad);
+    if(bad){errs.push(label); if(!firstInvalid)firstInvalid=f;}
+  });
+  if(!cfg.escuela.nombre){errs.push('datos de la escuela (Configuración)')}
+  if(firstInvalid){firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});}
+  return errs;
+}
+
+/* ═══════════════ GUARDADO ═══════════════ */
+function guardarRegistro(){
+  const d=collect();const errs=validate(d);
+  if(errs.length){toast('⚠ Complete los campos obligatorios: '+errs.join(', '),'err');return false}
+  let rec;
+  if(editId){
+    rec=regs.find(r=>r.id===editId);
+    d.folio=rec.folio;
+    rec.data=d;rec.updatedAt=new Date().toISOString();
+    toast(`✔ Folio ${rec.folio} actualizado correctamente`);
+  }else{
+    d.folio=pad(nextFolio);
+    rec={id:Date.now(),folio:d.folio,savedAt:new Date().toISOString(),data:d};
+    regs.unshift(rec);nextFolio++;save(LS.folio,nextFolio);
+    toast(`✔ Incidencia registrada con FOLIO ${d.folio}`);
+    $('stamp-mast').classList.remove('bump');void $('stamp-mast').offsetWidth;$('stamp-mast').classList.add('bump');
+  }
+  save(LS.regs,regs);renderAll();resetForm();
+  return true;
+}
+
+/* ═══════════════ DOCUMENTO IMPRESO ═══════════════ */
+function mark(map,vals){
+  return Object.entries(map).map(([k,l])=>{
+    const on=(vals||[]).includes(k);
+    return `<span class="${on?'':'off'}">${on?'☒':'☐'} ${l}</span>`;
+  }).join('');
+}
+function buildDoc(d){
+  const e=cfg.escuela;
+  const folio=d.folio||pad(nextFolio);
+  const kv=(t,v)=>`<dt>${t}</dt><dd>${v||'—'}</dd>`;
+  const lugar=[d.lugar,d.lugarDetalle].filter(Boolean).join(' — ');
+  const testigosTxt=(d.testigos||[]).map(t=>t.res?'◈ Testigo con identidad reservada':`${t.nom} (${t.cal})`).join(' · ')||'—';
+
+  return `
+  <div class="doc-topline">${esc(e.autoridad||'Autoridad Educativa Estatal')} · ${esc(e.nivel||'')}</div>
+  <div class="doc-inst">${esc(e.nombre||'Nombre de la escuela')}</div>
+  <div class="doc-meta">CCT: <b>${esc(e.cct||'—')}</b> · Zona Escolar: ${esc(e.zona||'—')} · Sector: ${esc(e.sector||'—')} · Ciclo Escolar: ${esc(e.ciclo||'—')}</div>
+  ${e.muni||e.dir?`<div class="doc-meta">${esc(e.muni||'')}${e.dir?' · '+esc(e.dir):''}${e.tel?' · Tel. '+esc(e.tel):''}</div>`:''}
+  <div class="doc-title-row">
+    <div class="doc-folio">FOLIO ÚNICO<b>${esc(folio)}</b>${d.folio?'':'PROVISIONAL'}</div>
+    <div class="doc-title">REPORTE DE INCIDENCIA</div>
+  </div>
+  <div class="doc-subtitle">Carta expedida por la Dirección Escolar</div>
+  ${e.telSeguro?`<div class="doc-seguro">☎ Centro de Atención Telefónica · Seguro Escolar: <b>${esc(e.telSeguro)}</b></div>`:''}
+  <div class="doc-conf">🔒 DOCUMENTO ESTRICTAMENTE CONFIDENCIAL. Elaborado bajo el principio del Interés Superior del Menor y la reserva de identidad establecida en la Ley de Transparencia y Acceso a la Información Pública del Estado de Oaxaca. Prohibida su difusión en actos públicos o redes sociales.</div>
+
+  <div class="doc-sec"><h3>1 · Control del reporte</h3>
+    <div class="doc-kv">
+      ${kv('Fecha (cuando ocurrió el incidente)',d.fecha)}${kv('Hora aproximada',d.hora)}
+      ${kv('Fecha (cuando ocurrió o se enteraron)',d.fechaEnt?d.fechaEnt.replace('T',' · '):'')}
+      ${kv('Lugar de los hechos',lugar)}
+    </div>
+    <div class="doc-checks" style="margin-top:8px">
+      ${['Flagrancia','Reporte','Sospecha'].map(m=>`<span class="${d.modo===m?'':'off'}">${d.modo===m?'☒':'☐'} ${m}</span>`).join('')}
+    </div></div>
+
+  <div class="doc-sec"><h3>2 · Datos de identificación del alumno(a)</h3>
+    <div class="doc-kv">
+      ${kv('Nombre completo',d.a_nombre)}${kv('Edad',d.a_edad)}
+      ${kv('Condición',d.sexo)}${kv('Grado y grupo',[d.a_grado,d.a_grupo].filter(Boolean).join(' · '))}
+      ${kv('Turno',d.a_turno)}${kv('Lengua indígena',d.a_lengua?('Sí'+(d.a_lenguaCual?' — '+d.a_lenguaCual:'')+(d.a_interprete?' · Requiere intérprete':'')):'No registrado')}
+      ${kv('Discapacidad / salud',d.a_discapacidad)}
+      ${kv('Padre / Madre / Tutor',(d.p_nombre||'—')+(d.p_parentesco?' ('+d.p_parentesco+')':''))}
+      ${kv('Contacto',(d.p_tel||'—')+(d.p_verificado?' · verificado':''))}
+    </div></div>
+
+  <div class="doc-sec"><h3>3 · Narrativa objetiva de los hechos</h3>
+    <div class="doc-box">${esc(d.n_descripcion)||'—'}</div>
+    <div class="doc-checks" style="margin-top:8px">${mark(TIPOS,d.tipos)}</div>
+    <div class="doc-kv" style="margin-top:8px">${kv('Testigos',testigosTxt)}</div>
+    ${(d.tipos||[]).some(t=>t==='sexual'||t==='delito')?`<div style="border:1.5px solid #b3261e;background:#fdecea;padding:.5rem .8rem;margin-top:8px;font-size:.8rem">
+      ⚠ <b>AVISO INMEDIATO A AUTORIDAD COMPETENTE:</b> ${d.n_autoridad?'Sí — '+esc(d.n_autoridadDetalle||''): '<b style="color:#b3261e">PENDIENTE. El reporte no sustituye la denuncia ante la Fiscalía General del Estado de Oaxaca o el DIF.</b>'}</div>`:''}
+  </div>
+
+  <div class="doc-sec"><h3>4 · Acciones inmediatas y medidas de protección</h3>
+    <div class="doc-checks">${mark(ACCS,d.acc)}</div>
+    ${d.acc_detalle?`<div class="doc-box" style="margin-top:6px">${esc(d.acc_detalle)}</div>`:''}
+    <div class="doc-kv" style="margin-top:10px">
+      ${kv('Hora de llamada a padres',d.notif_llamada)}${kv('Hora de respuesta',d.notif_respuesta)}
+      ${kv('Hora de llegada',d.notif_llegada)}${kv('Seguro escolar',d.notif_seguro)}
+    </div>
+    ${d.notif_obs?`<div class="doc-box" style="margin-top:8px">${esc(d.notif_obs)}</div>`:''}
+    <div class="doc-checks" style="margin-top:10px">${mark(CANALES,d.canal)}</div>
+    ${d.canal_detalle?`<div class="doc-kv" style="margin-top:4px">${kv('Detalle de canalización',d.canal_detalle)}</div>`:''}
+  </div>
+
+  <div class="doc-sec"><h3>5 · Antecedentes y reincidencia</h3>
+    <div class="doc-kv">${kv('Incidencias previas',d.h_previas||'Sin antecedentes registrados')}${kv('Cumplimiento de compromisos anteriores',d.h_cumplimiento)}</div>
+    ${d.h_compromisos?`<div class="doc-box" style="margin-top:6px">${esc(d.h_compromisos)}</div>`:''}</div>
+
+  <div class="doc-sec"><h3>6 · Acuerdos, compromisos y medidas formativas</h3>
+    <div class="doc-kv">${kv('Compromisos del alumno(a)',d.g_alumno||'—')}${kv('Compromisos de padres/tutores',d.g_padres||'—')}${kv('Medidas de la escuela',d.g_escuela||'—')}</div></div>
+
+  ${d.x_activar?`<div class="anexo"><h3 style="font-family:var(--disp);letter-spacing:.1em;font-size:.82rem;text-transform:uppercase">ANEXO 1 · Se anexa para completar la incidencia con fecha ${esc(d.x_fecha||'—')} y con folio ${esc(folio)}</h3>
+    <div class="doc-kv" style="margin-top:8px">${kv('Descripción complementaria',d.x_descripcion||'—')}${kv('Observaciones',d.x_observaciones||'—')}${kv('Acuerdos',d.x_acuerdos||'—')}</div>
+    <p style="font-size:.72rem;font-style:italic;margin-top:6px">Se firma al calce en fe y consentimiento.</p></div>`:''}
+
+  <div class="sigs">
+    <div class="sig"><div class="line"></div><b>Nombre y firma del Padre, Madre o Tutor del Alumno(a)</b><i>${esc(d.p_nombre||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Nombre y firma de quien realiza el reporte</b><i>${esc(d.persona_reporta||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Docente que atiende el incidente</b><i>${esc(d.qui_docente||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Directivo / Otro (especifique)</b><i>${esc(d.qui_directivo||d.qui_otro||'')}</i></div>
+  </div>
+  ${d.qui_directivo?`<div class="sig" style="margin-top:30px;text-align:center;font-size:.78rem"><div class="line" style="border-top:1.5px solid #2a352d;width:55%;margin:0 auto .3rem;padding-top:.35rem"></div><b>FIRMAS DE CONSENTIMIENTO · ${esc(d.qui_directivo)}</b><i>Dirección Escolar</i></div>`:''}
+  <div class="sello">Sello oficial<br>de la escuela</div>
+
+  <div class="doc-legal">
+    El presente reporte se elabora conforme a la Ley General de los Derechos de Niñas, Niños y Adolescentes; la Ley de Transparencia y Acceso a la Información Pública del Estado de Oaxaca; el Protocolo de Erradicación del Acoso Escolar en Oaxaca y el Plan Estatal de Prevención y Seguridad Escolar. Las medidas adoptadas son de carácter formativo y proporcional, respetando la dignidad del menor. En casos de violencia sexual o delitos graves, la escuela activa el protocolo de aviso inmediato a la Fiscalía General del Estado de Oaxaca o al DIF; este documento no sustituye la denuncia correspondiente. · Folio ${esc(folio)} · ${esc(e.nombre||'')}
+  </div>`;
+}
+
+/* ═══════════════ VISTA PREVIA ═══════════════ */
+function showPreview(data,opts={}){
+  try{
+    $('doc').innerHTML=buildDoc(data);
+    const folio=opts.folio||null;
+    $('ov-tag').textContent =
+      opts.state==='saved'   ? `FOLIO ${folio} · GUARDADO` :
+      opts.state==='editing' ? `EDITANDO FOLIO ${folio} · CAMBIOS SIN GUARDAR` :
+      `SIN GUARDAR · FOLIO PROVISIONAL ${pad(nextFolio)}`;
+    $('overlay').classList.add('open');
+    document.body.classList.add('preview-open');
+    document.body.style.overflow='hidden';
+  }catch(err){
+    console.error(err);
+    toast('No se pudo abrir la vista previa: '+err.message,'err');
+  }
+}
+function closePreview(){
+  $('overlay').classList.remove('open');
+  document.body.classList.remove('preview-open');
+  document.body.style.overflow='';
+}
+$('ov-close').onclick=closePreview;
+$('ov-print').onclick=()=>window.print();
+$('ov-save').onclick=()=>{
+  if(previewMode==='view'){toast('Este registro ya está guardado. Use ✎ Editar en la bitácora para modificarlo.');return}
+  if(guardarRegistro())closePreview();
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});
+
+/* ═══════════════ HISTORIAL ═══════════════ */
+const mask=n=>n.split(/\s+/).filter(Boolean).map(w=>w[0].toUpperCase()+'.').join(' ');
+function renderHist(){
+  const q=($('hist-search').value||'').toLowerCase();
+  const rows=regs.filter(r=>{
+    if(!q)return true;
+    const txt=(r.folio+' '+(r.data.tipos||[]).map(t=>TIPOS[t]).join(' ')).toLowerCase();
+    return txt.includes(q);
+  });
+  if(!regs.length){$('hist-body').innerHTML=`<div class="card in" style="opacity:1;transform:none"><div class="empty"><div class="big">📚</div>
+    <p><b>La bitácora está vacía.</b><br>Los reportes guardados aparecerán aquí con su folio consecutivo.</p></div></div>`;return}
+  $('hist-body').innerHTML=`<table class="hist"><thead><tr>
+    <th>Folio</th><th>Fecha</th><th>Alumno(a) · iniciales</th><th>Tipificación</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr>
+      <td><span class="folio-tag">${esc(r.folio)}</span></td>
+      <td>${esc(r.data.fecha||'—')}</td>
+      <td title="Identidad reservada en vistas públicas">${esc(mask(r.data.a_nombre||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
+      <td>${(r.data.tipos||[]).slice(0,3).map(t=>`<span class="tipo-tag">${TIPOS[t]||esc(t)}</span>`).join('')}${(r.data.tipos||[]).length>3?'…':''}</td>
+      <td><div class="row-acts" style="justify-content:flex-end">
+        <button class="icon-btn" title="Ver / imprimir" onclick="verRegistro(${r.id})">👁</button>
+        <button class="icon-btn" title="Editar" onclick="editarRegistro(${r.id})">✎</button>
+        <button class="icon-btn del" title="Eliminar" onclick="eliminarRegistro(${r.id})">🗑</button>
+      </div></td></tr>`).join('')}</tbody></table>
+    ${rows.length!==regs.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regs.length} registros coinciden con la búsqueda.</p>`:''}`;
+}
+window.verRegistro=id=>{
+  const r=regs.find(x=>x.id===id);if(!r)return;
+  previewMode='view';
+  showPreview(Object.assign({},r.data,{folio:r.folio}),{folio:r.folio,state:'saved'});
+};
+window.editarRegistro=id=>{
+  const r=regs.find(x=>x.id===id);if(!r)return;
+  editId=id;fillForm(r.data);
+  $('f_folio').value=r.folio;$('aside-folio').textContent=r.folio;
+  $('edit-badge').style.display='inline-block';$('edit-folio').textContent=r.folio;
+  switchTab('form');toast(`✎ Editando el folio ${r.folio}. El folio no cambia al guardar.`);
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+window.eliminarRegistro=id=>{
+  const r=regs.find(x=>x.id===id);if(!r)return;
+  if(confirm(`¿Eliminar definitivamente el registro con folio ${r.folio}?\n\nEl folio NO se reutiliza (conservación de la secuencia).`)){
+    regs=regs.filter(x=>x.id!==id);save(LS.regs,regs);renderAll();toast(`Registro ${r.folio} eliminado`,'err')}
+};
+$('hist-search').oninput=renderHist;
+
+/* Respaldo */
+$('btn-export').onclick=()=>{
+  const blob=new Blob([JSON.stringify({cfg,nextFolio,regs,exportado:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`respaldo_incidencias_${new Date().toISOString().slice(0,10)}.json`;a.click();
+  toast('⬇ Respaldo descargado. Consérvelo en la Dirección.')};
+$('btn-import').onclick=()=>$('import-file').click();
+$('import-file').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const j=JSON.parse(rd.result);
+    if(!j.cfg||!Array.isArray(j.regs))throw 0;
+    cfg=j.cfg;if(!cfg.ia)cfg.ia={};
+    cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
+    vozOn=cfg.ia.voz!==false;
+    nextFolio=j.nextFolio||1;regs=j.regs;
+    save(LS.cfg,cfg);save(LS.folio,nextFolio);save(LS.regs,regs);
+    renderAll();loadCfgForm();updateAIvisibility();toast('⬆ Respaldo importado correctamente');
+  }catch(err){toast('El archivo no es un respaldo válido','err')}};
+  rd.readAsText(f);e.target.value='';};
+
+/* ═══════════════ CONFIGURACIÓN ═══════════════ */
+function loadCfgForm(){
+  const e=cfg.escuela;
+  setVal('c_nombre',e.nombre);setVal('c_cct',e.cct);setVal('c_zona',e.zona);setVal('c_sector',e.sector);
+  setVal('c_muni',e.muni);setVal('c_ciclo',e.ciclo);setVal('c_dir',e.dir);setVal('c_tel',e.tel);setVal('c_telSeguro',e.telSeguro);
+  $('c_nivel').value=e.nivel&&[...$('c_nivel').options].some(o=>o.value===e.nivel)?e.nivel:'Otro';
+  $('ia_on').checked=cfg.ia.on;
+  $('ia_key').value=cfg.ia.apiKey||'';
+  $('ia_model').value=GROQ_MODELS.some(m=>m.id===cfg.ia.model)?cfg.ia.model:'llama-3.3-70b-versatile';
+  renderCfgLists();
+}
+function renderCfgLists(){
+  $('cfg-directivos').innerHTML=cfg.directivos.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b><span>${esc(d.cargo)}</span>
+    <button class="icon-btn del x" onclick="delPersona('directivos',${d.id})">✕</button></div>`).join('')||'<p style="font-size:.82rem;color:var(--muted)">Sin directivos registrados.</p>';
+  $('cfg-docentes').innerHTML=cfg.docentes.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b><span>${esc(d.asignatura||'Sin asignatura')}</span>
+    <button class="icon-btn del x" onclick="delPersona('docentes',${d.id})">✕</button></div>`).join('')||'<p style="font-size:.82rem;color:var(--muted)">Sin docentes registrados.</p>';
+}
+window.delPersona=(tipo,id)=>{cfg[tipo]=cfg[tipo].filter(p=>p.id!==id);renderCfgLists()};
+$('btn-add-dir').onclick=()=>{const n=$('nd_nombre').value.trim();if(!n)return toast('Escriba el nombre del directivo','err');
+  cfg.directivos.push({id:Date.now(),nombre:n,cargo:$('nd_cargo').value});$('nd_nombre').value='';renderCfgLists()};
+$('btn-add-doc').onclick=()=>{const n=$('nt_nombre').value.trim();if(!n)return toast('Escriba el nombre del docente','err');
+  cfg.docentes.push({id:Date.now(),nombre:n,asignatura:$('nt_asig').value.trim()});$('nt_nombre').value='';$('nt_asig').value='';renderCfgLists()};
+$('btn-save-cfg').onclick=()=>{
+  cfg.escuela={nombre:$('c_nombre').value.trim(),cct:$('c_cct').value.trim(),nivel:$('c_nivel').value,
+    zona:$('c_zona').value.trim(),sector:$('c_sector').value.trim(),muni:$('c_muni').value.trim(),
+    ciclo:$('c_ciclo').value.trim(),dir:$('c_dir').value.trim(),tel:$('c_tel').value.trim(),
+    telSeguro:$('c_telSeguro').value.trim(),autoridad:cfg.escuela.autoridad||DEFAULT_CFG.escuela.autoridad};
+  if(!cfg.escuela.nombre)return toast('El nombre de la escuela es obligatorio','err');
+  cfg.ia={on:$('ia_on').checked,apiKey:$('ia_key').value.trim(),model:$('ia_model').value,voz:vozOn};
+  save(LS.cfg,cfg);renderAll();updateAIvisibility();setModelTag();
+  toast('✔ Configuración guardada. El membrete y Yolia se actualizaron.')};
+$('btn-wipe').onclick=()=>{if(confirm('¿Vaciar TODA la bitácora? Esta acción no puede deshacerse.'))
+  if(confirm('Confirmación final: se eliminarán todos los registros.')){regs=[];save(LS.regs,regs);renderAll();toast('Bitácora vaciada','err')}};
+
+$('ia-show').onclick=()=>{const k=$('ia_key');k.type=k.type==='password'?'text':'password'};
+$('btn-test-ia').onclick=async()=>{
+  const key=$('ia_key').value.trim(),model=$('ia_model').value,out=$('ia-test-result');
+  out.textContent='';
+  if(!key){toast('Ingrese la API key de Groq','err');return}
+  $('btn-test-ia').disabled=true;$('btn-test-ia').textContent='⏳ Probando…';
+  try{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model,messages:[{role:'user',content:'Responde únicamente: OK'}],temperature:0,max_tokens:5})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status))}
+    out.innerHTML='<span style="color:#166b4f;font-weight:700">✔ Conexión exitosa con Groq</span>';
+    toast('✔ Conexión exitosa con Groq ('+model+')');
+  }catch(err){
+    out.innerHTML='<span style="color:#b3261e;font-weight:700">✕ '+esc(err.message)+'</span>';
+    toast('Error de conexión: '+err.message,'err');
+  }
+  $('btn-test-ia').disabled=false;$('btn-test-ia').textContent='🔌 Probar conexión';
+};
+
+function renderSelects(){
+  const dSel=$('qui_directivo'),tSel=$('qui_docente');
+  const dVal=dSel.value,tVal=tSel.value;
+  dSel.innerHTML='<option value="">— Seleccionar de plantilla —</option>'+
+    cfg.directivos.map(d=>`<option value="${esc(d.nombre)} · ${esc(d.cargo)}">${esc(d.nombre)} · ${esc(d.cargo)}</option>`).join('');
+  tSel.innerHTML='<option value="">— Seleccionar de plantilla —</option>'+
+    cfg.docentes.map(d=>`<option value="${esc(d.nombre)} · ${esc(d.asignatura||'Docente')}">${esc(d.nombre)} · ${esc(d.asignatura||'Docente')}</option>`).join('');
+  dSel.value=dVal;tSel.value=tVal;
+}
+
+/* ═══════════════ RENDER GENERAL ═══════════════ */
+function renderAll(){
+  const e=cfg.escuela;
+  $('mh-autoridad').textContent=e.autoridad||'';$('mh-nombre').textContent=e.nombre||'— Configure la escuela —';
+  $('mh-cct').textContent=e.cct||'—';$('mh-zona').textContent=e.zona||'—';$('mh-sector').textContent=e.sector||'—';
+  $('mh-nivel').textContent=e.nivel?'Nivel: '+e.nivel:'';$('mh-ciclo').textContent=e.ciclo||'—';$('mh-muni').textContent=e.muni||'';
+  $('mh-folio').textContent=pad(nextFolio);
+  $('aside-tel').textContent=e.telSeguro||'—';
+  $('st-total').textContent=regs.length;$('st-ultimo').textContent=regs.length?regs[0].folio:'—';
+  $('st-directivos').textContent=cfg.directivos.length;$('st-docentes').textContent=cfg.docentes.length;
+  $('tab-count').textContent=regs.length;
+  setFolioDisplay();renderSelects();renderHist();
+}
+function setFolioDisplay(){
+  if(editId){
+    const r=regs.find(x=>x.id===editId);
+    if(r){$('f_folio').value=r.folio;$('aside-folio').textContent=r.folio}
+  }else{
+    $('f_folio').value=pad(nextFolio);
+    $('aside-folio').textContent=pad(nextFolio);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   YOLIA · ASISTENTE IA (chat + voz + dictado + guía)
+   ═══════════════════════════════════════════════════ */
+const AI_SYSTEM=`Eres Yolia, asistente de redacción administrativa de una escuela pública de Oaxaca, México. Tu función principal es MEJORAR la redacción de narrativas de incidencias escolares. Reglas estrictas al mejorar un texto:
+1. Conserva TODOS los hechos originales: nombres, horas, lugares, edades y datos. No inventes, no omitas, no alteres.
+2. Redacción objetiva, formal, en tercera persona, orden cronológico y ortografía impecable.
+3. Cero juicios de valor, etiquetas o apodos (Interés Superior del Menor).
+4. No agregues conclusiones, sanciones ni recomendaciones.
+5. Entrega ÚNICAMENTE el texto mejorado, sin encabezados ni comentarios.
+Si te hacen una pregunta sobre el formato de reporte de incidencias, responde de forma breve y útil en español.`;
+let aiHist=[], aiBusy=false;
+let guia={activo:false,paso:0};
+
+function aiOK(){return cfg.ia.on&&cfg.ia.apiKey}
+function setModelTag(){
+  const m=GROQ_MODELS.find(x=>x.id===cfg.ia.model);
+  $('ai-model-tag').textContent='Groq · '+(m?m.label.split('(')[0].trim():cfg.ia.model);
+}
+function updateAIvisibility(){
+  if(aiOK())$('ai-fab').classList.add('show');
+  else{$('ai-fab').classList.remove('show');$('ai-panel').classList.remove('open')}
+}
+let aiPos=load(LS.aiPos,null);
+let aiFabPos=load(LS.aiFab,null);
+function placeAI(){
+  const p=$('ai-panel');
+  let x=aiPos?aiPos.x:(window.innerWidth-394), y=aiPos?aiPos.y:84;
+  x=Math.max(8,Math.min(x,window.innerWidth-p.offsetWidth-8));
+  y=Math.max(8,Math.min(y,Math.max(8,window.innerHeight-p.offsetHeight-8)));
+  p.style.left=x+'px';p.style.top=y+'px';
+}
+function aplicarPosFab(){
+  const fab=$('ai-fab');
+  if(!aiFabPos)return;
+  let x=Math.max(6,Math.min(aiFabPos.x,window.innerWidth-72));
+  let y=Math.max(6,Math.min(aiFabPos.y,window.innerHeight-72));
+  fab.style.left=x+'px';fab.style.top=y+'px';fab.style.right='auto';fab.style.bottom='auto';
+}
+function aiWelcome(){
+  if($('ai-msgs').children.length)return;
+  aiAdd('bot','👋 Soy Yolia, tu asistente escolar.\n\n• 🧭 «Llenar paso a paso»: te pregunto dato por dato y lleno el reporte por ti.\n• Escribe o DICTA (🎤) una narrativa y la mejoro con redacción objetiva.\n• Si la VOZ 🔊 está activada, te leo mis respuestas.\n\nEn cualquier paso escribe «saltar» para omitir o «cancelar» para terminar.');
+}
+function aiOpen(){$('ai-panel').classList.add('open');$('ai-fab').classList.remove('show');placeAI();aiWelcome();$('ai-input').focus()}
+function aiMin(){$('ai-panel').classList.remove('open');if(aiOK())$('ai-fab').classList.add('show')}
+$('ai-min').onclick=aiMin;
+
+/* Arrastre del panel (desde la barra superior) */
+(function(){
+  const head=$('ai-head'),p=$('ai-panel');
+  let sx,sy,ox,oy,drag=false;
+  head.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button'))return;
+    drag=true;sx=e.clientX;sy=e.clientY;ox=p.offsetLeft;oy=p.offsetTop;
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    let x=ox+e.clientX-sx,y=oy+e.clientY-sy;
+    x=Math.max(4,Math.min(x,window.innerWidth-p.offsetWidth-4));
+    y=Math.max(4,Math.min(y,window.innerHeight-44));
+    p.style.left=x+'px';p.style.top=y+'px';
+  });
+  head.addEventListener('pointerup',()=>{
+    if(!drag)return;drag=false;
+    aiPos={x:p.offsetLeft,y:p.offsetTop};save(LS.aiPos,aiPos);
+  });
+  window.addEventListener('resize',()=>{if($('ai-panel').classList.contains('open'))placeAI();aplicarPosFab()});
+})();
+
+/* Arrastre del botón flotante (clic corto = abrir) */
+(function(){
+  const fab=$('ai-fab');
+  let sx,sy,ox,oy,drag=false,moved=false;
+  fab.addEventListener('pointerdown',e=>{
+    drag=true;moved=false;sx=e.clientX;sy=e.clientY;
+    const r=fab.getBoundingClientRect();ox=r.left;oy=r.top;
+    fab.setPointerCapture(e.pointerId);
+  });
+  fab.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const dx=e.clientX-sx,dy=e.clientY-sy;
+    if(Math.abs(dx)>5||Math.abs(dy)>5)moved=true;
+    if(!moved)return;
+    let x=Math.max(6,Math.min(ox+dx,window.innerWidth-72));
+    let y=Math.max(6,Math.min(oy+dy,window.innerHeight-72));
+    fab.style.left=x+'px';fab.style.top=y+'px';fab.style.right='auto';fab.style.bottom='auto';
+  });
+  fab.addEventListener('pointerup',()=>{
+    if(!drag)return;drag=false;
+    if(moved){aiFabPos={x:fab.offsetLeft,y:fab.offsetTop};save(LS.aiFab,aiFabPos);toast('📌 Posición guardada')}
+    else aiOpen();
+  });
+})();
+
+/* Mensajes del chat */
+function aiAdd(role,text,raw){
+  const d=document.createElement('div');d.className='ai-msg '+role;
+  d.textContent=text;
+  if(role==='bot'&&raw){
+    const tools=document.createElement('div');tools.className='ai-tools';
+    tools.innerHTML=`<button data-a="voz">🔊 Escuchar</button><button data-a="copiar">📋 Copiar</button><button data-a="insertar">📥 Insertar en narrativa</button>`;
+    tools.querySelector('[data-a=voz]').onclick=()=>hablar(raw);
+    tools.querySelector('[data-a=copiar]').onclick=()=>{navigator.clipboard.writeText(raw).then(()=>toast('📋 Texto copiado al portapapeles'))};
+    tools.querySelector('[data-a=insertar]').onclick=()=>{
+      setCampo('n_descripcion',raw);
+      switchTab('form');
+      toast('✔ Narrativa insertada en el reporte');
+    };
+    d.appendChild(tools);
+  }
+  $('ai-msgs').appendChild(d);
+  $('ai-msgs').scrollTop=$('ai-msgs').scrollHeight;
+  return d;
+}
+
+/* Llamada a Groq */
+async function apiChat(messages,maxTokens=1200){
+  const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.ia.apiKey},
+    body:JSON.stringify({model:cfg.ia.model,messages,temperature:0.4,max_tokens:maxTokens})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||('HTTP '+res.status))}
+  return (await res.json()).choices[0].message.content.trim();
+}
+
+async function aiSend(text){
+  if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
+  text=(text||'').trim();if(!text||aiBusy)return;
+  aiAdd('user',text);
+  if(guia.activo){await guiaResponder(text);return}
+  aiHist.push({role:'user',content:text});
+  aiHist=aiHist.slice(-8);
+  aiBusy=true;$('ai-send').disabled=true;
+  const loading=aiAdd('bot typing','Yolia está escribiendo…');
+  try{
+    const out=await apiChat([{role:'system',content:AI_SYSTEM},...aiHist]);
+    loading.remove();
+    aiHist.push({role:'assistant',content:out});
+    aiAdd('bot',out,out);
+    hablar(out);
+  }catch(err){
+    loading.remove();
+    aiAdd('err','⚠ No se pudo obtener respuesta: '+err.message);
+  }
+  aiBusy=false;$('ai-send').disabled=false;
+}
+$('ai-send').onclick=()=>{aiSend($('ai-input').value);$('ai-input').value=''};
+$('ai-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('ai-send').click()}
+});
+function guardaGuia(){
+  if(guia.activo){toast('Termina el recorrido guiado primero (escribe «cancelar» en el chat).','err');return false}
+  return true;
+}
+$('ai-improve-report').onclick=()=>{
+  if(!guardaGuia())return;
+  const t=$('n_descripcion').value.trim();
+  if(!t){toast('La narrativa del reporte está vacía. Escriba o dicte los hechos primero.','err');return}
+  aiOpen();aiSend('Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t);
+};
+$('ai-voz-toggle').onclick=function(){
+  vozOn=!vozOn;
+  this.classList.toggle('voz-on',vozOn);
+  this.textContent=vozOn?'🔊 Voz':'🔇 Voz';
+  if(!vozOn)speechSynthesis.cancel();
+  cfg.ia.voz=vozOn;save(LS.cfg,cfg);
+};
+
+/* ── MODO GUIADO PASO A PASO ── */
+function parseFecha(t){
+  t=t.toLowerCase().trim();
+  const hoy=new Date();const iso=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  if(/\bhoy\b/.test(t))return iso(hoy);
+  if(/anteayer/.test(t)){const d=new Date(hoy);d.setDate(d.getDate()-2);return iso(d)}
+  if(/ayer/.test(t)){const d=new Date(hoy);d.setDate(d.getDate()-1);return iso(d)}
+  const meses={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+  let m=t.match(/(\d{1,2})\s*(?:de)?\s*([a-záéíóú]+)\s*(?:de|del)?\s*(\d{4})?/);
+  if(m&&meses[m[2]]){const y=+m[3]||hoy.getFullYear();return `${y}-${pad2(meses[m[2]])}-${pad2(+m[1])}`}
+  m=t.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(m){let y=+m[3];if(y<100)y+=2000;return `${y}-${pad2(+m[2])}-${pad2(+m[1])}`}
+  m=t.match(/(\d{1,2})[\/\-.](\d{1,2})/);
+  if(m)return `${hoy.getFullYear()}-${pad2(+m[2])}-${pad2(+m[1])}`;
+  const d=new Date(t);
+  return isNaN(d)?null:iso(d);
+}
+function parseHora(t){
+  t=t.toLowerCase();
+  let m=t.match(/(\d{1,2})\s*[:\.h]\s*(\d{2})/),h,min;
+  if(m){h=+m[1];min=+m[2]}
+  else{
+    m=t.match(/(\d{1,2})/);if(!m)return null;
+    h=+m[1];
+    min=/y\s?media/.test(t)?30:(/y\s?cuarto/.test(t)?15:(/tres\s?cuartos|menos\s?cuarto/.test(t)?45:0));
+  }
+  if(/(p\.?m\.?|tarde|noche)/.test(t)&&h<12)h+=12;
+  if(/(a\.?m\.?|mañana)/.test(t)&&h===12)h=0;
+  if(h>23||min>59)return null;
+  return pad2(h)+':'+pad2(min);
+}
+function parseLugar(t){
+  const bajo=t.toLowerCase();
+  const mapa=[['Aula',['aula','salon','salón','clase']],['Patio / cancha',['patio','cancha']],['Baños',['baño','sanitario']],
+    ['Pasillos',['pasillo']],['Entrada / salida',['entrada','salida','puerta']],['Alrededores del plantel',['alrededor','afuera','fuera','calle']],
+    ['Ciberespacio (redes / mensajería)',['ciber','redes','whatsapp','facebook','internet','mensajer','celular']],['Otro',['otro','otra']]];
+  for(const [op,keys] of mapa){if(keys.some(k=>bajo.includes(k)))return op}
+  return null;
+}
+function parseModo(t){
+  const bajo=t.toLowerCase();
+  if(bajo.includes('flagran')||bajo.includes('presenci'))return 'Flagrancia';
+  if(bajo.includes('reporte')||bajo.includes('report')||bajo.includes('avis'))return 'Reporte';
+  if(bajo.includes('sospech')||bajo.includes('indici'))return 'Sospecha';
+  return null;
+}
+function parseSexo(t){
+  const bajo=t.toLowerCase();
+  if(bajo.includes('adolescen'))return 'Adolescente';
+  if(bajo.includes('niña')||bajo.includes('femenin')||bajo.includes('mujer')||bajo.includes('chica'))return 'Niña';
+  if(bajo.includes('niño')||bajo.includes('masculin')||bajo.includes('hombre')||bajo.includes('chico'))return 'Niño';
+  return null;
+}
+function parseGrado(t){
+  const m=t.match(/(1|2|3|primero|segundo|tercero|primer|tercer)\s*(?:°|º|er|o)?\s*([a-zA-Z0-9]+)?/i);
+  if(!m)return null;
+  return {g:m[1],gr:(m[2]||'').toUpperCase()};
+}
+function parseParentesco(t){
+  const bajo=t.toLowerCase();
+  if(bajo.includes('madre')||bajo.includes('mamá'))return 'Madre';
+  if(bajo.includes('padre')||bajo.includes('papá'))return 'Padre';
+  if(bajo.includes('tutor'))return 'Tutor(a)';
+  if(bajo.includes('abuel'))return 'Abuelo(a)';
+  return null;
+}
+function parseTipos(t){
+  const bajo=t.toLowerCase();
+  const mapa={fisica:['fisica','física','golpe','empuj','pelea','agresion','agresión'],verbal:['verbal','insulto','grito','apodo','burla','ofensa'],
+    psicologica:['psicolog','emocional','amenaza','exclu','intimid'],digital:['ciber','redes','whatsapp','facebook','digital','internet','foto','video'],
+    sexual:['sexual','abuso'],sustancias:['sustancia','droga','alcohol','cigarro','vapo','inhal'],
+    patrimonial:['robo','robó','robar','daño','dañ','rompi','destroz','ray'],discriminacion:['discrimin','racis'],otra:['otra','otro']};
+  const vals=Object.keys(mapa).filter(k=>mapa[k].some(w=>bajo.includes(w)));
+  return vals.length?vals:null;
+}
+function parseQuien(t){
+  const bajo=t.toLowerCase();
+  const palabras=bajo.split(/\s+/).filter(w=>w.length>=4);
+  const busca=lista=>lista.find(p=>{
+    const partes=p.nombre.toLowerCase().split(/\s+/).filter(w=>w.length>=4);
+    return partes.some(w=>bajo.includes(w))||palabras.some(w=>p.nombre.toLowerCase().includes(w));
+  });
+  const d=busca(cfg.docentes);
+  if(d)return {sel:'qui_docente',label:`${d.nombre} · ${d.asignatura||'Docente'}`};
+  const di=busca(cfg.directivos);
+  if(di)return {sel:'qui_directivo',label:`${di.nombre} · ${di.cargo}`};
+  return null;
+}
+const PASOS=[
+ {campo:'f_fecha',opcional:false,
+  pregunta:'¿Qué día ocurrió el incidente?\nAcepto: «hoy», «ayer», 14/05/2025 o «14 de mayo».',
+  ok:v=>`✔ Fecha del incidente: ${v}`, parse:t=>parseFecha(t),
+  invalida:'No entendí la fecha. Prueba con «hoy», «ayer» o un formato como 14/05/2025.'},
+ {campo:'f_hora',
+  pregunta:'¿A qué hora ocurrió aproximadamente?\nEj. 10:30, «diez y media», «3 de la tarde».',
+  ok:v=>`✔ Hora: ${v}`, parse:t=>parseHora(t),
+  invalida:'No logré leer la hora. Escribe algo como 10:30 o «diez y media».'},
+ {campo:'f_lugar',
+  pregunta:'¿Dónde sucedió?\nOpciones: aula, patio, baños, pasillos, entrada/salida, alrededores, ciberespacio u otro.',
+  ok:v=>`✔ Lugar: ${v}`, parse:t=>parseLugar(t),
+  invalida:'Elige una opción: aula, patio, baños, pasillos, entrada, alrededores, ciberespacio u otro.'},
+ {campo:'f_lugarDetalle',
+  pregunta:'Precisa el lugar (p. ej. «aula de 2º B, segundo piso»). Escribe «saltar» si no aplica.',
+  ok:v=>`✔ Detalle del lugar: ${v}`, parse:t=>t.trim()},
+ {campo:null,
+  pregunta:'¿Cómo se enteró la escuela?\nFlagrancia (se presenció) · Reporte (avisó un tercero) · Sospecha.',
+  ok:v=>`✔ Modo de detección: ${v}`, parse:t=>parseModo(t),
+  apply:v=>{document.querySelectorAll('input[name=modo]').forEach(r=>r.checked=r.value===v);updateChecklist();},
+  invalida:'Escribe: flagrancia, reporte o sospecha.'},
+ {campo:'a_nombre',opcional:false,
+  pregunta:'Nombre completo del alumno(a) involucrado(a).',
+  ok:v=>`✔ Alumno(a): ${v}`, parse:t=>t.trim().length>=5?t.trim():null,
+  invalida:'Escribe el nombre completo (al menos nombre y apellido).'},
+ {campo:'a_edad',
+  pregunta:'¿Edad del alumno(a)? (solo el número)',
+  ok:v=>`✔ Edad: ${v} años`, parse:t=>{const n=parseInt(t);return n>=3&&n<=21?n:null},
+  invalida:'Escribe una edad entre 3 y 21.'},
+ {campo:null,
+  pregunta:'¿Es niña, niño o adolescente?',
+  ok:v=>`✔ Condición: ${v}`, parse:t=>parseSexo(t),
+  apply:v=>{document.querySelectorAll('input[name=sexo]').forEach(r=>r.checked=r.value===v);updateChecklist();},
+  invalida:'Escribe: niña, niño o adolescente.'},
+ {campo:'a_grado',
+  pregunta:'Grado y grupo. Ej. «2 B» o «tercero C».',
+  ok:v=>`✔ Grado y grupo: ${v.g} · ${v.gr||'—'}`, parse:t=>parseGrado(t),
+  apply:v=>{setCampo('a_grado',v.g);setCampo('a_grupo',v.gr)},
+  invalida:'Ejemplo: «2 B» o «1 A».'},
+ {campo:'p_nombre',
+  pregunta:'Nombre del padre, madre o tutor.',
+  ok:v=>`✔ Padre/Madre/Tutor: ${v}`, parse:t=>t.trim().length>=5?t.trim():null,
+  invalida:'Escribe el nombre completo del padre, madre o tutor.'},
+ {campo:'p_parentesco',
+  pregunta:'¿Parentesco? (madre, padre, tutor, abuelo…)',
+  ok:v=>`✔ Parentesco: ${v}`, parse:t=>parseParentesco(t),
+  invalida:'Escribe: madre, padre, tutor o abuelo(a).'},
+ {campo:'p_tel',
+  pregunta:'Teléfono de contacto (10 dígitos).',
+  ok:v=>`✔ Teléfono: ${v}`, parse:t=>{const d=t.replace(/\D/g,'');return d.length>=8?d:null},
+  invalida:'Escribe un teléfono de al menos 8 dígitos.'},
+ {campo:'n_descripcion',opcional:false,
+  pregunta:'Cuéntame qué sucedió con tus palabras (puedes usar el micrófono 🎤).\nYo la redactaré de forma objetiva y la colocaré en el reporte.',
+  ok:()=>'✔ Narrativa redactada y colocada en el reporte. Revísala.',
+  parse:async t=>{
+    const ind=aiAdd('bot typing','✍ Redactando de forma objetiva…');
+    try{const out=await apiChat([{role:'system',content:AI_SYSTEM},{role:'user',content:'Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t}],900);
+      ind.remove();return out}
+    catch(e){ind.remove();aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+'). Colocaré el texto original.');return t}
+  }},
+ {campo:null,
+  pregunta:'¿Qué tipo de conducta fue? (puedes indicar varias)\nFísica · verbal · psicológica · ciberacoso · sexual · sustancias · robo/daños · discriminación · otra',
+  ok:v=>`✔ Tipificación: ${v.map(x=>TIPOS[x]).join(', ')}`, parse:t=>parseTipos(t),
+  apply:v=>{document.querySelectorAll('input[name=tipos]').forEach(c=>{if(v.includes(c.value))c.checked=true});updateAlerta();updateChecklist();},
+  invalida:'No identifiqué el tipo. Usa: física, verbal, psicológica, ciberacoso, sexual, sustancias, robo, discriminación u otra.'},
+ {campo:'qui_docente',
+  pregunta:'¿Quién atiende el incidente? Escribe el nombre del docente o directivo (debe estar dado de alta en ⚙ Configuración).',
+  ok:v=>`✔ Atiende: ${v.label}`, parse:t=>parseQuien(t),
+  apply:v=>setCampo(v.sel,v.label),
+  invalida:'No encontré ese nombre en la plantilla. Verifica en ⚙ Configuración o escribe «saltar».'}
+];
+$('ai-guia').onclick=()=>{
+  if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
+  aiOpen();
+  guia={activo:true,paso:0};
+  $('ai-guia').classList.add('guia-on');
+  aiAdd('bot','🧭 Recorrido guiado iniciado. Te preguntaré dato por dato y llenaré el formulario.\n\nPuedes escribir «saltar» para omitir un paso o «cancelar» para terminar.');
+  guiaPreguntar();
+};
+function guiaPreguntar(){
+  const p=PASOS[guia.paso];
+  aiAdd('bot',`🧭 Paso ${guia.paso+1} de ${PASOS.length} · ${p.pregunta}`);
+  if(p.campo&&$(p.campo)){
+    switchTab('form');
+    const f=$(p.campo).closest('.field');
+    setTimeout(()=>{f.scrollIntoView({behavior:'smooth',block:'center'});f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');},200);
+  }
+}
+async function guiaResponder(text){
+  const bajo=text.toLowerCase().trim();
+  if(/^(cancelar|salir|terminar recorrido)/.test(bajo)){
+    guia.activo=false;$('ai-guia').classList.remove('guia-on');
+    aiAdd('bot','👌 Recorrido guiado cancelado. Sigo disponible para mejorar redacciones.');
+    return;
+  }
+  const p=PASOS[guia.paso];
+  const saltar=/^(saltar|omitir|skip|ninguno|ninguna|no se|no sé|n\/a|despues|después|-|s)\b/.test(bajo)||bajo==='x';
+  if(saltar){
+    if(p.opcional===false){aiAdd('bot','⛔ Este dato es obligatorio para poder guardar el reporte. Inténtalo de nuevo (o escribe «cancelar»).');return}
+    aiAdd('bot','⏭ Campo omitido.');
+  }else{
+    let v=await p.parse(text);
+    if(v===null||v===undefined||v===''){
+      aiAdd('bot',p.invalida||'No entendí tu respuesta. ¿Puedes escribirla de nuevo?');return;
+    }
+    if(p.apply)p.apply(v);else if(p.campo)setCampo(p.campo,v);
+    aiAdd('bot',p.ok(v));
+  }
+  guia.paso++;
+  if(guia.paso>=PASOS.length)guiaFin();else guiaPreguntar();
+}
+function guiaFin(){
+  guia.activo=false;$('ai-guia').classList.remove('guia-on');
+  aiAdd('bot','🎉 ¡Listo! Completé el recorrido. Revisa los campos que llené (los que faltan puedes capturarlos a mano), luego presiona 👁 Vista previa y 💾 Guardar en bitácora.');
+  toast('🧭 Recorrido guiado completado');
+  switchTab('form');
+}
+
+/* ── Voz: respuesta hablada ── */
+function hablar(txt){
+  if(!vozOn||!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const limpio=txt.replace(/[*#_`]/g,'').slice(0,700);
+  const u=new SpeechSynthesisUtterance(limpio);u.lang='es-MX';u.rate=1.05;
+  const voces=speechSynthesis.getVoices();
+  const v=voces.find(v=>/^es[-_](MX|419)/i.test(v.lang))||voces.find(v=>v.lang.startsWith('es'));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
+
+/* ── Voz: dictado (con reintentos ante error de red) ── */
+let activeRec=null, recRetry=0;
+function dictarA(el,btn){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('Su navegador no soporta dictado por voz. Use Google Chrome o Microsoft Edge.','err');return}
+  if(activeRec){activeRec.stop();return}
+  const r=new SR();r.lang='es-MX';r.continuous=true;r.interimResults=true;
+  let base=el.value;
+  r.onresult=e=>{
+    recRetry=0;
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal)final+=t+' ';else interim+=t;
+    }
+    if(final)base=(base?base+' ':'')+final.trim();
+    el.value=base+(interim?' '+interim:'');
+    el.dispatchEvent(new Event('input'));
+  };
+  r.onend=()=>{
+    btn.classList.remove('rec-on');
+    if(activeRec===r){activeRec=null;toast('🎤 Dictado finalizado')}
+  };
+  r.onerror=e=>{
+    btn.classList.remove('rec-on');
+    if(activeRec!==r)return;
+    if(e.error==='network'&&recRetry<2){
+      recRetry++;activeRec=null;
+      toast(`🎤 El dictado necesita internet. Reintentando (${recRetry}/2)…`);
+      setTimeout(()=>dictarA(el,btn),1000);
+      return;
+    }
+    activeRec=null;recRetry=0;
+    if(e.error==='network')toast('No hay conexión con el servidor de voz: el dictado de Chrome necesita internet y acceso a los servicios de Google. Revisa tu conexión (desactiva VPN/bloqueadores) o intenta con Edge.','err');
+    else if(e.error==='not-allowed'||e.error==='service-not-allowed')toast('Permiso de micrófono bloqueado. Actívalo en el candado 🔒 junto a la dirección del navegador.','err');
+    else if(e.error!=='no-speech'&&e.error!=='aborted')toast('Error de dictado: '+e.error,'err');
+  };
+  try{
+    r.start();activeRec=r;btn.classList.add('rec-on');
+    toast('🎤 Dictando… hable con claridad; pulse el micrófono para detener');
+  }catch(err){toast('No se pudo iniciar el micrófono: '+err.message,'err')}
+}
+$('ai-mic').onclick=function(){dictarA($('ai-input'),this)};
+$('btn-mic-narr').onclick=function(){dictarA($('n_descripcion'),this)};
+$('btn-ai-narr').onclick=()=>{
+  if(!guardaGuia())return;
+  if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
+  aiOpen();
+  const t=$('n_descripcion').value.trim();
+  if(!t){toast('Escriba o dicte primero los hechos en la narrativa; luego presione «Mejorar redacción con IA».');return}
+  aiSend('Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t);
+};
+
+/* ═══════════════ INTERACCIÓN VIVA ═══════════════ */
+function updateAlerta(){const on=checks('tipos').some(t=>t==='sexual'||t==='delito');$('alerta-fiscalia').classList.toggle('on',on)}
+document.querySelectorAll('input[name=tipos]').forEach(c=>c.addEventListener('change',updateAlerta));
+$('x_activar').onchange=()=>$('anexo-fields').style.display=$('x_activar').checked?'block':'none';
+
+const SEC_FIELDS={
+  s1:['f_fecha','f_hora','f_lugar','f_lugarDetalle'],
+  s2:['a_nombre','a_edad','a_grado','a_grupo','p_nombre','p_tel'],
+  s3:['n_descripcion'],s4:['acc_detalle','notif_llamada','notif_obs','canal_detalle'],
+  s5:['h_previas','h_compromisos'],s6:['g_alumno','g_padres','g_escuela','persona_reporta']};
+function updateChecklist(){
+  Object.entries(SEC_FIELDS).forEach(([sec,ids])=>{
+    let ok=ids.some(id=>$(id).value.trim());
+    if(sec==='s3'&&checks('tipos').length)ok=true;
+    if(sec==='s1'&&radios('modo'))ok=true;
+    document.querySelector(`#checklist li[data-sec="${sec}"]`).classList.toggle('ok',ok);
+  });
+}
+document.getElementById('rep-form').addEventListener('input',()=>{updateChecklist();
+  document.querySelectorAll('.field.invalid').forEach(f=>f.classList.remove('invalid'))});
+
+/* Tabs */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
+
+/* Botones principales */
+$('btn-preview').onclick=()=>{
+  const d=collect();
+  if(editId){
+    const r=regs.find(x=>x.id===editId);
+    d.folio=r?r.folio:null;
+    previewMode='edit';
+    showPreview(d,{folio:d.folio,state:'editing'});
+  }else{
+    previewMode='new';
+    showPreview(d,{state:'new'});
+  }
+};
+$('btn-save').onclick=()=>guardarRegistro();
+$('btn-clear').onclick=()=>{if(confirm('¿Limpiar el formulario? Los datos no guardados se perderán.'))resetForm()};
+
+/* Reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+/* ═══════════════ INICIO ═══════════════ */
+(function initAI(){
+  $('ia_model').innerHTML=GROQ_MODELS.map(m=>`<option value="${m.id}">${m.label}</option>`).join('');
+  $('ai-voz-toggle').classList.toggle('voz-on',vozOn);
+  $('ai-voz-toggle').textContent=vozOn?'🔊 Voz':'🔇 Voz';
+  $('ai-fab').innerHTML=AVATAR;
+  $('ai-avatar').innerHTML=AVATAR;
+  setModelTag();updateAIvisibility();aplicarPosFab();
+})();
+if(!localStorage.getItem(LS.cfg)){toast('👋 Primer uso: revise y ajuste los datos de la escuela y el asistente en ⚙ Configuración.')}
+loadCfgForm();resetForm();renderAll();
+</script>
+</body>
+</html>
