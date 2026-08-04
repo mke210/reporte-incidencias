@@ -673,7 +673,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 
       <!-- ASISTENTE IA -->
       <div class="card">
-        <div class="card-head"><span class="card-num">IA</span><div><h3>Asistente IA «Yolia» · Groq (gratuito)</h3><p>Mejora redacciones, llena el reporte paso a paso, con dictado y voz. Se activa al abrir la app.</p></div></div>
+        <div class="card-head"><span class="card-num">IA</span><div><h3>Asistente IA «Yolia» · Groq (gratuito)</h3><p>Mejora redacciones, llena el reporte paso a paso con voz, dictado y respuesta hablada.</p></div></div>
         <div class="card-body">
           <label class="check-line"><input type="checkbox" id="ia_on"> <span><b>Activar asistente flotante</b> al abrir la aplicación</span></label>
           <div class="grid2" style="margin-top:12px">
@@ -814,7 +814,7 @@ const GROQ_MODELS=[
 ];
 const $=id=>document.getElementById(id);
 
-/* Avatar de Yolia (asistente femenina a color) */
+/* Avatar de Yolia */
 const AVATAR=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="yvbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#f4845f"/></linearGradient></defs>
 <circle cx="32" cy="32" r="32" fill="url(#yvbg)"/>
@@ -1265,13 +1265,13 @@ function aplicarPosFab(){
 }
 function aiWelcome(){
   if($('ai-msgs').children.length)return;
-  aiAdd('bot','👋 Soy Yolia, tu asistente escolar.\n\n• 🧭 «Llenar paso a paso»: te pregunto dato por dato y lleno el reporte por ti.\n• Escribe o DICTA (🎤) una narrativa y la mejoro con redacción objetiva.\n• Si la VOZ 🔊 está activada, te leo mis respuestas.\n\nEn cualquier paso escribe «saltar» para omitir o «cancelar» para terminar.');
+  aiAdd('bot','👋 Soy Yolia, tu asistente escolar.\n\n• 🧭 «Llenar paso a paso»: te pregunto CON VOZ dato por dato (todos los campos del reporte, sin saltarme ninguno) y los lleno por ti.\n• Escribe o DICTA (🎤) una narrativa y la mejoro con redacción objetiva.\n• Si la VOZ 🔊 está activada, te leo mis respuestas.\n\nEn cualquier paso escribe «saltar» para omitir o «cancelar» para terminar.');
 }
 function aiOpen(){$('ai-panel').classList.add('open');$('ai-fab').classList.remove('show');placeAI();aiWelcome();$('ai-input').focus()}
 function aiMin(){$('ai-panel').classList.remove('open');if(aiOK())$('ai-fab').classList.add('show')}
 $('ai-min').onclick=aiMin;
 
-/* Arrastre del panel (desde la barra superior) */
+/* Arrastre del panel */
 (function(){
   const head=$('ai-head'),p=$('ai-panel');
   let sx,sy,ox,oy,drag=false;
@@ -1294,7 +1294,7 @@ $('ai-min').onclick=aiMin;
   window.addEventListener('resize',()=>{if($('ai-panel').classList.contains('open'))placeAI();aplicarPosFab()});
 })();
 
-/* Arrastre del botón flotante (clic corto = abrir) */
+/* Arrastre del botón flotante */
 (function(){
   const fab=$('ai-fab');
   let sx,sy,ox,oy,drag=false,moved=false;
@@ -1394,7 +1394,13 @@ $('ai-voz-toggle').onclick=function(){
   cfg.ia.voz=vozOn;save(LS.cfg,cfg);
 };
 
-/* ── MODO GUIADO PASO A PASO ── */
+/* ── Voz: lectura limpia ── */
+function limpiarVoz(t){
+  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/gu,'')
+    .replace(/[«»]/g,'"').replace(/\n+/g,'. ').replace(/\s+/g,' ').trim();
+}
+
+/* ── MODO GUIADO PASO A PASO (COMPLETO, 34 PASOS, CON VOZ) ── */
 function parseFecha(t){
   t=t.toLowerCase().trim();
   const hoy=new Date();const iso=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
@@ -1425,6 +1431,11 @@ function parseHora(t){
   if(h>23||min>59)return null;
   return pad2(h)+':'+pad2(min);
 }
+function parseFechaHora(t){
+  const f=parseFecha(t);if(!f)return null;
+  const hs=t.match(/\d{1,2}:\d{2}/);
+  return f+'T'+(hs?hs[0]:'12:00');
+}
 function parseLugar(t){
   const bajo=t.toLowerCase();
   const mapa=[['Aula',['aula','salon','salón','clase']],['Patio / cancha',['patio','cancha']],['Baños',['baño','sanitario']],
@@ -1436,7 +1447,7 @@ function parseLugar(t){
 function parseModo(t){
   const bajo=t.toLowerCase();
   if(bajo.includes('flagran')||bajo.includes('presenci'))return 'Flagrancia';
-  if(bajo.includes('reporte')||bajo.includes('report')||bajo.includes('avis'))return 'Reporte';
+  if(bajo.includes('reporte')||bajo.includes('avis'))return 'Reporte';
   if(bajo.includes('sospech')||bajo.includes('indici'))return 'Sospecha';
   return null;
 }
@@ -1451,6 +1462,13 @@ function parseGrado(t){
   const m=t.match(/(1|2|3|primero|segundo|tercero|primer|tercer)\s*(?:°|º|er|o)?\s*([a-zA-Z0-9]+)?/i);
   if(!m)return null;
   return {g:m[1],gr:(m[2]||'').toUpperCase()};
+}
+function parseTurno(t){
+  const bajo=t.toLowerCase();
+  if(bajo.includes('matut'))return 'Matutino';
+  if(bajo.includes('vesper'))return 'Vespertino';
+  if(bajo.includes('completo')||bajo.includes('extendido'))return 'Tiempo completo';
+  return null;
 }
 function parseParentesco(t){
   const bajo=t.toLowerCase();
@@ -1469,6 +1487,28 @@ function parseTipos(t){
   const vals=Object.keys(mapa).filter(k=>mapa[k].some(w=>bajo.includes(w)));
   return vals.length?vals:null;
 }
+function parseAcc(t){
+  const bajo=t.toLowerCase();
+  const mapa={separacion:['separ'],contencion:['conten'],primeros:['primeros','auxilio'],medico:['medic','enfermer','doctor','clinic','clínic'],resguardo:['resguard'],otra:['otra']};
+  const vals=Object.keys(mapa).filter(k=>mapa[k].some(w=>bajo.includes(w)));
+  return vals.length?vals:null;
+}
+function parseSeguro(t){
+  const bajo=t.toLowerCase();
+  if(bajo.includes('no acept')||bajo.includes('rechaz'))return 'Se informó y NO se aceptó el seguro escolar';
+  if(bajo.includes('espera'))return 'En espera de respuesta';
+  if(bajo.includes('no aplic')||bajo.includes('no fue neces')||bajo==='no')return 'No fue necesario / no aplicó';
+  if(bajo.includes('acept')||bajo.includes('sí')||bajo.includes('si'))return 'Se informó y se ACEPTÓ el seguro escolar';
+  return null;
+}
+function parseCanal(t){
+  const bajo=t.toLowerCase();
+  const mapa={dif:['dif'],fiscalia:['fiscal','ministerio'],salud:['salud','jurisdic','hospital','clinic','clínic'],usaer:['usaer'],orientacion:['orienta'],otra:['otra']};
+  let vals=Object.keys(mapa).filter(k=>mapa[k].some(w=>bajo.includes(w)));
+  if(vals.length)return vals;
+  if(/(ningun|no se canaliz|no aplica)/.test(bajo))return ['ninguna'];
+  return null;
+}
 function parseQuien(t){
   const bajo=t.toLowerCase();
   const palabras=bajo.split(/\s+/).filter(w=>w.length>=4);
@@ -1482,33 +1522,43 @@ function parseQuien(t){
   if(di)return {sel:'qui_directivo',label:`${di.nombre} · ${di.cargo}`};
   return null;
 }
+const esOmitir=t=>/^(no\b|ningun|ningún|ninguna|sin |nadie)/.test(t.toLowerCase().trim());
+
 const PASOS=[
+ /* ── SECCIÓN 01 · CONTROL ── */
  {campo:'f_fecha',opcional:false,
-  pregunta:'¿Qué día ocurrió el incidente?\nAcepto: «hoy», «ayer», 14/05/2025 o «14 de mayo».',
+  pregunta:'Sección 1, Control del reporte. ¿Qué día ocurrió el incidente? Acepto: hoy, ayer, catorce de mayo, o catorce diagonal cero cinco diagonal dos mil veinticinco.',
   ok:v=>`✔ Fecha del incidente: ${v}`, parse:t=>parseFecha(t),
-  invalida:'No entendí la fecha. Prueba con «hoy», «ayer» o un formato como 14/05/2025.'},
+  invalida:'No entendí la fecha. Prueba con hoy, ayer, o un formato como 14/05/2025.'},
  {campo:'f_hora',
-  pregunta:'¿A qué hora ocurrió aproximadamente?\nEj. 10:30, «diez y media», «3 de la tarde».',
+  pregunta:'¿A qué hora ocurrió aproximadamente? Por ejemplo: diez y media, o tres de la tarde.',
   ok:v=>`✔ Hora: ${v}`, parse:t=>parseHora(t),
-  invalida:'No logré leer la hora. Escribe algo como 10:30 o «diez y media».'},
+  invalida:'No logré leer la hora. Escribe algo como 10:30 o diez y media.'},
+ {campo:'f_fechaEnt',
+  pregunta:'¿Cuándo ocurrió o cuándo SE ENTERÓ la escuela del incidente? Incluye fecha y hora. Por ejemplo: hoy diez y media. Escribe saltar si se atendió en el momento.',
+  ok:v=>`✔ La escuela se enteró: ${v.replace('T',' · ')}`,
+  parse:t=>parseFechaHora(t),
+  invalida:'Escribe fecha y hora, por ejemplo hoy 10:30 o 14/05/2025 11:00.'},
  {campo:'f_lugar',
-  pregunta:'¿Dónde sucedió?\nOpciones: aula, patio, baños, pasillos, entrada/salida, alrededores, ciberespacio u otro.',
+  pregunta:'¿Dónde sucedió? Opciones: aula, patio, baños, pasillos, entrada o salida, alrededores, ciberespacio, u otro.',
   ok:v=>`✔ Lugar: ${v}`, parse:t=>parseLugar(t),
   invalida:'Elige una opción: aula, patio, baños, pasillos, entrada, alrededores, ciberespacio u otro.'},
  {campo:'f_lugarDetalle',
-  pregunta:'Precisa el lugar (p. ej. «aula de 2º B, segundo piso»). Escribe «saltar» si no aplica.',
-  ok:v=>`✔ Detalle del lugar: ${v}`, parse:t=>t.trim()},
+  pregunta:'Precisa el lugar. Por ejemplo: aula de segundo B, segundo piso. Escribe saltar si no aplica.',
+  ok:v=>`✔ Detalle del lugar: ${v}`,
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
  {campo:null,
-  pregunta:'¿Cómo se enteró la escuela?\nFlagrancia (se presenció) · Reporte (avisó un tercero) · Sospecha.',
+  pregunta:'¿Cómo se enteró la escuela? Flagrancia, si se presenció. Reporte, si avisó un tercero. O sospecha.',
   ok:v=>`✔ Modo de detección: ${v}`, parse:t=>parseModo(t),
   apply:v=>{document.querySelectorAll('input[name=modo]').forEach(r=>r.checked=r.value===v);updateChecklist();},
   invalida:'Escribe: flagrancia, reporte o sospecha.'},
+ /* ── SECCIÓN 02 · IDENTIFICACIÓN ── */
  {campo:'a_nombre',opcional:false,
-  pregunta:'Nombre completo del alumno(a) involucrado(a).',
+  pregunta:'Sección 2, Identificación. Nombre completo del alumno o alumna involucrada.',
   ok:v=>`✔ Alumno(a): ${v}`, parse:t=>t.trim().length>=5?t.trim():null,
-  invalida:'Escribe el nombre completo (al menos nombre y apellido).'},
+  invalida:'Escribe el nombre completo, al menos nombre y apellido.'},
  {campo:'a_edad',
-  pregunta:'¿Edad del alumno(a)? (solo el número)',
+  pregunta:'¿Edad del alumno o alumna? Solo el número.',
   ok:v=>`✔ Edad: ${v} años`, parse:t=>{const n=parseInt(t);return n>=3&&n<=21?n:null},
   invalida:'Escribe una edad entre 3 y 21.'},
  {campo:null,
@@ -1517,24 +1567,54 @@ const PASOS=[
   apply:v=>{document.querySelectorAll('input[name=sexo]').forEach(r=>r.checked=r.value===v);updateChecklist();},
   invalida:'Escribe: niña, niño o adolescente.'},
  {campo:'a_grado',
-  pregunta:'Grado y grupo. Ej. «2 B» o «tercero C».',
+  pregunta:'Grado y grupo. Por ejemplo: dos B, o tercero C.',
   ok:v=>`✔ Grado y grupo: ${v.g} · ${v.gr||'—'}`, parse:t=>parseGrado(t),
   apply:v=>{setCampo('a_grado',v.g);setCampo('a_grupo',v.gr)},
-  invalida:'Ejemplo: «2 B» o «1 A».'},
+  invalida:'Ejemplo: 2 B o 1 A.'},
+ {campo:'a_turno',
+  pregunta:'¿Turno del alumno? Matutino, vespertino, o tiempo completo.',
+  ok:v=>`✔ Turno: ${v}`, parse:t=>parseTurno(t),
+  invalida:'Escribe: matutino, vespertino o tiempo completo.'},
+ {campo:'a_lenguaCual',
+  pregunta:'¿Es hablante de lengua indígena? Escribe no, o el nombre de la lengua, por ejemplo zapoteco. Si requiere intérprete, agrégalo.',
+  ok:v=>v.habla?`✔ Habla ${v.cual}${v.interprete?' · requiere intérprete':''}`:'✔ No habla lengua indígena',
+  parse:t=>{
+    if(esOmitir(t))return {habla:false};
+    const cual=t.replace(/^(sí|si)\b/gi,'').replace(/,?\s*(con\s+)?intérprete.*$/i,'').replace(/requiere.*$/i,'').trim();
+    return {habla:true,cual:cual||'Lengua indígena',interprete:/interprete/i.test(t)};
+  },
+  apply:v=>{$('a_lengua').checked=v.habla;setCampo('a_lenguaCual',v.habla?v.cual:'');$('a_interprete').checked=!!v.interprete;updateChecklist();}},
+ {campo:'a_discapacidad',
+  pregunta:'¿Tiene alguna discapacidad o condición de salud relevante? Escribe no si no aplica.',
+  ok:v=>`✔ Condición de salud: ${v}`,
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
  {campo:'p_nombre',
   pregunta:'Nombre del padre, madre o tutor.',
-  ok:v=>`✔ Padre/Madre/Tutor: ${v}`, parse:t=>t.trim().length>=5?t.trim():null,
+  ok:v=>`✔ Padre, madre o tutor: ${v}`, parse:t=>t.trim().length>=5?t.trim():null,
   invalida:'Escribe el nombre completo del padre, madre o tutor.'},
  {campo:'p_parentesco',
-  pregunta:'¿Parentesco? (madre, padre, tutor, abuelo…)',
+  pregunta:'¿Parentesco? Madre, padre, tutor, o abuelo.',
   ok:v=>`✔ Parentesco: ${v}`, parse:t=>parseParentesco(t),
-  invalida:'Escribe: madre, padre, tutor o abuelo(a).'},
+  invalida:'Escribe: madre, padre, tutor o abuelo.'},
  {campo:'p_tel',
-  pregunta:'Teléfono de contacto (10 dígitos).',
-  ok:v=>`✔ Teléfono: ${v}`, parse:t=>{const d=t.replace(/\D/g,'');return d.length>=8?d:null},
+  pregunta:'Teléfono de contacto, de diez dígitos.',
+  ok:v=>`✔ Teléfono: ${v} (marcado como verificado)`,
+  parse:t=>{const d=t.replace(/\D/g,'');return d.length>=8?d:null},
+  apply:v=>{setCampo('p_tel',v);$('p_verificado').checked=true},
   invalida:'Escribe un teléfono de al menos 8 dígitos.'},
+ /* ── SECCIÓN 03 · NARRATIVA ── */
+ {campo:null,
+  pregunta:'Sección 3, Narrativa. ¿Hubo testigos de los hechos? Escribe sus nombres separados por coma, o escribe no.',
+  ok:v=>`✔ ${v.length} testigo(s) agregado(s)`,
+  parse:t=>{
+    if(esOmitir(t))return 'SKIP';
+    const noms=t.split(/[,;]+/).map(s=>s.trim()).filter(s=>s.length>=3);
+    return noms.length?noms:null;
+  },
+  apply:v=>{$('testigos-list').innerHTML='';v.forEach(n=>addTestigoRow({nom:n,cal:'Alumno(a)'}))},
+  invalida:'Escribe los nombres separados por coma, o la palabra no.'},
  {campo:'n_descripcion',opcional:false,
-  pregunta:'Cuéntame qué sucedió con tus palabras (puedes usar el micrófono 🎤).\nYo la redactaré de forma objetiva y la colocaré en el reporte.',
+  pregunta:'Cuéntame qué sucedió con tus palabras: qué pasó, cómo supieron, qué vieron, qué dijeron, quiénes participaron, a qué hora y dónde. Puedes usar el micrófono. Yo la redactaré de forma objetiva y la colocaré en el reporte.',
   ok:()=>'✔ Narrativa redactada y colocada en el reporte. Revísala.',
   parse:async t=>{
     const ind=aiAdd('bot typing','✍ Redactando de forma objetiva…');
@@ -1543,27 +1623,103 @@ const PASOS=[
     catch(e){ind.remove();aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+'). Colocaré el texto original.');return t}
   }},
  {campo:null,
-  pregunta:'¿Qué tipo de conducta fue? (puedes indicar varias)\nFísica · verbal · psicológica · ciberacoso · sexual · sustancias · robo/daños · discriminación · otra',
+  pregunta:'¿Qué tipo de conducta fue? Puedes indicar varias: física, verbal, psicológica, ciberacoso, sexual, sustancias, robo o daños, discriminación, u otra.',
   ok:v=>`✔ Tipificación: ${v.map(x=>TIPOS[x]).join(', ')}`, parse:t=>parseTipos(t),
   apply:v=>{document.querySelectorAll('input[name=tipos]').forEach(c=>{if(v.includes(c.value))c.checked=true});updateAlerta();updateChecklist();},
   invalida:'No identifiqué el tipo. Usa: física, verbal, psicológica, ciberacoso, sexual, sustancias, robo, discriminación u otra.'},
+ {campo:'n_autoridadDetalle',
+  skipIf:()=>!checks('tipos').some(t=>t==='sexual'||t==='delito'),
+  pregunta:'Atención: la conducta puede constituir un delito. ¿Ya se dio aviso a la Fiscalía o al DIF? Escribe no si está pendiente, o indica a quién, cuándo y por qué medio.',
+  ok:v=>`✔ Aviso registrado: ${v}`,
+  parse:t=>esOmitir(t)?'SKIP':t.trim(),
+  apply:v=>{$('n_autoridad').checked=true;setCampo('n_autoridadDetalle',v)}},
+ /* ── SECCIÓN 04 · ACCIONES ── */
+ {campo:null,
+  pregunta:'Sección 4, Acciones inmediatas. ¿Qué acciones se tomaron al momento? Puedes indicar varias: separación de involucrados, contención emocional, primeros auxilios, atención médica, resguardo, u otra.',
+  ok:v=>`✔ Acciones: ${v.map(x=>ACCS[x]).join(', ')}`, parse:t=>parseAcc(t),
+  apply:v=>{document.querySelectorAll('input[name=acc]').forEach(c=>{if(v.includes(c.value))c.checked=true});updateChecklist();},
+  invalida:'Usa: separación, contención, primeros auxilios, médica, resguardo u otra. O escribe saltar.'},
+ {campo:'acc_detalle',
+  pregunta:'Detalle de la intervención realizada. Opcional.',
+  ok:()=>'✔ Detalle de intervención registrado',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ {campo:'notif_llamada',
+  pregunta:'Notificación a los padres. Dame las horas de la llamada, de la respuesta y de la llegada, separadas por coma. Por ejemplo: diez veinte, diez treinta y cinco, once cero cinco. Puedes dar solo las que tengas.',
+  ok:v=>`✔ Notificación: llamada ${v[0]||'—'} · respuesta ${v[1]||'—'} · llegada ${v[2]||'—'}`,
+  parse:t=>{const hs=t.match(/\d{1,2}:\d{2}/g);return hs&&hs.length?hs.slice(0,3):null},
+  apply:v=>{setCampo('notif_llamada',v[0]||'');setCampo('notif_respuesta',v[1]||'');setCampo('notif_llegada',v[2]||'')},
+  invalida:'Escribe las horas en formato como 10:20, 10:35, 11:05.'},
+ {campo:'notif_seguro',
+  pregunta:'¿Aceptaron el seguro escolar? Aceptó, no aceptó, en espera, o no aplicó. Recuerde siempre hacer hincapié en el seguro escolar.',
+  ok:v=>`✔ Seguro escolar: ${v}`, parse:t=>parseSeguro(t),
+  invalida:'Escribe: aceptó, no aceptó, en espera o no aplicó.'},
+ {campo:'notif_obs',
+  pregunta:'Observaciones de la atención a los padres: cómo llegaron, su actitud durante y después del incidente, acuerdos verbales. Opcional.',
+  ok:()=>'✔ Observaciones registradas',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ {campo:null,
+  pregunta:'¿Se canalizó a algún servicio? Puedes indicar varias: ninguna, DIF, Fiscalía, centro de salud, USAER, u orientación educativa.',
+  ok:v=>`✔ Canalización: ${v.map(x=>CANALES[x]).join(', ')}`, parse:t=>parseCanal(t),
+  apply:v=>{document.querySelectorAll('input[name=canal]').forEach(c=>{if(v.includes(c.value))c.checked=true});updateChecklist();},
+  invalida:'Usa: ninguna, DIF, Fiscalía, salud, USAER, orientación u otra. O escribe saltar.'},
+ {campo:'canal_detalle',
+  pregunta:'Detalle de la canalización: institución, persona que recibe, número de oficio. Opcional.',
+  ok:()=>'✔ Detalle de canalización registrado',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ /* ── SECCIÓN 05 · ANTECEDENTES ── */
+ {campo:'h_previas',
+  pregunta:'Sección 5, Antecedentes. ¿El alumno tiene incidencias previas? Describe fechas y tipos de falta, o escribe no.',
+  ok:()=>'✔ Antecedentes registrados',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ {campo:'h_compromisos',
+  pregunta:'¿Existen compromisos anteriores firmados? Indica cuáles y su cumplimiento: cumplido, parcial o incumplido. Opcional.',
+  ok:()=>'✔ Compromisos anteriores registrados',
+  parse:t=>esOmitir(t)?'SKIP':t.trim(),
+  apply:v=>{setCampo('h_compromisos',v);
+    const bajo=v.toLowerCase();
+    $('h_cumplimiento').value=/incumpli/.test(bajo)?'Incumplido':/parcial/.test(bajo)?'Parcial':/cumpli/.test(bajo)?'Cumplido':'';
+    $('h_cumplimiento').dispatchEvent(new Event('input'));}},
+ /* ── SECCIÓN 06 · ACUERDOS ── */
+ {campo:'g_alumno',
+  pregunta:'Sección 6, Acuerdos. Compromisos del alumno o alumna: acciones concretas de reparación del daño o mejora de conducta. Opcional.',
+  ok:()=>'✔ Compromisos del alumno registrados',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ {campo:'g_padres',
+  pregunta:'Compromisos de los padres o tutores: acompañamiento en casa, asistencia a citas. Opcional.',
+  ok:()=>'✔ Compromisos de los padres registrados',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
+ {campo:'g_escuela',
+  pregunta:'Medidas de la escuela: seguimiento pedagógico, psicológico o disciplinario formativo. Opcional.',
+  ok:()=>'✔ Medidas de la escuela registradas',
+  parse:t=>esOmitir(t)?'SKIP':t.trim()},
  {campo:'qui_docente',
-  pregunta:'¿Quién atiende el incidente? Escribe el nombre del docente o directivo (debe estar dado de alta en ⚙ Configuración).',
+  pregunta:'¿Quién atiende el incidente? Escribe el nombre del docente o directivo. Debe estar dado de alta en Configuración.',
   ok:v=>`✔ Atiende: ${v.label}`, parse:t=>parseQuien(t),
   apply:v=>setCampo(v.sel,v.label),
-  invalida:'No encontré ese nombre en la plantilla. Verifica en ⚙ Configuración o escribe «saltar».'}
+  invalida:'No encontré ese nombre en la plantilla. Verifica en Configuración o escribe saltar.'},
+ {campo:'persona_reporta',
+  pregunta:'Última pregunta. ¿Quién realiza el reporte? Nombre completo y cargo.',
+  ok:v=>`✔ Realiza el reporte: ${v}`,
+  parse:t=>t.trim().length>=5?t.trim():null,
+  invalida:'Escribe nombre completo y cargo.'}
 ];
 $('ai-guia').onclick=()=>{
   if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
   aiOpen();
   guia={activo:true,paso:0};
   $('ai-guia').classList.add('guia-on');
-  aiAdd('bot','🧭 Recorrido guiado iniciado. Te preguntaré dato por dato y llenaré el formulario.\n\nPuedes escribir «saltar» para omitir un paso o «cancelar» para terminar.');
-  guiaPreguntar();
+  aiAdd('bot',`🧭 Recorrido guiado iniciado · ${PASOS.length} pasos que cubren TODAS las secciones del reporte.\n\nTe leeré cada pregunta con voz. Responde escribiendo o dictando. Puedes decir «saltar» para omitir un paso opcional o «cancelar» para terminar.`);
+  guiaIr(0);
 };
+function guiaIr(n){
+  guia.paso=n;
+  while(guia.paso<PASOS.length&&PASOS[guia.paso].skipIf&&PASOS[guia.paso].skipIf()){guia.paso++}
+  if(guia.paso>=PASOS.length)guiaFin();else guiaPreguntar();
+}
 function guiaPreguntar(){
   const p=PASOS[guia.paso];
   aiAdd('bot',`🧭 Paso ${guia.paso+1} de ${PASOS.length} · ${p.pregunta}`);
+  hablar(limpiarVoz(p.pregunta));
   if(p.campo&&$(p.campo)){
     switchTab('form');
     const f=$(p.campo).closest('.field');
@@ -1573,30 +1729,40 @@ function guiaPreguntar(){
 async function guiaResponder(text){
   const bajo=text.toLowerCase().trim();
   if(/^(cancelar|salir|terminar recorrido)/.test(bajo)){
+    speechSynthesis.cancel();
     guia.activo=false;$('ai-guia').classList.remove('guia-on');
     aiAdd('bot','👌 Recorrido guiado cancelado. Sigo disponible para mejorar redacciones.');
     return;
   }
   const p=PASOS[guia.paso];
-  const saltar=/^(saltar|omitir|skip|ninguno|ninguna|no se|no sé|n\/a|despues|después|-|s)\b/.test(bajo)||bajo==='x';
+  const saltar=/^(saltar|omitir|skip|s)\b/.test(bajo)||bajo==='x';
   if(saltar){
-    if(p.opcional===false){aiAdd('bot','⛔ Este dato es obligatorio para poder guardar el reporte. Inténtalo de nuevo (o escribe «cancelar»).');return}
+    if(p.opcional===false){
+      aiAdd('bot','⛔ Este dato es obligatorio para poder guardar el reporte. Inténtalo de nuevo, o escribe cancelar.');
+      hablar('Este dato es obligatorio. Inténtalo de nuevo.');
+      return;
+    }
     aiAdd('bot','⏭ Campo omitido.');
   }else{
     let v=await p.parse(text);
-    if(v===null||v===undefined||v===''){
-      aiAdd('bot',p.invalida||'No entendí tu respuesta. ¿Puedes escribirla de nuevo?');return;
+    if(v==='SKIP'){aiAdd('bot','⏭ Campo omitido.');}
+    else if(v===null||v===undefined||v===''){
+      aiAdd('bot',p.invalida||'No entendí tu respuesta. ¿Puedes escribirla de nuevo?');
+      hablar(limpiarVoz(p.invalida||'No entendí tu respuesta. Intenta de nuevo.'));
+      return;
+    }else{
+      if(p.apply)p.apply(v);else if(p.campo)setCampo(p.campo,v);
+      aiAdd('bot',p.ok(v));
     }
-    if(p.apply)p.apply(v);else if(p.campo)setCampo(p.campo,v);
-    aiAdd('bot',p.ok(v));
   }
-  guia.paso++;
-  if(guia.paso>=PASOS.length)guiaFin();else guiaPreguntar();
+  guiaIr(guia.paso+1);
 }
 function guiaFin(){
   guia.activo=false;$('ai-guia').classList.remove('guia-on');
-  aiAdd('bot','🎉 ¡Listo! Completé el recorrido. Revisa los campos que llené (los que faltan puedes capturarlos a mano), luego presiona 👁 Vista previa y 💾 Guardar en bitácora.');
-  toast('🧭 Recorrido guiado completado');
+  const fin='¡Listo! Completé todo el recorrido sin saltar secciones. Revisa los campos que llené, luego presiona Vista previa y Guardar en bitácora.';
+  aiAdd('bot','🎉 '+fin);
+  hablar(fin);
+  toast('🧭 Recorrido guiado completado ('+PASOS.length+' pasos)');
   switchTab('form');
 }
 
@@ -1604,8 +1770,8 @@ function guiaFin(){
 function hablar(txt){
   if(!vozOn||!('speechSynthesis' in window))return;
   speechSynthesis.cancel();
-  const limpio=txt.replace(/[*#_`]/g,'').slice(0,700);
-  const u=new SpeechSynthesisUtterance(limpio);u.lang='es-MX';u.rate=1.05;
+  const limpio=txt.replace(/[*#_`]/g,'').slice(0,800);
+  const u=new SpeechSynthesisUtterance(limpio);u.lang='es-MX';u.rate=1.03;
   const voces=speechSynthesis.getVoices();
   const v=voces.find(v=>/^es[-_](MX|419)/i.test(v.lang))||voces.find(v=>v.lang.startsWith('es'));
   if(v)u.voice=v;
@@ -1619,6 +1785,7 @@ function dictarA(el,btn){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){toast('Su navegador no soporta dictado por voz. Use Google Chrome o Microsoft Edge.','err');return}
   if(activeRec){activeRec.stop();return}
+  speechSynthesis.cancel();
   const r=new SR();r.lang='es-MX';r.continuous=true;r.interimResults=true;
   let base=el.value;
   r.onresult=e=>{
@@ -1672,8 +1839,8 @@ document.querySelectorAll('input[name=tipos]').forEach(c=>c.addEventListener('ch
 $('x_activar').onchange=()=>$('anexo-fields').style.display=$('x_activar').checked?'block':'none';
 
 const SEC_FIELDS={
-  s1:['f_fecha','f_hora','f_lugar','f_lugarDetalle'],
-  s2:['a_nombre','a_edad','a_grado','a_grupo','p_nombre','p_tel'],
+  s1:['f_fecha','f_hora','f_fechaEnt','f_lugar','f_lugarDetalle'],
+  s2:['a_nombre','a_edad','a_grado','a_grupo','a_turno','p_nombre','p_tel'],
   s3:['n_descripcion'],s4:['acc_detalle','notif_llamada','notif_obs','canal_detalle'],
   s5:['h_previas','h_compromisos'],s6:['g_alumno','g_padres','g_escuela','persona_reporta']};
 function updateChecklist(){
