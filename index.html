@@ -249,11 +249,12 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 #ai-min:hover{background:var(--gold);color:#241a04}
 .ai-dot{width:9px;height:9px;border-radius:50%;background:#7fe3a1;box-shadow:0 0 9px #7fe3a1;flex:none;animation:pulse 2s infinite}
 #ai-msgs{height:300px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:#f6f4ec}
-.ai-msg{max-width:88%;padding:.55rem .8rem;border-radius:10px;font-size:.82rem;line-height:1.5;animation:panelIn .25s both;white-space:pre-wrap;word-wrap:break-word}
+.ai-msg{max-width:92%;padding:.55rem .8rem;border-radius:10px;font-size:.82rem;line-height:1.5;animation:panelIn .25s both;white-space:pre-wrap;word-wrap:break-word}
 .ai-msg.user{align-self:flex-end;background:var(--green-800);color:var(--gold-soft);border-bottom-right-radius:3px}
 .ai-msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px}
 .ai-msg.err{align-self:flex-start;background:var(--red-soft);border:1px solid #e5b3ae;color:#7c1d17}
 .ai-msg.typing{color:var(--muted);font-style:italic}
+.ai-msg .op-tag{display:inline-block;font-size:.66rem;font-weight:800;color:var(--gold-dark);background:var(--gold-soft);border-radius:5px;padding:.1rem .45rem;margin-bottom:.35rem;font-family:var(--disp)}
 .ai-tools{display:flex;gap:.35rem;margin-top:.55rem;flex-wrap:wrap}
 .ai-tools button{font-size:.68rem;padding:.22rem .55rem;border-radius:5px;border:1px solid var(--line);background:#faf8f0;cursor:pointer;transition:.15s;font-weight:600}
 .ai-tools button:hover{background:var(--gold-soft);border-color:var(--gold-dark);transform:translateY(-1px)}
@@ -466,10 +467,10 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           <div class="field"><label>Descripción de los hechos <span class="req">*</span></label>
             <textarea id="n_descripcion" placeholder="¿Qué sucedió? ¿Cómo supieron de la situación? ¿Qué vimos, qué dijeron? ¿Quiénes participaron? ¿A qué hora fue y en qué lugar?"></textarea>
             <div class="mini-ai-btns">
-              <button type="button" class="btn btn-ghost btn-sm" id="btn-ai-narr">✨ Mejorar redacción con IA</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-ai-narr">✨ Mejorar redacción · 3 opciones</button>
               <button type="button" class="btn btn-ghost btn-sm" id="btn-mic-narr">🎤 Dictar por voz</button>
             </div>
-            <div class="hint">Redacte solo hechos observables o testimonios textuales. El dictado requiere internet (la voz se procesa en línea). Aleida conserva todos los hechos al mejorar la redacción.</div></div>
+            <div class="hint">Aleida genera 3 versiones estrictamente objetivas, cronológicas, en tercera persona y sin opiniones, emociones, suposiciones ni generalizaciones. Tú eliges cuál insertar.</div></div>
           <div class="field" style="margin-top:16px"><label>Tipificación de la conducta</label>
             <div class="chips" id="chips-tipos">
               <label class="chip"><input type="checkbox" name="tipos" value="fisica"><span>Violencia física</span></label>
@@ -673,7 +674,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 
       <!-- ASISTENTE IA -->
       <div class="card">
-        <div class="card-head"><span class="card-num">IA</span><div><h3>Asistente IA «Aleida» · Groq (gratuito)</h3><p>Mejora redacciones, llena el reporte paso a paso con voz femenina, dictado y respuesta hablada.</p></div></div>
+        <div class="card-head"><span class="card-num">IA</span><div><h3>Asistente IA «Aleida» · Groq (gratuito)</h3><p>Mejora redacciones con 3 versiones objetivas, llena el reporte paso a paso con voz femenina.</p></div></div>
         <div class="card-body">
           <label class="check-line"><input type="checkbox" id="ia_on"> <span><b>Activar asistente flotante</b> al abrir la aplicación</span></label>
           <div class="grid2" style="margin-top:12px">
@@ -759,7 +760,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
   <div id="ai-msgs"></div>
   <div id="ai-actions">
     <button id="ai-guia">🧭 Llenar paso a paso</button>
-    <button id="ai-improve-report">✨ Mejorar narrativa</button>
+    <button id="ai-improve-report">✨ Mejorar narrativa · 3 opciones</button>
     <button id="ai-voz-toggle" class="voz-on">🔊 Voz</button>
   </div>
   <div id="ai-input-row">
@@ -1226,17 +1227,24 @@ function setFolioDisplay(){
 }
 
 /* ═══════════════════════════════════════════════════
-   ALEIDA · ASISTENTE IA (voz femenina + anti-eco + autoenvío)
+   ALEIDA · ASISTENTE IA
    ═══════════════════════════════════════════════════ */
-const AI_SYSTEM=`Eres Aleida, asistente de redacción administrativa de una escuela pública de Oaxaca, México. Tu función principal es MEJORAR la redacción de narrativas de incidencias escolares. Reglas estrictas al mejorar un texto:
-1. Conserva TODOS los hechos originales: nombres, horas, lugares, edades y datos. No inventes, no omitas, no alteres.
-2. Redacción objetiva, formal, en tercera persona, orden cronológico y ortografía impecable.
-3. Cero juicios de valor, etiquetas o apodos (Interés Superior del Menor).
-4. No agregues conclusiones, sanciones ni recomendaciones.
-5. Entrega ÚNICAMENTE el texto mejorado, sin encabezados ni comentarios.
-Si te hacen una pregunta sobre el formato de reporte de incidencias, responde de forma breve y útil en español.`;
+const AI_SYSTEM=`Eres Aleida, asistente de redacción administrativa de una escuela pública de Oaxaca, México. Respondes preguntas sobre el formato de reporte de incidencias de forma breve y útil en español.`;
+
+/* Prompt especializado: SOLO para la descripción de los hechos (3 versiones) */
+const AI_SYSTEM_NARR=`Eres Aleida, especialista en redacción de reportes de incidencias escolares en Oaxaca, México. Mejorarás la DESCRIPCIÓN DE LOS HECHOS de una incidencia cumpliendo ESTRICTAMENTE:
+1. Redacción estrictamente OBJETIVA, CRONOLÓGICA y DESCRIPTIVA.
+2. Evita TODA generalización (prohibido: "siempre lo hace", "llega siempre tarde", "nunca", "todo el tiempo"); registra únicamente hechos puntuales y verificables.
+3. Clara y específica: conserva nombres, grados, lugares, horas, fechas y datos concretos del texto original.
+4. Lenguaje NEUTRAL, sin calificativos, sin juicios de valor.
+5. Tercera persona ("el alumno", "la docente", "se observó", "refirió").
+6. Elimina por COMPLETO: opiniones personales (ej. "el aprendizaje autodidacta es tan válido como el formal"), emociones (ej. "estoy furioso por lo ocurrido", "actitud irrespetuosa") y suposiciones (ej. "los niños ya deberían saber esto").
+7. No inventes hechos; no agregues conclusiones, sanciones ni recomendaciones.
+FORMATO DE RESPUESTA OBLIGATORIO: exactamente tres versiones mejoradas, numeradas al inicio de línea con 1) , 2) y 3) , cada una en un solo párrafo, sin negritas, sin markdown y sin comentarios adicionales.`;
+
 let aiHist=[], aiBusy=false;
-let guia={activo:false,paso:0};
+let guia={activo:false,paso:0,modoEleccion:false,opciones:null};
+let opcionPicker=null;
 
 function aiOK(){return cfg.ia.on&&cfg.ia.apiKey}
 function setModelTag(){
@@ -1265,7 +1273,7 @@ function aplicarPosFab(){
 }
 function aiWelcome(){
   if($('ai-msgs').children.length)return;
-  aiAdd('bot','👋 Soy Aleida, tu asistente escolar.\n\n• 🧭 «Llenar paso a paso»: te pregunto CON VOZ todos los campos del reporte, sin saltarme ninguno.\n• Para responder por voz presiona 🎤, habla y vuelve a presionar 🎤 al terminar: tu respuesta SE ENVÍA SOLA y el campo se limpia.\n• Yo me quedo en silencio mientras el micrófono está abierto, para no confundir el dictado.\n• Escribe o dicta una narrativa y la mejoro con redacción objetiva.\n\nEn el recorrido puedes decir «saltar» u «cancelar» cuando quieras.');
+  aiAdd('bot','👋 Soy Aleida, tu asistente escolar.\n\n• 🧭 «Llenar paso a paso»: te pregunto CON VOZ todos los campos del reporte, sin saltarme ninguno.\n• ✨ Al mejorar la DESCRIPCIÓN DE LOS HECHOS te doy 3 versiones objetivas, cronológicas y en tercera persona (sin opiniones, emociones, suposiciones ni generalizaciones) para que elijas cuál insertar.\n• Para responder por voz presiona 🎤, habla y vuelve a presionar 🎤: tu respuesta SE ENVÍA SOLA.\n\nEn el recorrido puedes decir «saltar» u «cancelar» cuando quieras.');
 }
 function aiOpen(){$('ai-panel').classList.add('open');$('ai-fab').classList.remove('show');placeAI();aiWelcome();$('ai-input').focus()}
 function aiMin(){$('ai-panel').classList.remove('open');if(aiOK())$('ai-fab').classList.add('show')}
@@ -1351,6 +1359,70 @@ async function apiChat(messages,maxTokens=1200){
   return (await res.json()).choices[0].message.content.trim();
 }
 
+/* ── 3 VERSIONES de la descripción de los hechos ── */
+function parseOpciones(txt){
+  const re=/^\s*\**\s*([123])\s*[\)\.\:\-]\s*/gm;
+  const idx=[];let m;
+  while((m=re.exec(txt))!==null)idx.push({at:m.index,len:m[0].length,n:+m[1]});
+  if(!idx.length){
+    const bloques=txt.split(/\n{2,}/).map(b=>b.trim()).filter(b=>b.length>40);
+    return bloques.length?bloques.slice(0,3):[txt.trim()];
+  }
+  const ops=[];
+  idx.forEach((p,i)=>{
+    const start=p.at+p.len;
+    const end=i+1<idx.length?idx[i+1].at:txt.length;
+    const chunk=txt.slice(start,end).trim();
+    if(chunk)ops[p.n-1]=chunk;
+  });
+  const out=ops.filter(Boolean);
+  return out.length?out:[txt.trim()];
+}
+async function pedirOpciones(t){
+  const out=await apiChat([{role:'system',content:AI_SYSTEM_NARR},{role:'user',content:'Texto original:\n\n'+t}],1800);
+  return parseOpciones(out);
+}
+function mostrarOpciones(ops,onPick){
+  opcionPicker=onPick||null;
+  aiAdd('bot',`✍ Preparé ${ops.length} versiones estrictamente objetivas, cronológicas, descriptivas y en tercera persona de la descripción de los hechos. Elige cuál insertar en el reporte:`);
+  ops.forEach((op,i)=>{
+    const d=document.createElement('div');d.className='ai-msg bot';
+    const tag=document.createElement('span');tag.className='op-tag';tag.textContent='OPCIÓN '+(i+1);
+    d.appendChild(tag);d.appendChild(document.createElement('br'));
+    d.appendChild(document.createTextNode(op));
+    const tools=document.createElement('div');tools.className='ai-tools';
+    tools.innerHTML='<button data-a="ins">📥 Insertar en reporte</button><button data-a="cop">📋 Copiar</button><button data-a="voz">🔊 Escuchar</button>';
+    tools.querySelector('[data-a=ins]').onclick=()=>{if(opcionPicker)opcionPicker(i,op)};
+    tools.querySelector('[data-a=cop]').onclick=()=>navigator.clipboard.writeText(op).then(()=>toast('📋 Opción '+(i+1)+' copiada'));
+    tools.querySelector('[data-a=voz]').onclick=()=>hablar(op);
+    d.appendChild(tools);
+    $('ai-msgs').appendChild(d);
+  });
+  $('ai-msgs').scrollTop=$('ai-msgs').scrollHeight;
+}
+async function mejorarNarrativa(t){
+  const ind=aiAdd('bot typing','✍ Redactando tres versiones objetivas…');
+  try{
+    const ops=await pedirOpciones(t);ind.remove();
+    mostrarOpciones(ops,(i,op)=>{
+      setCampo('n_descripcion',op);
+      switchTab('form');
+      toast('✔ Opción '+(i+1)+' insertada en el reporte');
+    });
+    hablar('Preparé tres versiones objetivas de la narrativa. Elige la que prefieras con el botón insertar.');
+  }catch(e){
+    ind.remove();
+    aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+').');
+  }
+}
+function parseNumOpcion(t){
+  if(/^[123]$/.test(t))return +t;
+  if(/^(uno|primera|primero|opcion uno|la uno)/.test(t))return 1;
+  if(/^(dos|segunda|segundo|la dos)/.test(t))return 2;
+  if(/^(tres|tercera|tercero|la tres)/.test(t))return 3;
+  const m=t.match(/\b([123])\b/);return m?+m[1]:null;
+}
+
 async function aiSend(text){
   if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
   text=(text||'').trim();if(!text||aiBusy)return;
@@ -1385,7 +1457,7 @@ $('ai-improve-report').onclick=()=>{
   if(!guardaGuia())return;
   const t=$('n_descripcion').value.trim();
   if(!t){toast('La narrativa del reporte está vacía. Escriba o dicte los hechos primero.','err');return}
-  aiOpen();aiSend('Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t);
+  aiOpen();mejorarNarrativa(t);
 };
 $('ai-voz-toggle').onclick=function(){
   vozOn=!vozOn;
@@ -1395,7 +1467,7 @@ $('ai-voz-toggle').onclick=function(){
   cfg.ia.voz=vozOn;save(LS.cfg,cfg);
 };
 
-/* ── Voz: selección de voz femenina en español ── */
+/* ── Voz femenina ── */
 let vozCache=null;
 function vozFemenina(){
   if(!('speechSynthesis' in window))return null;
@@ -1422,7 +1494,7 @@ function limpiarVoz(t){
 }
 function hablar(txt){
   if(!vozOn||!('speechSynthesis' in window))return;
-  if(activeRec||dictPend)return;               /* nunca hablar con el micrófono abierto (anti-eco) */
+  if(activeRec||dictPend)return;               /* anti-eco */
   speechSynthesis.cancel();
   const limpio=txt.replace(/[*#_`]/g,'').slice(0,900);
   const u=new SpeechSynthesisUtterance(limpio);
@@ -1436,7 +1508,7 @@ if('speechSynthesis' in window){
   window.speechSynthesis.getVoices();
 }
 
-/* ── MODO GUIADO PASO A PASO (COMPLETO, CON VOZ) ── */
+/* ── MODO GUIADO PASO A PASO ── */
 function parseFecha(t){
   t=t.toLowerCase().trim();
   const hoy=new Date();const iso=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
@@ -1647,13 +1719,12 @@ const PASOS=[
   apply:v=>{$('testigos-list').innerHTML='';v.forEach(n=>addTestigoRow({nom:n,cal:'Alumno(a)'}))},
   invalida:'Di los nombres separados por coma, o la palabra no.'},
  {campo:'n_descripcion',opcional:false,
-  pregunta:'Cuéntame qué sucedió con tus palabras: qué pasó, cómo supieron, qué vieron, qué dijeron, quiénes participaron, a qué hora y dónde. Yo la redactaré de forma objetiva y la colocaré en el reporte.',
-  ok:()=>'✔ Narrativa redactada y colocada en el reporte. Revísala.',
+  pregunta:'Cuéntame qué sucedió con tus palabras: qué pasó, cómo supieron, qué vieron, qué dijeron, quiénes participaron, a qué hora y dónde. Prepararé TRES versiones objetivas para que elijas.',
+  ok:()=>'✔ Narrativa colocada en el reporte.',
   parse:async t=>{
-    const ind=aiAdd('bot typing','✍ Redactando de forma objetiva…');
-    try{const out=await apiChat([{role:'system',content:AI_SYSTEM},{role:'user',content:'Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t}],900);
-      ind.remove();return out}
-    catch(e){ind.remove();aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+'). Colocaré el texto original.');return t}
+    const ind=aiAdd('bot typing','✍ Redactando tres versiones objetivas…');
+    try{const ops=await pedirOpciones(t);ind.remove();return {opciones:ops};}
+    catch(e){ind.remove();aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+'). Colocaré tu texto original.');return t;}
   }},
  {campo:null,
   pregunta:'¿Qué tipo de conducta fue? Puedes indicar varias: física, verbal, psicológica, ciberacoso, sexual, sustancias, robo o daños, discriminación, u otra.',
@@ -1736,9 +1807,9 @@ const PASOS=[
 $('ai-guia').onclick=()=>{
   if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
   aiOpen();
-  guia={activo:true,paso:0};
+  guia={activo:true,paso:0,modoEleccion:false,opciones:null};opcionPicker=null;
   $('ai-guia').classList.add('guia-on');
-  aiAdd('bot',`🧭 Recorrido guiado iniciado · ${PASOS.length} pasos que cubren TODAS las secciones del reporte.\n\nTe leeré cada pregunta con voz. Para responder por voz: presiona 🎤, habla y vuelve a presionar 🎤 — tu respuesta se envía sola. También puedes escribir.\n\nPuedes decir «saltar» en pasos opcionales o «cancelar» para terminar.`);
+  aiAdd('bot',`🧭 Recorrido guiado iniciado · ${PASOS.length} pasos que cubren TODAS las secciones del reporte.\n\nTe leeré cada pregunta con voz. Para responder por voz: presiona 🎤, habla y vuelve a presionar 🎤 — tu respuesta se envía sola.\n\nAl llegar a la descripción de los hechos te daré 3 versiones objetivas: elige con el botón insertar o diciendo uno, dos o tres.\n\nPuedes decir «saltar» en pasos opcionales o «cancelar» para terminar.`);
   guiaIr(0);
 };
 function guiaIr(n){
@@ -1760,8 +1831,21 @@ async function guiaResponder(text){
   const bajo=text.toLowerCase().trim();
   if(/^(cancelar|salir|terminar recorrido)/.test(bajo)){
     speechSynthesis.cancel();
-    guia.activo=false;$('ai-guia').classList.remove('guia-on');
+    guia={activo:false,paso:0,modoEleccion:false,opciones:null};opcionPicker=null;
+    $('ai-guia').classList.remove('guia-on');
     aiAdd('bot','👌 Recorrido guiado cancelado. Sigo disponible para mejorar redacciones.');
+    return;
+  }
+  /* Elección de una de las 3 versiones de la narrativa */
+  if(guia.modoEleccion){
+    const n=parseNumOpcion(bajo);
+    if(n&&guia.opciones&&guia.opciones[n-1]&&opcionPicker){
+      const op=guia.opciones[n-1];
+      opcionPicker(n-1,op);
+    }else{
+      aiAdd('bot','Di el número de la opción: uno, dos o tres. O escribe «cancelar» para terminar.');
+      hablar('Di el número de la opción: uno, dos o tres.');
+    }
     return;
   }
   const p=PASOS[guia.paso];
@@ -1776,6 +1860,19 @@ async function guiaResponder(text){
   }else{
     let v=await p.parse(text);
     if(v==='SKIP'){aiAdd('bot','⏭ Campo omitido.');}
+    else if(v&&typeof v==='object'&&v.opciones){
+      /* 3 versiones de la descripción de los hechos */
+      guia.modoEleccion=true;guia.opciones=v.opciones;
+      mostrarOpciones(v.opciones,(i,op)=>{
+        setCampo('n_descripcion',op);
+        aiAdd('bot',`✔ Opción ${i+1} colocada en la narrativa del reporte.`);
+        guia.modoEleccion=false;guia.opciones=null;opcionPicker=null;
+        guiaIr(guia.paso+1);
+      });
+      aiAdd('bot','Si prefieres, dime el número de la opción: uno, dos o tres.');
+      hablar('Te preparé tres versiones objetivas, cronológicas y en tercera persona. Toca insertar en la elegida, o dime el número: uno, dos o tres.');
+      return;
+    }
     else if(v===null||v===undefined||v===''){
       aiAdd('bot',p.invalida||'No entendí tu respuesta. ¿Puedes decirla de nuevo?');
       hablar(limpiarVoz(p.invalida||'No entendí tu respuesta. Intenta de nuevo.'));
@@ -1788,7 +1885,8 @@ async function guiaResponder(text){
   guiaIr(guia.paso+1);
 }
 function guiaFin(){
-  guia.activo=false;$('ai-guia').classList.remove('guia-on');
+  guia={activo:false,paso:0,modoEleccion:false,opciones:null};opcionPicker=null;
+  $('ai-guia').classList.remove('guia-on');
   const fin='¡Listo! Completé todo el recorrido sin saltar secciones. Revisa los campos que llené, luego presiona Vista previa y Guardar en bitácora.';
   aiAdd('bot','🎉 '+fin);
   hablar(fin);
@@ -1803,7 +1901,7 @@ function dictarA(el,btn,opts={}){
   if(!SR){toast('Su navegador no soporta dictado por voz. Use Google Chrome o Microsoft Edge.','err');return}
   if(activeRec){activeRec.stop();return}
   if(dictPend)return;
-  speechSynthesis.cancel();          /* Aleida se calla para que el micrófono no la escuche */
+  speechSynthesis.cancel();
   dictPend=true;
   setTimeout(()=>{dictPend=false;iniciarRec(el,btn,opts)},350);
 }
@@ -1860,8 +1958,8 @@ $('btn-ai-narr').onclick=()=>{
   if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
   aiOpen();
   const t=$('n_descripcion').value.trim();
-  if(!t){toast('Escriba o dicte primero los hechos en la narrativa; luego presione «Mejorar redacción con IA».');return}
-  aiSend('Mejora la redacción de la siguiente narrativa de incidencia escolar:\n\n'+t);
+  if(!t){toast('Escriba o dicte primero los hechos en la narrativa; luego presione «Mejorar redacción».');return}
+  mejorarNarrativa(t);
 };
 
 /* ═══════════════ INTERACCIÓN VIVA ═══════════════ */
