@@ -772,6 +772,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
             <input type="text" id="nu_cargo" placeholder="Cargo o asignatura (p. ej. Docente de Matemáticas, Prefecto)" style="min-width:220px">
             <select id="nu_rol" style="max-width:150px"><option value="profesor">Profesor(a)</option><option value="admin">Administrador</option></select>
             <button type="button" class="btn btn-green btn-sm" id="btn-add-user">+ Dar de alta</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-cancel-edit-user" style="display:none">Cancelar edición</button>
           </div>
           <div class="hint" style="margin-top:10px">El nombre completo y el cargo se usarán para identificar automáticamente a la persona en «Docente que atiende el incidente» y en «Nombre de quien realiza el reporte». La persona puede cambiar su contraseña por su cuenta después. Al desactivar un usuario, pierde acceso de inmediato pero su historial de reportes se conserva.</div>
         </div>
@@ -1294,6 +1295,7 @@ function renderUsuarios(){
       <span>${u.rol==='admin'?'Administrador':'Profesor(a)'}</span>
       <span style="background:${u.activo!==false?'var(--green-100)':'var(--red-soft)'};color:${u.activo!==false?'var(--green-900)':'var(--red)'}">${u.activo!==false?'Activo':'Desactivado'}</span>
       <span style="font-size:.72rem;color:var(--muted);font-weight:400">Próximo folio: ${pad(u.proximoFolio||1)}</span>
+      <button type="button" class="icon-btn" title="Editar nombre, cargo o rol" onclick="editarUsuario('${uid}')">✎</button>
       ${uid!==currentUser.uid?`<button type="button" class="icon-btn x" title="${u.activo!==false?'Desactivar':'Activar'}" onclick="toggleUsuario('${uid}')">${u.activo!==false?'⏸':'▶'}</button>
       <button type="button" class="icon-btn del" title="Eliminar de la lista de acceso" onclick="quitarUsuario('${uid}')">✕</button>`:'<span style="font-size:.7rem;color:var(--muted)">(usted)</span>'}
     </div>`).join('');
@@ -1306,24 +1308,60 @@ window.toggleUsuario=uid=>{
 window.quitarUsuario=uid=>{
   if(!esAdmin())return;
   if(!confirm('Esto le quita el acceso a la aplicación (su historial de reportes se conserva). ¿Continuar?'))return;
+  if(editandoUsuarioUid===uid)cancelarEdicionUsuario();
   db.ref('usuarios/'+uid).remove().catch(err=>toast('Error: '+err.message,'err'));
 };
+
+let editandoUsuarioUid=null;
+window.editarUsuario=uid=>{
+  if(!esAdmin())return;
+  const u=usuarios[uid];if(!u)return;
+  editandoUsuarioUid=uid;
+  $('nu_email').value=u.email||'';$('nu_email').disabled=true;
+  $('nu_pass').value='';$('nu_pass').disabled=true;$('nu_pass').placeholder='(la contraseña no se cambia aquí)';
+  $('nu_nombre').value=u.nombre||'';
+  $('nu_cargo').value=u.cargo||'';
+  $('nu_rol').value=u.rol||'profesor';
+  $('btn-add-user').textContent='💾 Guardar cambios';
+  $('btn-cancel-edit-user').style.display='inline-flex';
+  $('card-usuarios').scrollIntoView({behavior:'smooth',block:'center'});
+  toast(`✎ Editando a ${u.nombre||u.email}`);
+};
+function cancelarEdicionUsuario(){
+  editandoUsuarioUid=null;
+  $('nu_email').value='';$('nu_email').disabled=false;
+  $('nu_pass').value='';$('nu_pass').disabled=false;$('nu_pass').placeholder='Contraseña inicial (mín. 6 caracteres)';
+  $('nu_nombre').value='';$('nu_cargo').value='';$('nu_rol').value='profesor';
+  $('btn-add-user').textContent='+ Dar de alta';
+  $('btn-cancel-edit-user').style.display='none';
+}
+$('btn-cancel-edit-user').onclick=cancelarEdicionUsuario;
+
 $('btn-add-user').onclick=async()=>{
   if(!esAdmin())return;
-  const email=$('nu_email').value.trim().toLowerCase(),pass=$('nu_pass').value,
-    nombre=$('nu_nombre').value.trim(),cargo=$('nu_cargo').value.trim(),rol=$('nu_rol').value;
-  if(!email||!pass)return toast('Escriba correo y contraseña','err');
-  if(pass.length<6)return toast('La contraseña debe tener al menos 6 caracteres','err');
+  const nombre=$('nu_nombre').value.trim(),cargo=$('nu_cargo').value.trim(),rol=$('nu_rol').value;
   if(!nombre)return toast('Escriba el nombre completo de la persona','err');
+  let email='',pass='';
+  if(!editandoUsuarioUid){
+    email=$('nu_email').value.trim().toLowerCase();pass=$('nu_pass').value;
+    if(!email||!pass)return toast('Escriba correo y contraseña','err');
+    if(pass.length<6)return toast('La contraseña debe tener al menos 6 caracteres','err');
+  }
   $('btn-add-user').disabled=true;
   try{
-    const cred=await secAuth.createUserWithEmailAndPassword(email,pass);
-    await db.ref('usuarios/'+cred.user.uid).set({email,nombre,cargo,rol,activo:true,proximoFolio:1});
-    await secAuth.signOut();
-    $('nu_email').value='';$('nu_pass').value='';$('nu_nombre').value='';$('nu_cargo').value='';
-    toast(`✔ Usuario ${email} dado de alta como ${rol==='admin'?'administrador':'profesor(a)'}`);
+    if(editandoUsuarioUid){
+      await db.ref('usuarios/'+editandoUsuarioUid).update({nombre,cargo,rol});
+      toast(`✔ Datos de ${nombre} actualizados`);
+      cancelarEdicionUsuario();
+    }else{
+      const cred=await secAuth.createUserWithEmailAndPassword(email,pass);
+      await db.ref('usuarios/'+cred.user.uid).set({email,nombre,cargo,rol,activo:true,proximoFolio:1});
+      await secAuth.signOut();
+      $('nu_email').value='';$('nu_pass').value='';$('nu_nombre').value='';$('nu_cargo').value='';
+      toast(`✔ Usuario ${email} dado de alta como ${rol==='admin'?'administrador':'profesor(a)'}`);
+    }
   }catch(err){
-    toast('No se pudo crear el usuario: '+(err.message||err.code),'err');
+    toast('No se pudo guardar: '+(err.message||err.code),'err');
   }
   $('btn-add-user').disabled=false;
 };
