@@ -614,14 +614,15 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           </div>
           <div class="grid3" style="margin-top:18px;border-top:1px dashed var(--line);padding-top:16px">
             <div class="field"><label>Docente que atiende el incidente</label>
-              <select id="qui_docente"><option value="">— Seleccionar de plantilla —</option></select>
-              <div class="hint">Al seleccionar, el nombre y asignatura se llenan automáticamente en el documento y firmas.</div></div>
+              <input type="text" id="qui_docente" placeholder="Nombre completo del/la docente">
+              <div class="hint">Se sugiere su propio nombre; puede escribir otro si fue alguien más quien atendió.</div></div>
             <div class="field"><label>Directivo que atiende el incidente</label>
               <select id="qui_directivo"><option value="">— Seleccionar de plantilla —</option></select></div>
             <div class="field"><label>Otro personal (especifique)</label>
               <input type="text" id="qui_otro" placeholder="p. ej. Orientador(a), USAER…"></div>
             <div class="field span2"><label>Nombre de quien realiza el reporte</label>
-              <input type="text" id="persona_reporta" placeholder="Nombre completo y cargo"></div>
+              <input type="text" id="persona_reporta" readonly style="background:var(--gold-paper);font-weight:600">
+              <div class="hint">Se completa automáticamente con el nombre de su cuenta; no se puede modificar.</div></div>
           </div>
         </div>
       </div>
@@ -767,11 +768,12 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           <div class="add-row">
             <input type="email" id="nu_email" placeholder="Correo del profesor(a)" style="min-width:200px">
             <input type="text" id="nu_pass" placeholder="Contraseña inicial (mín. 6 caracteres)" style="max-width:220px">
-            <input type="text" id="nu_nombre" placeholder="Nombre para mostrar" style="max-width:200px">
+            <input type="text" id="nu_nombre" placeholder="Nombre completo (con Prof./Mtro./Lic.)" style="min-width:220px">
+            <input type="text" id="nu_cargo" placeholder="Cargo o asignatura (p. ej. Docente de Matemáticas, Prefecto)" style="min-width:220px">
             <select id="nu_rol" style="max-width:150px"><option value="profesor">Profesor(a)</option><option value="admin">Administrador</option></select>
             <button type="button" class="btn btn-green btn-sm" id="btn-add-user">+ Dar de alta</button>
           </div>
-          <div class="hint" style="margin-top:10px">La persona puede cambiar su contraseña por su cuenta después. Al desactivar un usuario, pierde acceso de inmediato pero su historial de reportes se conserva.</div>
+          <div class="hint" style="margin-top:10px">El nombre completo y el cargo se usarán para identificar automáticamente a la persona en «Docente que atiende el incidente» y en «Nombre de quien realiza el reporte». La persona puede cambiar su contraseña por su cuenta después. Al desactivar un usuario, pierde acceso de inmediato pero su historial de reportes se conserva.</div>
         </div>
       </div>
 
@@ -883,6 +885,7 @@ let currentUser=null;      // {uid,email,rol,nombre}
 let editId=null, previewMode='new';
 let vozOn=loadLocal(LOCAL.voz,true);
 const esAdmin=()=>!!currentUser&&currentUser.rol==='admin';
+const miIdentidad=()=>currentUser?(currentUser.nombre||currentUser.email)+(currentUser.cargo?' · '+currentUser.cargo:''):'';
 
 /* Guarda config compartida (solo mantiene en memoria hasta llamar a saveCfgRemoto) */
 function saveCfgRemoto(){return db.ref('config').set(cfg)}
@@ -983,6 +986,9 @@ function resetForm(){
   document.getElementById('rep-form').reset();
   $('testigos-list').innerHTML='';editId=null;$('edit-badge').style.display='none';
   $('f_fecha').value=new Date().toISOString().slice(0,10);
+  const miNombre=miIdentidad();
+  $('persona_reporta').value=miNombre;
+  $('qui_docente').value=miNombre;
   setFolioDisplay();updateChecklist();updateAlerta();
 }
 
@@ -1283,6 +1289,7 @@ function renderUsuarios(){
   if(!lista.length){cont.innerHTML='<p style="font-size:.82rem;color:var(--muted)">Sin usuarios registrados todavía.</p>';return}
   cont.innerHTML=lista.map(([uid,u])=>`<div class="persona-item">
       <b>${esc(u.nombre||u.email)}</b>
+      ${u.cargo?`<span style="font-size:.72rem;color:var(--muted);font-weight:400">${esc(u.cargo)}</span>`:''}
       <span style="font-size:.72rem;color:var(--muted);font-weight:400">${esc(u.email)}</span>
       <span>${u.rol==='admin'?'Administrador':'Profesor(a)'}</span>
       <span style="background:${u.activo!==false?'var(--green-100)':'var(--red-soft)'};color:${u.activo!==false?'var(--green-900)':'var(--red)'}">${u.activo!==false?'Activo':'Desactivado'}</span>
@@ -1303,15 +1310,17 @@ window.quitarUsuario=uid=>{
 };
 $('btn-add-user').onclick=async()=>{
   if(!esAdmin())return;
-  const email=$('nu_email').value.trim().toLowerCase(),pass=$('nu_pass').value,nombre=$('nu_nombre').value.trim(),rol=$('nu_rol').value;
+  const email=$('nu_email').value.trim().toLowerCase(),pass=$('nu_pass').value,
+    nombre=$('nu_nombre').value.trim(),cargo=$('nu_cargo').value.trim(),rol=$('nu_rol').value;
   if(!email||!pass)return toast('Escriba correo y contraseña','err');
   if(pass.length<6)return toast('La contraseña debe tener al menos 6 caracteres','err');
+  if(!nombre)return toast('Escriba el nombre completo de la persona','err');
   $('btn-add-user').disabled=true;
   try{
     const cred=await secAuth.createUserWithEmailAndPassword(email,pass);
-    await db.ref('usuarios/'+cred.user.uid).set({email,nombre:nombre||email,rol,activo:true,proximoFolio:1});
+    await db.ref('usuarios/'+cred.user.uid).set({email,nombre,cargo,rol,activo:true,proximoFolio:1});
     await secAuth.signOut();
-    $('nu_email').value='';$('nu_pass').value='';$('nu_nombre').value='';
+    $('nu_email').value='';$('nu_pass').value='';$('nu_nombre').value='';$('nu_cargo').value='';
     toast(`✔ Usuario ${email} dado de alta como ${rol==='admin'?'administrador':'profesor(a)'}`);
   }catch(err){
     toast('No se pudo crear el usuario: '+(err.message||err.code),'err');
@@ -1358,13 +1367,11 @@ $('btn-test-ia').onclick=async()=>{
 };
 
 function renderSelects(){
-  const dSel=$('qui_directivo'),tSel=$('qui_docente');
-  const dVal=dSel.value,tVal=tSel.value;
+  const dSel=$('qui_directivo');
+  const dVal=dSel.value;
   dSel.innerHTML='<option value="">— Seleccionar de plantilla —</option>'+
     cfg.directivos.map(d=>`<option value="${esc(d.nombre)} · ${esc(d.cargo)}">${esc(d.nombre)} · ${esc(d.cargo)}</option>`).join('');
-  tSel.innerHTML='<option value="">— Seleccionar de plantilla —</option>'+
-    cfg.docentes.map(d=>`<option value="${esc(d.nombre)} · ${esc(d.asignatura||'Docente')}">${esc(d.nombre)} · ${esc(d.asignatura||'Docente')}</option>`).join('');
-  dSel.value=dVal;tSel.value=tVal;
+  dSel.value=dVal;
 }
 
 /* ═══════════════ RENDER GENERAL ═══════════════ */
@@ -1789,10 +1796,9 @@ function parseQuien(t){
     const partes=p.nombre.toLowerCase().split(/\s+/).filter(w=>w.length>=4);
     return partes.some(w=>bajo.includes(w))||palabras.some(w=>p.nombre.toLowerCase().includes(w));
   });
-  const d=busca(cfg.docentes);
-  if(d)return {sel:'qui_docente',label:`${d.nombre} · ${d.asignatura||'Docente'}`};
   const di=busca(cfg.directivos);
   if(di)return {sel:'qui_directivo',label:`${di.nombre} · ${di.cargo}`};
+  if(t.trim().length>=3)return {sel:'qui_docente',label:t.trim()};
   return null;
 }
 const esOmitir=t=>/^(no\b|ningun|ningún|ninguna|sin |nadie)/.test(t.toLowerCase().trim());
@@ -1959,15 +1965,10 @@ const PASOS=[
   ok:()=>'✔ Medidas de la escuela registradas',
   parse:t=>esOmitir(t)?'SKIP':t.trim()},
  {campo:'qui_docente',
-  pregunta:'¿Quién atiende el incidente? Di el nombre del docente o directivo. Debe estar dado de alta en Configuración.',
+  pregunta:'¿Quién atiende el incidente? Diga el nombre del docente, o si es un directivo dado de alta en Configuración, diga su nombre.',
   ok:v=>`✔ Atiende: ${v.label}`, parse:t=>parseQuien(t),
   apply:v=>setCampo(v.sel,v.label),
-  invalida:'No encontré ese nombre en la plantilla. Verifica en Configuración o di saltar.'},
- {campo:'persona_reporta',
-  pregunta:'Última pregunta. ¿Quién realiza el reporte? Di su nombre completo y cargo.',
-  ok:v=>`✔ Realiza el reporte: ${v}`,
-  parse:t=>t.trim().length>=5?t.trim():null,
-  invalida:'Di nombre completo y cargo.'}
+  invalida:'No entendí el nombre. Intente de nuevo o diga saltar.'}
 ];
 $('ai-guia').onclick=()=>{
   if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
@@ -2252,6 +2253,9 @@ function escucharDatos(){
     const u=snap.val();if(!u)return;
     nextFolio=u.proximoFolio||1;
     currentUser.rol=u.rol||currentUser.rol;
+    currentUser.nombre=u.nombre||currentUser.nombre;
+    currentUser.cargo=u.cargo||'';
+    $('ub-email').textContent=miIdentidad();
     $('ub-rol').textContent=esAdmin()?'Administrador':'Profesor(a)';
     document.querySelector('.tab[data-tab="config"]').style.display=esAdmin()?'':'none';
     if(esAdmin()&&!refUsuarios){
@@ -2288,10 +2292,11 @@ auth.onAuthStateChanged(async user=>{
       mostrarLogin('Su cuenta fue desactivada. Contacte al administrador.');
       return;
     }
-    currentUser={uid:user.uid,email:datos.email||user.email,rol:datos.rol||'profesor',nombre:datos.nombre||user.email};
+    currentUser={uid:user.uid,email:datos.email||user.email,rol:datos.rol||'profesor',nombre:datos.nombre||user.email,cargo:datos.cargo||''};
     nextFolio=datos.proximoFolio||1;
     $('login-screen').classList.add('hide');
-    $('ub-email').textContent=currentUser.email;
+    $('ub-email').textContent=miIdentidad();
+    $('ub-email').title=currentUser.email;
     $('ub-rol').textContent=esAdmin()?'Administrador':'Profesor(a)';
     document.querySelector('.tab[data-tab="config"]').style.display=esAdmin()?'':'none';
     if(!esAdmin()&&document.querySelector('.tab[data-tab="config"].active'))switchTab('form');
