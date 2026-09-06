@@ -12,6 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<!-- Firebase (Authentication + Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 <style>
 /* ============ SISTEMA DE DISEÑO ============ */
 :root{
@@ -325,6 +329,26 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 @keyframes toastIn{from{transform:translateX(-60px);opacity:0}to{transform:none;opacity:1}}
 .toast.out{transition:.4s;opacity:0;transform:translateX(-60px)}
 
+/* ============ LOGIN ============ */
+#login-screen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:
+    repeating-linear-gradient(135deg, rgba(244,228,189,.05) 0 2px, transparent 2px 14px),
+    linear-gradient(120deg, var(--green-950), var(--green-800) 62%, var(--green-700));}
+#login-screen.hide{display:none}
+.login-card{background:var(--card);border-radius:14px;box-shadow:0 24px 60px -12px rgba(8,42,32,.6);padding:34px 32px;width:100%;max-width:360px;text-align:center}
+.login-card img{width:74px;height:74px;object-fit:contain;margin-bottom:10px}
+.login-card h2{font-family:var(--disp);font-size:1.15rem;color:var(--green-900);margin-bottom:.2rem}
+.login-card p.sub{font-size:.78rem;color:var(--muted);margin-bottom:20px}
+.login-card .field{text-align:left;margin-bottom:14px}
+.login-card button{width:100%;justify-content:center;margin-top:6px}
+#login-error{display:none;background:var(--red-soft);color:#7c1d17;border-left:4px solid var(--red);border-radius:0 6px 6px 0;
+  padding:.6rem .8rem;font-size:.8rem;text-align:left;margin-bottom:14px}
+#login-error.on{display:block}
+.userbar{display:flex;align-items:center;gap:10px;font-size:.78rem;color:#e6e2d1}
+.userbar .rol-tag{background:var(--gold);color:#241a04;font-weight:700;padding:.1rem .5rem;border-radius:99px;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em}
+.userbar button{background:none;border:1px solid rgba(244,228,189,.4);color:var(--gold-soft);border-radius:6px;padding:.25rem .6rem;font-size:.72rem}
+.userbar button:hover{background:var(--gold);color:#241a04}
+
 /* ============ IMPRESIÓN ============ */
 @media print{
   @page{size:Letter;margin:11mm}
@@ -345,6 +369,21 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 </head>
 <body>
 
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <img src="escudo.png" alt="Escudo de la escuela">
+    <h2>Bitácora de Incidencias</h2>
+    <p class="sub">Acceso exclusivo para personal autorizado de la escuela</p>
+    <div id="login-error"></div>
+    <form id="login-form">
+      <div class="field"><label>Correo electrónico</label><input type="email" id="li_email" required autocomplete="username"></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="li_pass" required autocomplete="current-password"></div>
+      <button type="submit" class="btn btn-green" id="btn-login">🔐 Iniciar sesión</button>
+    </form>
+  </div>
+</div>
+
 <!-- ══════════ MEMBRETE ══════════ -->
 <header class="masthead">
   <div class="mast-inner">
@@ -364,10 +403,14 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
   </div>
   <div class="stats-strip">
     <div class="stats-inner">
-      <span><b id="st-total">0</b>incidencias registradas</span>
-      <span><b id="st-ultimo">—</b>último folio emitido</span>
+      <span><b id="st-total">0</b>mis incidencias registradas</span>
+      <span><b id="st-ultimo">—</b>mi último folio</span>
       <span><b id="st-directivos">0</b>directivos · <b id="st-docentes">0</b>docentes en plantilla</span>
       <span class="lock">🔒 Manejo estrictamente confidencial · Interés Superior del Menor</span>
+      <div class="userbar" id="userbar">
+        <span class="rol-tag" id="ub-rol">—</span><span id="ub-email">—</span>
+        <button type="button" id="btn-logout">Salir</button>
+      </div>
     </div>
   </div>
 </header>
@@ -376,7 +419,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 <nav class="tabs">
   <div class="tabs-inner">
     <button class="tab active" data-tab="form">✎ Nuevo Reporte</button>
-    <button class="tab" data-tab="hist">📚 Bitácora <span class="count" id="tab-count">0</span></button>
+    <button class="tab" data-tab="hist">📚 Mi bitácora <span class="count" id="tab-count">0</span></button>
     <button class="tab" data-tab="config">⚙ Configuración</button>
   </div>
 </nav>
@@ -717,6 +760,21 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
         </div>
       </div>
 
+      <div class="card" id="card-usuarios">
+        <div class="card-head"><span class="card-num">USR</span><div><h3>Usuarios del sistema</h3><p>Alta de profesores y administradores. Cada usuario tiene su propio folio consecutivo, iniciando en 0001.</p></div></div>
+        <div class="card-body">
+          <div id="cfg-usuarios"></div>
+          <div class="add-row">
+            <input type="email" id="nu_email" placeholder="Correo del profesor(a)" style="min-width:200px">
+            <input type="text" id="nu_pass" placeholder="Contraseña inicial (mín. 6 caracteres)" style="max-width:220px">
+            <input type="text" id="nu_nombre" placeholder="Nombre para mostrar" style="max-width:200px">
+            <select id="nu_rol" style="max-width:150px"><option value="profesor">Profesor(a)</option><option value="admin">Administrador</option></select>
+            <button type="button" class="btn btn-green btn-sm" id="btn-add-user">+ Dar de alta</button>
+          </div>
+          <div class="hint" style="margin-top:10px">La persona puede cambiar su contraseña por su cuenta después. Al desactivar un usuario, pierde acceso de inmediato pero su historial de reportes se conserva.</div>
+        </div>
+      </div>
+
       <div class="card" style="opacity:1;transform:none">
         <div class="actions-bar">
           <button type="button" class="btn btn-gold" id="btn-save-cfg">💾 Guardar configuración</button>
@@ -727,8 +785,8 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
     <aside class="aside">
       <div class="mini legal-note">
         <h4>Sobre esta bitácora</h4>
-        Los datos se guardan en <b>este navegador</b>. Use <b>«Descargar respaldo»</b> periódicamente.<br><br>
-        Cada reporte conserva su <b>folio único consecutivo</b> (0001, 0002…) aun si se edita después.
+        Los datos se guardan en <b>una base de datos en la nube</b>, no en este navegador: sobreviven aunque se borren los datos del navegador o se cambie de PC. Por privacidad, <b>la bitácora de cada profesor(a) es privada</b>: nadie más puede verla, ni siquiera otro profesor. Use <b>«Descargar respaldo»</b> periódicamente de todos modos, como copia adicional.<br><br>
+        Cada profesor(a) tiene su <b>folio propio consecutivo</b> (0001, 0002…) aun si edita el reporte después.
       </div>
     </aside>
   </div>
@@ -773,10 +831,37 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 <div id="toasts"></div>
 
 <script>
+/* ═══════════════ FIREBASE ═══════════════ */
+// 1) Reemplace este objeto con el que le da la consola de Firebase de SU proyecto
+//    (Configuración del proyecto → Tus apps → Config del SDK).
+// 2) En Authentication, active el proveedor "Correo electrónico/contraseña".
+// 3) Cree a mano el primer usuario administrador en Authentication con el correo
+//    y contraseña definidos en ADMIN_MAESTRO más abajo; la app lo reconocerá solo.
+const firebaseConfig={
+  apiKey:"AIzaSyAxYIb7_C28OL_4eiqExF9s9l5IE21tip4",
+  authDomain:"bitacora-de-incidencias-9ed51.firebaseapp.com",
+  databaseURL:"https://bitacora-de-incidencias-9ed51-default-rtdb.firebaseio.com",
+  projectId:"bitacora-de-incidencias-9ed51",
+  storageBucket:"bitacora-de-incidencias-9ed51.firebasestorage.app",
+  messagingSenderId:"594840249927",
+  appId:"1:594840249927:web:b665036c494bcfdae6f362"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.database();
+const ADMIN_MAESTRO='elprofechan@gmail.com'; // se auto-registra como administrador al iniciar sesión por primera vez
+
+/* Segunda instancia de Firebase, solo para crear usuarios nuevos sin cerrar
+   la sesión del administrador que los está dando de alta */
+const secApp=firebase.initializeApp(firebaseConfig,'secundaria');
+const secAuth=secApp.auth();
+
 /* ═══════════════ ESTADO Y ALMACÉN ═══════════════ */
-const LS={cfg:'oax_inc_cfg_v1',folio:'oax_inc_folio_v1',regs:'oax_inc_regs_v1',aiPos:'oax_inc_ai_pos_v1',aiFab:'oax_inc_ai_fab_v1'};
-const load=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}};
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+// Únicamente preferencias de esta pantalla (posición del asistente flotante, voz);
+// NUNCA datos de la escuela: esos siempre viven en Firebase.
+const LOCAL={aiPos:'oax_inc_ai_pos_v1',aiFab:'oax_inc_ai_fab_v1',voz:'oax_inc_voz_v1'};
+const loadLocal=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}};
+const saveLocal=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const pad=n=>String(n).padStart(4,'0');
 const pad2=n=>String(n).padStart(2,'0');
 const esc=s=>(s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -790,13 +875,19 @@ const DEFAULT_CFG={
   docentes:[{id:1,nombre:'Prof. Juan Ejemplo Pérez',asignatura:'Formación Cívica y Ética'}],
   ia:{on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true}
 };
-let cfg=load(LS.cfg,null)||JSON.parse(JSON.stringify(DEFAULT_CFG));
-if(!cfg.ia)cfg.ia={};
-cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
-let nextFolio=load(LS.folio,1);
-let regs=load(LS.regs,[]);
+let cfg=JSON.parse(JSON.stringify(DEFAULT_CFG));
+let nextFolio=1;          // próximo folio del usuario que tiene la sesión iniciada
+let regs=[];               // SOLO la bitácora del usuario en sesión (privada, no se comparte entre profesores)
+let usuarios={};           // uid -> {email,nombre,rol,activo,proximoFolio}
+let currentUser=null;      // {uid,email,rol,nombre}
 let editId=null, previewMode='new';
-let vozOn=cfg.ia.voz!==false;
+let vozOn=loadLocal(LOCAL.voz,true);
+const esAdmin=()=>!!currentUser&&currentUser.rol==='admin';
+
+/* Guarda config compartida (solo mantiene en memoria hasta llamar a saveCfgRemoto) */
+function saveCfgRemoto(){return db.ref('config').set(cfg)}
+function saveRegistroRemoto(rec){return db.ref('reportes/'+currentUser.uid+'/'+rec.id).set(rec)}
+function borrarRegistroRemoto(id){return db.ref('reportes/'+currentUser.uid+'/'+id).remove()}
 
 const TIPOS={fisica:'Violencia física',verbal:'Violencia verbal',psicologica:'Violencia psicológica',digital:'Ciberacoso / violencia digital',
   sexual:'Violencia sexual',delito:'Presunto delito grave',sustancias:'Consumo de sustancias',patrimonial:'Robo / daño a bienes',
@@ -930,24 +1021,43 @@ function validate(d){
 }
 
 /* ═══════════════ GUARDADO ═══════════════ */
-function guardarRegistro(){
+function siguienteFolioDe(uid){
+  return db.ref('usuarios/'+uid+'/proximoFolio').transaction(v=>(v||1)+1).then(res=>{
+    const nuevo=res.snapshot.val()||2;
+    if(usuarios[uid])usuarios[uid].proximoFolio=nuevo;
+    if(currentUser&&uid===currentUser.uid)nextFolio=nuevo;
+    return nuevo-1; // folio recién asignado
+  });
+}
+let guardando=false;
+async function guardarRegistro(){
   const d=collect();const errs=validate(d);
   if(errs.length){toast('⚠ Complete los campos obligatorios: '+errs.join(', '),'err');return false}
-  let rec;
-  if(editId){
-    rec=regs.find(r=>r.id===editId);
-    d.folio=rec.folio;
-    rec.data=d;rec.updatedAt=new Date().toISOString();
-    toast(`✔ Folio ${rec.folio} actualizado correctamente`);
-  }else{
-    d.folio=pad(nextFolio);
-    rec={id:Date.now(),folio:d.folio,savedAt:new Date().toISOString(),data:d};
-    regs.unshift(rec);nextFolio++;save(LS.folio,nextFolio);
-    toast(`✔ Incidencia registrada con FOLIO ${d.folio}`);
-    $('stamp-mast').classList.remove('bump');void $('stamp-mast').offsetWidth;$('stamp-mast').classList.add('bump');
-  }
-  save(LS.regs,regs);renderAll();resetForm();
-  return true;
+  if(!currentUser){toast('Su sesión expiró. Vuelva a iniciar sesión.','err');return false}
+  if(guardando)return false;
+  guardando=true;
+  try{
+    if(editId){
+      const rec=regs.find(r=>r.id===editId);
+      if(!rec){toast('El registro ya no existe.','err');return false}
+      d.folio=rec.folio;
+      const actualizado=Object.assign({},rec,{data:d,updatedAt:new Date().toISOString()});
+      await saveRegistroRemoto(actualizado);
+      toast(`✔ Folio ${rec.folio} actualizado correctamente`);
+    }else{
+      const folioNum=await siguienteFolioDe(currentUser.uid);
+      d.folio=pad(folioNum);
+      const rec={id:db.ref('reportes/'+currentUser.uid).push().key,folio:d.folio,savedAt:new Date().toISOString(),data:d};
+      await saveRegistroRemoto(rec);
+      toast(`✔ Incidencia registrada con FOLIO ${d.folio}`);
+      $('stamp-mast').classList.remove('bump');void $('stamp-mast').offsetWidth;$('stamp-mast').classList.add('bump');
+    }
+    resetForm();
+    return true;
+  }catch(err){
+    toast('No se pudo guardar: '+err.message,'err');
+    return false;
+  }finally{guardando=false}
 }
 
 /* ═══════════════ DOCUMENTO IMPRESO ═══════════════ */
@@ -1066,9 +1176,9 @@ function closePreview(){
 }
 $('ov-close').onclick=closePreview;
 $('ov-print').onclick=()=>window.print();
-$('ov-save').onclick=()=>{
+$('ov-save').onclick=async()=>{
   if(previewMode==='view'){toast('Este registro ya está guardado. Use ✎ Editar en la bitácora para modificarlo.');return}
-  if(guardarRegistro())closePreview();
+  if(await guardarRegistro())closePreview();
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});
 
@@ -1091,9 +1201,9 @@ function renderHist(){
       <td title="Identidad reservada en vistas públicas">${esc(mask(r.data.a_nombre||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
       <td>${(r.data.tipos||[]).slice(0,3).map(t=>`<span class="tipo-tag">${TIPOS[t]||esc(t)}</span>`).join('')}${(r.data.tipos||[]).length>3?'…':''}</td>
       <td><div class="row-acts" style="justify-content:flex-end">
-        <button class="icon-btn" title="Ver / imprimir" onclick="verRegistro(${r.id})">👁</button>
-        <button class="icon-btn" title="Editar" onclick="editarRegistro(${r.id})">✎</button>
-        <button class="icon-btn del" title="Eliminar" onclick="eliminarRegistro(${r.id})">🗑</button>
+        <button class="icon-btn" title="Ver / imprimir" onclick="verRegistro('${r.id}')">👁</button>
+        <button class="icon-btn" title="Editar" onclick="editarRegistro('${r.id}')">✎</button>
+        <button class="icon-btn del" title="Eliminar" onclick="eliminarRegistro('${r.id}')">🗑</button>
       </div></td></tr>`).join('')}</tbody></table>
     ${rows.length!==regs.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regs.length} registros coinciden con la búsqueda.</p>`:''}`;
 }
@@ -1110,10 +1220,12 @@ window.editarRegistro=id=>{
   switchTab('form');toast(`✎ Editando el folio ${r.folio}. El folio no cambia al guardar.`);
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.eliminarRegistro=id=>{
+window.eliminarRegistro=async id=>{
   const r=regs.find(x=>x.id===id);if(!r)return;
   if(confirm(`¿Eliminar definitivamente el registro con folio ${r.folio}?\n\nEl folio NO se reutiliza (conservación de la secuencia).`)){
-    regs=regs.filter(x=>x.id!==id);save(LS.regs,regs);renderAll();toast(`Registro ${r.folio} eliminado`,'err')}
+    try{await borrarRegistroRemoto(id);toast(`Registro ${r.folio} eliminado`,'err')}
+    catch(err){toast('No se pudo eliminar: '+err.message,'err')}
+  }
 };
 $('hist-search').oninput=renderHist;
 
@@ -1123,18 +1235,23 @@ $('btn-export').onclick=()=>{
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`respaldo_incidencias_${new Date().toISOString().slice(0,10)}.json`;a.click();
   toast('⬇ Respaldo descargado. Consérvelo en la Dirección.')};
-$('btn-import').onclick=()=>$('import-file').click();
+$('btn-import').onclick=()=>{
+  if(!esAdmin()){toast('Solo un administrador puede importar un respaldo.','err');return}
+  $('import-file').click();
+};
 $('import-file').onchange=e=>{
   const f=e.target.files[0];if(!f)return;const rd=new FileReader();
-  rd.onload=()=>{try{const j=JSON.parse(rd.result);
+  rd.onload=async()=>{try{const j=JSON.parse(rd.result);
     if(!j.cfg||!Array.isArray(j.regs))throw 0;
+    if(!confirm('Esto reemplazará la configuración de la escuela y SU bitácora personal con el contenido del respaldo. ¿Continuar?'))return;
     cfg=j.cfg;if(!cfg.ia)cfg.ia={};
     cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
     vozOn=cfg.ia.voz!==false;
-    nextFolio=j.nextFolio||1;regs=j.regs;
-    save(LS.cfg,cfg);save(LS.folio,nextFolio);save(LS.regs,regs);
-    renderAll();loadCfgForm();updateAIvisibility();toast('⬆ Respaldo importado correctamente');
-  }catch(err){toast('El archivo no es un respaldo válido','err')}};
+    const nuevosRegs={};(j.regs||[]).forEach(r=>{nuevosRegs[r.id]=r});
+    await saveCfgRemoto();
+    await db.ref('reportes/'+currentUser.uid).set(nuevosRegs);
+    loadCfgForm();updateAIvisibility();toast('⬆ Respaldo importado correctamente');
+  }catch(err){toast('El archivo no es un respaldo válido, o falló la escritura: '+(err.message||''),'err')}};
   rd.readAsText(f);e.target.value='';};
 
 /* ═══════════════ CONFIGURACIÓN ═══════════════ */
@@ -1154,22 +1271,69 @@ function renderCfgLists(){
   $('cfg-docentes').innerHTML=cfg.docentes.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b><span>${esc(d.asignatura||'Sin asignatura')}</span>
     <button class="icon-btn del x" onclick="delPersona('docentes',${d.id})">✕</button></div>`).join('')||'<p style="font-size:.82rem;color:var(--muted)">Sin docentes registrados.</p>';
 }
-window.delPersona=(tipo,id)=>{cfg[tipo]=cfg[tipo].filter(p=>p.id!==id);renderCfgLists()};
-$('btn-add-dir').onclick=()=>{const n=$('nd_nombre').value.trim();if(!n)return toast('Escriba el nombre del directivo','err');
+window.delPersona=(tipo,id)=>{if(!esAdmin())return;cfg[tipo]=cfg[tipo].filter(p=>p.id!==id);renderCfgLists()};
+$('btn-add-dir').onclick=()=>{if(!esAdmin())return;const n=$('nd_nombre').value.trim();if(!n)return toast('Escriba el nombre del directivo','err');
   cfg.directivos.push({id:Date.now(),nombre:n,cargo:$('nd_cargo').value});$('nd_nombre').value='';renderCfgLists()};
-$('btn-add-doc').onclick=()=>{const n=$('nt_nombre').value.trim();if(!n)return toast('Escriba el nombre del docente','err');
+$('btn-add-doc').onclick=()=>{if(!esAdmin())return;const n=$('nt_nombre').value.trim();if(!n)return toast('Escriba el nombre del docente','err');
   cfg.docentes.push({id:Date.now(),nombre:n,asignatura:$('nt_asig').value.trim()});$('nt_nombre').value='';$('nt_asig').value='';renderCfgLists()};
-$('btn-save-cfg').onclick=()=>{
+/* ═══════════════ USUARIOS (solo administradores) ═══════════════ */
+function renderUsuarios(){
+  const cont=$('cfg-usuarios');if(!cont)return;
+  const lista=Object.entries(usuarios);
+  if(!lista.length){cont.innerHTML='<p style="font-size:.82rem;color:var(--muted)">Sin usuarios registrados todavía.</p>';return}
+  cont.innerHTML=lista.map(([uid,u])=>`<div class="persona-item">
+      <b>${esc(u.nombre||u.email)}</b>
+      <span style="font-size:.72rem;color:var(--muted);font-weight:400">${esc(u.email)}</span>
+      <span>${u.rol==='admin'?'Administrador':'Profesor(a)'}</span>
+      <span style="background:${u.activo!==false?'var(--green-100)':'var(--red-soft)'};color:${u.activo!==false?'var(--green-900)':'var(--red)'}">${u.activo!==false?'Activo':'Desactivado'}</span>
+      <span style="font-size:.72rem;color:var(--muted);font-weight:400">Próximo folio: ${pad(u.proximoFolio||1)}</span>
+      ${uid!==currentUser.uid?`<button type="button" class="icon-btn x" title="${u.activo!==false?'Desactivar':'Activar'}" onclick="toggleUsuario('${uid}')">${u.activo!==false?'⏸':'▶'}</button>
+      <button type="button" class="icon-btn del" title="Eliminar de la lista de acceso" onclick="quitarUsuario('${uid}')">✕</button>`:'<span style="font-size:.7rem;color:var(--muted)">(usted)</span>'}
+    </div>`).join('');
+}
+window.toggleUsuario=uid=>{
+  if(!esAdmin())return;
+  const u=usuarios[uid];if(!u)return;
+  db.ref('usuarios/'+uid+'/activo').set(!(u.activo!==false)).catch(err=>toast('Error: '+err.message,'err'));
+};
+window.quitarUsuario=uid=>{
+  if(!esAdmin())return;
+  if(!confirm('Esto le quita el acceso a la aplicación (su historial de reportes se conserva). ¿Continuar?'))return;
+  db.ref('usuarios/'+uid).remove().catch(err=>toast('Error: '+err.message,'err'));
+};
+$('btn-add-user').onclick=async()=>{
+  if(!esAdmin())return;
+  const email=$('nu_email').value.trim().toLowerCase(),pass=$('nu_pass').value,nombre=$('nu_nombre').value.trim(),rol=$('nu_rol').value;
+  if(!email||!pass)return toast('Escriba correo y contraseña','err');
+  if(pass.length<6)return toast('La contraseña debe tener al menos 6 caracteres','err');
+  $('btn-add-user').disabled=true;
+  try{
+    const cred=await secAuth.createUserWithEmailAndPassword(email,pass);
+    await db.ref('usuarios/'+cred.user.uid).set({email,nombre:nombre||email,rol,activo:true,proximoFolio:1});
+    await secAuth.signOut();
+    $('nu_email').value='';$('nu_pass').value='';$('nu_nombre').value='';
+    toast(`✔ Usuario ${email} dado de alta como ${rol==='admin'?'administrador':'profesor(a)'}`);
+  }catch(err){
+    toast('No se pudo crear el usuario: '+(err.message||err.code),'err');
+  }
+  $('btn-add-user').disabled=false;
+};
+
+$('btn-save-cfg').onclick=async()=>{
+  if(!esAdmin()){toast('Solo un administrador puede modificar la configuración.','err');return}
   cfg.escuela={nombre:$('c_nombre').value.trim(),cct:$('c_cct').value.trim(),nivel:$('c_nivel').value,
     zona:$('c_zona').value.trim(),sector:$('c_sector').value.trim(),muni:$('c_muni').value.trim(),
     ciclo:$('c_ciclo').value.trim(),dir:$('c_dir').value.trim(),tel:$('c_tel').value.trim(),
     telSeguro:$('c_telSeguro').value.trim(),autoridad:cfg.escuela.autoridad||DEFAULT_CFG.escuela.autoridad};
   if(!cfg.escuela.nombre)return toast('El nombre de la escuela es obligatorio','err');
   cfg.ia={on:$('ia_on').checked,apiKey:$('ia_key').value.trim(),model:$('ia_model').value,voz:vozOn};
-  save(LS.cfg,cfg);renderAll();updateAIvisibility();setModelTag();
-  toast('✔ Configuración guardada. El membrete y Aleida se actualizaron.')};
-$('btn-wipe').onclick=()=>{if(confirm('¿Vaciar TODA la bitácora? Esta acción no puede deshacerse.'))
-  if(confirm('Confirmación final: se eliminarán todos los registros.')){regs=[];save(LS.regs,regs);renderAll();toast('Bitácora vaciada','err')}};
+  try{await saveCfgRemoto();updateAIvisibility();setModelTag();
+    toast('✔ Configuración guardada. El membrete y Aleida se actualizaron para todo el personal.')}
+  catch(err){toast('No se pudo guardar: '+err.message,'err')}};
+$('btn-wipe').onclick=()=>{
+  if(confirm('¿Vaciar TODA su bitácora personal? Esta acción no puede deshacerse y no afecta a otros profesores.'))
+  if(confirm('Confirmación final: se eliminarán todos SUS registros.'))
+    db.ref('reportes/'+currentUser.uid).remove().then(()=>toast('Bitácora vaciada','err')).catch(err=>toast('Error: '+err.message,'err'))};
 
 $('ia-show').onclick=()=>{const k=$('ia_key');k.type=k.type==='password'?'text':'password'};
 $('btn-test-ia').onclick=async()=>{
@@ -1211,10 +1375,11 @@ function renderAll(){
   $('mh-nivel').textContent=e.nivel?'Nivel: '+e.nivel:'';$('mh-ciclo').textContent=e.ciclo||'—';$('mh-muni').textContent=e.muni||'';
   $('mh-folio').textContent=pad(nextFolio);
   $('aside-tel').textContent=e.telSeguro||'—';
-  $('st-total').textContent=regs.length;$('st-ultimo').textContent=regs.length?regs[0].folio:'—';
+  $('st-total').textContent=regs.length;
+  $('st-ultimo').textContent=regs.length?regs[0].folio:'—';
   $('st-directivos').textContent=cfg.directivos.length;$('st-docentes').textContent=cfg.docentes.length;
   $('tab-count').textContent=regs.length;
-  setFolioDisplay();renderSelects();renderHist();
+  setFolioDisplay();renderSelects();renderHist();renderUsuarios();
 }
 function setFolioDisplay(){
   if(editId){
@@ -1255,8 +1420,8 @@ function updateAIvisibility(){
   if(aiOK())$('ai-fab').classList.add('show');
   else{$('ai-fab').classList.remove('show');$('ai-panel').classList.remove('open')}
 }
-let aiPos=load(LS.aiPos,null);
-let aiFabPos=load(LS.aiFab,null);
+let aiPos=loadLocal(LOCAL.aiPos,null);
+let aiFabPos=loadLocal(LOCAL.aiFab,null);
 function placeAI(){
   const p=$('ai-panel');
   let x=aiPos?aiPos.x:(window.innerWidth-394), y=aiPos?aiPos.y:84;
@@ -1297,7 +1462,7 @@ $('ai-min').onclick=aiMin;
   });
   head.addEventListener('pointerup',()=>{
     if(!drag)return;drag=false;
-    aiPos={x:p.offsetLeft,y:p.offsetTop};save(LS.aiPos,aiPos);
+    aiPos={x:p.offsetLeft,y:p.offsetTop};saveLocal(LOCAL.aiPos,aiPos);
   });
   window.addEventListener('resize',()=>{if($('ai-panel').classList.contains('open'))placeAI();aplicarPosFab()});
 })();
@@ -1322,7 +1487,7 @@ $('ai-min').onclick=aiMin;
   });
   fab.addEventListener('pointerup',()=>{
     if(!drag)return;drag=false;
-    if(moved){aiFabPos={x:fab.offsetLeft,y:fab.offsetTop};save(LS.aiFab,aiFabPos);toast('📌 Posición guardada')}
+    if(moved){aiFabPos={x:fab.offsetLeft,y:fab.offsetTop};saveLocal(LOCAL.aiFab,aiFabPos);toast('📌 Posición guardada')}
     else aiOpen();
   });
 })();
@@ -1464,7 +1629,7 @@ $('ai-voz-toggle').onclick=function(){
   this.classList.toggle('voz-on',vozOn);
   this.textContent=vozOn?'🔊 Voz':'🔇 Voz';
   if(!vozOn)speechSynthesis.cancel();
-  cfg.ia.voz=vozOn;save(LS.cfg,cfg);
+  saveLocal(LOCAL.voz,vozOn);
 };
 
 /* ── Voz femenina ── */
@@ -2011,7 +2176,7 @@ $('btn-clear').onclick=()=>{if(confirm('¿Limpiar el formulario? Los datos no gu
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
 document.querySelectorAll('.card').forEach(c=>io.observe(c));
 
-/* ═══════════════ INICIO ═══════════════ */
+/* ═══════════════ INICIO (AI, sin depender de datos) ═══════════════ */
 (function initAI(){
   $('ia_model').innerHTML=GROQ_MODELS.map(m=>`<option value="${m.id}">${m.label}</option>`).join('');
   $('ai-voz-toggle').classList.toggle('voz-on',vozOn);
@@ -2021,11 +2186,121 @@ document.querySelectorAll('.card').forEach(c=>io.observe(c));
   vozCache=vozFemenina();
   setModelTag();updateAIvisibility();aplicarPosFab();
 })();
-if(!localStorage.getItem(LS.cfg)){toast('👋 Primer uso: revise y ajuste los datos de la escuela y el asistente en ⚙ Configuración.')}
-loadCfgForm();resetForm();renderAll();
 
 /* Registro del service worker (PWA instalable) */
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+
+/* ═══════════════ AUTENTICACIÓN ═══════════════ */
+function mostrarLogin(msg){
+  $('login-screen').classList.remove('hide');
+  if(msg!==undefined){
+    if(msg){$('login-error').textContent=msg;$('login-error').classList.add('on')}
+    else $('login-error').classList.remove('on');
+  }
+}
+$('login-form').onsubmit=async e=>{
+  e.preventDefault();
+  $('login-error').classList.remove('on');
+  const email=$('li_email').value.trim(),pass=$('li_pass').value;
+  $('btn-login').disabled=true;$('btn-login').textContent='⏳ Verificando…';
+  try{
+    await auth.signInWithEmailAndPassword(email,pass);
+  }catch(err){
+    let msg='No se pudo iniciar sesión. Verifique su correo y contraseña.';
+    if(err.code==='auth/too-many-requests')msg='Demasiados intentos fallidos. Espere unos minutos e intente de nuevo.';
+    mostrarLogin(msg);
+  }
+  $('btn-login').disabled=false;$('btn-login').textContent='🔐 Iniciar sesión';
+};
+$('btn-logout').onclick=()=>{if(confirm('¿Cerrar sesión?'))auth.signOut()};
+
+let refConfig=null, refReportes=null, refMiUsuario=null, refUsuarios=null, primerUsoAvisado=false;
+function detenerEscucha(){
+  if(refConfig){refConfig.off();refConfig=null}
+  if(refReportes){refReportes.off();refReportes=null}
+  if(refMiUsuario){refMiUsuario.off();refMiUsuario=null}
+  if(refUsuarios){refUsuarios.off();refUsuarios=null}
+}
+function escucharDatos(){
+  detenerEscucha();
+  regs=[];usuarios={};
+  resetForm();
+  refConfig=db.ref('config');
+  refConfig.on('value',snap=>{
+    const v=snap.val();
+    if(v){
+      cfg=v;if(!cfg.ia)cfg.ia={};
+      cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
+      if(!cfg.directivos)cfg.directivos=[];if(!cfg.docentes)cfg.docentes=[];
+    }else{
+      cfg=JSON.parse(JSON.stringify(DEFAULT_CFG));
+      if(esAdmin())saveCfgRemoto();
+      if(esAdmin()&&!primerUsoAvisado){primerUsoAvisado=true;toast('👋 Primer uso: revise y ajuste los datos de la escuela y el asistente en ⚙ Configuración.')}
+    }
+    loadCfgForm();updateAIvisibility();setModelTag();renderAll();
+  });
+  // Bitácora PRIVADA: solo los reportes del usuario en sesión, nunca los de otros
+  refReportes=db.ref('reportes/'+currentUser.uid);
+  refReportes.on('value',snap=>{
+    const v=snap.val()||{};
+    regs=Object.values(v).sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||''));
+    renderAll();
+  });
+  // Mi propio registro de usuario: mantiene mi folio y mi rol al día
+  refMiUsuario=db.ref('usuarios/'+currentUser.uid);
+  refMiUsuario.on('value',snap=>{
+    const u=snap.val();if(!u)return;
+    nextFolio=u.proximoFolio||1;
+    currentUser.rol=u.rol||currentUser.rol;
+    $('ub-rol').textContent=esAdmin()?'Administrador':'Profesor(a)';
+    document.querySelector('.tab[data-tab="config"]').style.display=esAdmin()?'':'none';
+    if(esAdmin()&&!refUsuarios){
+      refUsuarios=db.ref('usuarios');
+      refUsuarios.on('value',s2=>{usuarios=s2.val()||{};renderUsuarios()});
+    }
+    renderAll();
+  });
+}
+
+auth.onAuthStateChanged(async user=>{
+  if(!user){
+    detenerEscucha();
+    currentUser=null;regs=[];usuarios={};
+    document.querySelector('.tab[data-tab="config"]').style.display='none';
+    mostrarLogin();
+    return;
+  }
+  try{
+    const snap=await db.ref('usuarios/'+user.uid).once('value');
+    let datos=snap.val();
+    if(!datos){
+      if(user.email.toLowerCase()===ADMIN_MAESTRO.toLowerCase()){
+        datos={email:user.email,nombre:'Administrador',rol:'admin',activo:true,proximoFolio:1};
+        await db.ref('usuarios/'+user.uid).set(datos);
+      }else{
+        await auth.signOut();
+        mostrarLogin('Su cuenta no está autorizada todavía. Pida a un administrador que lo dé de alta.');
+        return;
+      }
+    }
+    if(datos.activo===false){
+      await auth.signOut();
+      mostrarLogin('Su cuenta fue desactivada. Contacte al administrador.');
+      return;
+    }
+    currentUser={uid:user.uid,email:datos.email||user.email,rol:datos.rol||'profesor',nombre:datos.nombre||user.email};
+    nextFolio=datos.proximoFolio||1;
+    $('login-screen').classList.add('hide');
+    $('ub-email').textContent=currentUser.email;
+    $('ub-rol').textContent=esAdmin()?'Administrador':'Profesor(a)';
+    document.querySelector('.tab[data-tab="config"]').style.display=esAdmin()?'':'none';
+    if(!esAdmin()&&document.querySelector('.tab[data-tab="config"].active'))switchTab('form');
+    escucharDatos();
+  }catch(err){
+    mostrarLogin('Error al validar su cuenta: '+err.message);
+    auth.signOut();
+  }
+});
 </script>
 </body>
 </html>
