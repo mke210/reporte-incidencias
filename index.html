@@ -123,6 +123,7 @@ main{max-width:1240px;margin:0 auto;padding:30px 28px 90px}
 .field input:focus,.field select:focus,.field textarea:focus{
   outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(192,133,20,.18)}
 .field.invalid input,.field.invalid textarea,.field.invalid select{border-color:var(--red);background:var(--red-soft)}
+.chips.invalid-box{outline:2px solid var(--red);outline-offset:4px;border-radius:8px;background:var(--red-soft)}
 .field.flash{animation:flashField 1.2s ease 2;border-radius:8px}
 @keyframes flashField{50%{box-shadow:0 0 0 6px rgba(192,133,20,.4);background:var(--gold-paper)}}
 .hint{font-size:.72rem;color:var(--muted);margin-top:.3rem;line-height:1.4}
@@ -299,7 +300,6 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 .doc-folio{border:2px double var(--gold-dark);padding:.4rem .8rem;text-align:center;font-size:.62rem;letter-spacing:.2em;color:var(--gold-dark);font-family:var(--body);font-weight:700;transform:rotate(-1.5deg);background:var(--gold-paper);flex:none}
 .doc-folio b{display:block;font-family:var(--disp);font-size:1.5rem;color:var(--green-900);letter-spacing:.06em}
 .doc-subtitle{text-align:center;font-family:var(--body);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:#40503f;margin:4px 0 8px}
-.doc-seguro{border:1px solid #b9b094;background:#fffdf6;font-size:.72rem;padding:.45rem .7rem;text-align:center;margin-bottom:10px;font-family:var(--body)}
 .doc-conf{background:#f0ebdb;border-left:4px solid var(--gold-dark);font-size:.72rem;padding:.55rem .8rem;margin:12px 0 20px;font-style:italic;color:#544c33}
 .doc-sec{margin-bottom:18px;break-inside:avoid}
 .doc-sec > h3{font-family:var(--disp);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green-900);
@@ -483,7 +483,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
             <div style="display:flex;gap:10px"><input type="text" id="a_grado" placeholder="Grado" style="width:45%">
             <input type="text" id="a_grupo" placeholder="Grupo"></div></div>
           <div class="field"><label>Turno</label>
-            <select id="a_turno"><option value="">—</option><option>Matutino</option><option>Vespertino</option><option>Tiempo completo</option></select></div>
+            <select id="a_turno"><option value="">—</option><option>Matutino</option><option>Mixto</option></select></div>
           <div class="field"><label>¿Es hablante de lengua indígena?</label>
             <div class="check-line"><input type="checkbox" id="a_lengua"> Sí habla lengua indígena</div>
             <input type="text" id="a_lenguaCual" placeholder="¿Cuál? (zapoteco, mixteco, mixe…)" style="margin-top:6px">
@@ -560,17 +560,12 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
             </div>
             <textarea id="acc_detalle" placeholder="Detalle de la intervención (p. ej. se canalizó a enfermería, se contuvo al alumno en dirección…)" style="margin-top:10px"></textarea></div>
           <div class="grid3" style="margin-top:18px;border-top:1px dashed var(--line);padding-top:16px">
-            <div class="field span2"><label style="letter-spacing:.08em;font-size:.75rem;text-transform:uppercase;color:var(--gold-dark)">Notificación a padres / tutores · Seguro Escolar</label></div>
+            <div class="field span2"><label style="letter-spacing:.08em;font-size:.75rem;text-transform:uppercase;color:var(--gold-dark)">Notificación a padres / tutores</label></div>
             <div class="field"><label>Hora de la llamada</label><input type="time" id="notif_llamada"></div>
             <div class="field"><label>Hora de respuesta</label><input type="time" id="notif_respuesta"></div>
             <div class="field"><label>Hora de llegada de los padres</label><input type="time" id="notif_llegada"></div>
-            <div class="field"><label>Seguro escolar</label>
-              <select id="notif_seguro"><option value="">—</option><option>Se informó y se ACEPTÓ el seguro escolar</option>
-              <option>Se informó y NO se aceptó el seguro escolar</option><option>En espera de respuesta</option>
-              <option>No fue necesario / no aplicó</option></select>
-              <div class="hint">Hacer hincapié siempre en mencionar el seguro escolar; registre la actitud de los padres.</div></div>
             <div class="field span2"><label>Observaciones de la atención a padres</label>
-              <textarea id="notif_obs" placeholder="Hora de la llamada y de la respuesta, hora y forma en que llegaron los padres, si aceptaron o no el seguro escolar, y cualquier actitud durante o después del incidente…"></textarea></div>
+              <textarea id="notif_obs" placeholder="Hora de la llamada y de la respuesta, hora y forma en que llegaron los padres, y cualquier actitud durante o después del incidente…"></textarea></div>
           </div>
           <div class="field" style="margin-top:16px"><label>Canalización a servicios</label>
             <div class="chips">
@@ -677,7 +672,6 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
         <b>Interés Superior del Menor:</b> las medidas deben ser formativas, nunca humillantes.<br><br>
         <b>Reserva de identidad:</b> prohibido exponer nombres en actos públicos o redes sociales.<br><br>
         <b>Perspectiva de género e interculturalidad:</b> considere factores agravantes culturales o de género.
-        <span class="tel">☎ Seguro Escolar: <span id="aside-tel">—</span></span>
       </div>
     </aside>
   </div>
@@ -712,8 +706,6 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           <div class="field"><label>Ciclo escolar</label><input type="text" id="c_ciclo" placeholder="2024–2025"></div>
           <div class="field span2"><label>Domicilio del plantel</label><input type="text" id="c_dir"></div>
           <div class="field"><label>Teléfono de la escuela</label><input type="tel" id="c_tel"></div>
-          <div class="field"><label>Centro de atención telefónica / Seguro Escolar</label><input type="text" id="c_telSeguro" placeholder="Teléfonos del seguro escolar">
-            <div class="hint">Aparece en el documento impreso, conforme al formato oficial.</div></div>
         </div>
       </div>
 
@@ -782,7 +774,6 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
       <div class="card" style="opacity:1;transform:none">
         <div class="actions-bar">
           <button type="button" class="btn btn-gold" id="btn-save-cfg">💾 Guardar configuración</button>
-          <button type="button" class="btn btn-red" id="btn-wipe">🗑 Vaciar bitácora</button>
         </div>
       </div>
     </div>
@@ -873,7 +864,6 @@ const esc=s=>(s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','
 const DEFAULT_CFG={
   escuela:{nombre:'Escuela Secundaria General «Benito Juárez García»',cct:'20DES0001X',nivel:'Secundaria General',
     zona:'01',sector:'03',muni:'Oaxaca de Juárez, Oax.',ciclo:'2024–2025',dir:'',tel:'',
-    telSeguro:'(722) 232 48 45 · 232 47 60 · 232 47 96 · 232 47 73 · 232 31 78',
     autoridad:'Instituto Estatal de Educación Pública de Oaxaca'},
   directivos:[{id:1,nombre:'Mtra. María Ejemplo López',cargo:'Director(a) Escolar'}],
   docentes:[{id:1,nombre:'Prof. Juan Ejemplo Pérez',asignatura:'Formación Cívica y Ética'}],
@@ -892,7 +882,6 @@ const miIdentidad=()=>currentUser?(currentUser.nombre||currentUser.email)+(curre
 /* Guarda config compartida (solo mantiene en memoria hasta llamar a saveCfgRemoto) */
 function saveCfgRemoto(){return db.ref('config').set(cfg)}
 function saveRegistroRemoto(rec){return db.ref('reportes/'+currentUser.uid+'/'+rec.id).set(rec)}
-function borrarRegistroRemoto(id){return db.ref('reportes/'+currentUser.uid+'/'+id).remove()}
 
 const TIPOS={fisica:'Violencia física',verbal:'Violencia verbal',psicologica:'Violencia psicológica',digital:'Ciberacoso / violencia digital',
   sexual:'Violencia sexual',delito:'Presunto delito grave',sustancias:'Consumo de sustancias',patrimonial:'Robo / daño a bienes',
@@ -960,7 +949,7 @@ function collect(){
       nom:r.querySelector('.t_nom').value.trim(),cal:r.querySelector('.t_cal').value,res:r.querySelector('.t_res').checked})).filter(t=>t.nom),
     acc:checks('acc'),acc_detalle:g('acc_detalle'),
     notif_llamada:g('notif_llamada'),notif_respuesta:g('notif_respuesta'),notif_llegada:g('notif_llegada'),
-    notif_seguro:g('notif_seguro'),notif_obs:g('notif_obs'),
+    notif_obs:g('notif_obs'),
     canal:checks('canal'),canal_detalle:g('canal_detalle'),
     h_previas:g('h_previas'),h_compromisos:g('h_compromisos'),h_cumplimiento:g('h_cumplimiento'),
     g_alumno:g('g_alumno'),g_padres:g('g_padres'),g_escuela:g('g_escuela'),
@@ -973,7 +962,7 @@ function setCampo(id,v){const el=$(id);if(!el)return;el.value=v;el.dispatchEvent
 function fillForm(d){
   ['f_fecha','f_hora','f_fechaEnt','f_lugar','f_lugarDetalle','a_nombre','a_edad','a_grado','a_grupo','a_turno','a_lenguaCual','a_discapacidad',
    'p_nombre','p_parentesco','p_tel','n_descripcion','n_tipoOtro','n_autoridadDetalle','acc_detalle','notif_llamada','notif_respuesta','notif_llegada',
-   'notif_seguro','notif_obs','canal_detalle','h_previas','h_compromisos','h_cumplimiento','g_alumno','g_padres','g_escuela','qui_docente','qui_directivo',
+   'notif_obs','canal_detalle','h_previas','h_compromisos','h_cumplimiento','g_alumno','g_padres','g_escuela','qui_docente','qui_directivo',
    'qui_otro','persona_reporta','x_fecha','x_descripcion','x_observaciones','x_acuerdos'].forEach(id=>setVal(id,d[id]));
   document.querySelectorAll('input[name=modo]').forEach(r=>r.checked=r.value===d.modo);
   document.querySelectorAll('input[name=sexo]').forEach(r=>r.checked=r.value===d.sexo);
@@ -1014,6 +1003,10 @@ function validate(d){
   const req=[
     {key:'a_nombre',      id:'a_nombre',      label:'nombre del alumno'},
     {key:'fecha',         id:'f_fecha',       label:'fecha del incidente'},
+    {key:'hora',          id:'f_hora',        label:'hora del incidente'},
+    {key:'lugar',         id:'f_lugar',       label:'lugar del incidente'},
+    {key:'a_grado',       id:'a_grado',       label:'grado del alumno'},
+    {key:'a_grupo',       id:'a_grupo',       label:'grupo del alumno'},
     {key:'n_descripcion', id:'n_descripcion', label:'descripción de los hechos'}
   ];
   let firstInvalid=null;
@@ -1023,6 +1016,11 @@ function validate(d){
     f.classList.toggle('invalid',bad);
     if(bad){errs.push(label); if(!firstInvalid)firstInvalid=f;}
   });
+  // Tipificación: debe marcarse al menos un tipo de conducta
+  const tiposBox=$('chips-tipos');
+  const badTipos=!d.tipos||d.tipos.length===0;
+  if(tiposBox)tiposBox.classList.toggle('invalid-box',badTipos);
+  if(badTipos){errs.push('tipificación de la conducta (marque al menos una)'); if(!firstInvalid)firstInvalid=tiposBox;}
   if(!cfg.escuela.nombre){errs.push('datos de la escuela (Configuración)')}
   if(firstInvalid){firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});}
   return errs;
@@ -1092,7 +1090,6 @@ function buildDoc(d){
     <div class="doc-title">REPORTE DE INCIDENCIA</div>
   </div>
   <div class="doc-subtitle">Carta expedida por la Dirección Escolar</div>
-  ${e.telSeguro?`<div class="doc-seguro">☎ Centro de Atención Telefónica · Seguro Escolar: <b>${esc(e.telSeguro)}</b></div>`:''}
   <div class="doc-conf">🔒 DOCUMENTO ESTRICTAMENTE CONFIDENCIAL. Elaborado bajo el principio del Interés Superior del Menor y la reserva de identidad establecida en la Ley de Transparencia y Acceso a la Información Pública del Estado de Oaxaca. Prohibida su difusión en actos públicos o redes sociales.</div>
 
   <div class="doc-sec"><h3>1 · Control del reporte</h3>
@@ -1128,7 +1125,7 @@ function buildDoc(d){
     ${d.acc_detalle?`<div class="doc-box" style="margin-top:6px">${esc(d.acc_detalle)}</div>`:''}
     <div class="doc-kv" style="margin-top:10px">
       ${kv('Hora de llamada a padres',d.notif_llamada)}${kv('Hora de respuesta',d.notif_respuesta)}
-      ${kv('Hora de llegada',d.notif_llegada)}${kv('Seguro escolar',d.notif_seguro)}
+      ${kv('Hora de llegada',d.notif_llegada)}
     </div>
     ${d.notif_obs?`<div class="doc-box" style="margin-top:8px">${esc(d.notif_obs)}</div>`:''}
     <div class="doc-checks" style="margin-top:10px">${mark(CANALES,d.canal)}</div>
@@ -1211,7 +1208,6 @@ function renderHist(){
       <td><div class="row-acts" style="justify-content:flex-end">
         <button class="icon-btn" title="Ver / imprimir" onclick="verRegistro('${r.id}')">👁</button>
         <button class="icon-btn" title="Editar" onclick="editarRegistro('${r.id}')">✎</button>
-        <button class="icon-btn del" title="Eliminar" onclick="eliminarRegistro('${r.id}')">🗑</button>
       </div></td></tr>`).join('')}</tbody></table>
     ${rows.length!==regs.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regs.length} registros coinciden con la búsqueda.</p>`:''}`;
 }
@@ -1227,13 +1223,6 @@ window.editarRegistro=id=>{
   $('edit-badge').style.display='inline-block';$('edit-folio').textContent=r.folio;
   switchTab('form');toast(`✎ Editando el folio ${r.folio}. El folio no cambia al guardar.`);
   window.scrollTo({top:0,behavior:'smooth'});
-};
-window.eliminarRegistro=async id=>{
-  const r=regs.find(x=>x.id===id);if(!r)return;
-  if(confirm(`¿Eliminar definitivamente el registro con folio ${r.folio}?\n\nEl folio NO se reutiliza (conservación de la secuencia).`)){
-    try{await borrarRegistroRemoto(id);toast(`Registro ${r.folio} eliminado`,'err')}
-    catch(err){toast('No se pudo eliminar: '+err.message,'err')}
-  }
 };
 $('hist-search').oninput=renderHist;
 
@@ -1266,7 +1255,7 @@ $('import-file').onchange=e=>{
 function loadCfgForm(){
   const e=cfg.escuela;
   setVal('c_nombre',e.nombre);setVal('c_cct',e.cct);setVal('c_zona',e.zona);setVal('c_sector',e.sector);
-  setVal('c_muni',e.muni);setVal('c_ciclo',e.ciclo);setVal('c_dir',e.dir);setVal('c_tel',e.tel);setVal('c_telSeguro',e.telSeguro);
+  setVal('c_muni',e.muni);setVal('c_ciclo',e.ciclo);setVal('c_dir',e.dir);setVal('c_tel',e.tel);
   $('c_nivel').value=e.nivel&&[...$('c_nivel').options].some(o=>o.value===e.nivel)?e.nivel:'Otro';
   $('ia_on').checked=cfg.ia.on;
   $('ia_key').value=cfg.ia.apiKey||'';
@@ -1372,16 +1361,12 @@ $('btn-save-cfg').onclick=async()=>{
   cfg.escuela={nombre:$('c_nombre').value.trim(),cct:$('c_cct').value.trim(),nivel:$('c_nivel').value,
     zona:$('c_zona').value.trim(),sector:$('c_sector').value.trim(),muni:$('c_muni').value.trim(),
     ciclo:$('c_ciclo').value.trim(),dir:$('c_dir').value.trim(),tel:$('c_tel').value.trim(),
-    telSeguro:$('c_telSeguro').value.trim(),autoridad:cfg.escuela.autoridad||DEFAULT_CFG.escuela.autoridad};
+    autoridad:cfg.escuela.autoridad||DEFAULT_CFG.escuela.autoridad};
   if(!cfg.escuela.nombre)return toast('El nombre de la escuela es obligatorio','err');
   cfg.ia={on:$('ia_on').checked,apiKey:$('ia_key').value.trim(),model:$('ia_model').value,voz:vozOn};
   try{await saveCfgRemoto();updateAIvisibility();setModelTag();
     toast('✔ Configuración guardada. El membrete y Aleida se actualizaron para todo el personal.')}
   catch(err){toast('No se pudo guardar: '+err.message,'err')}};
-$('btn-wipe').onclick=()=>{
-  if(confirm('¿Vaciar TODA su bitácora personal? Esta acción no puede deshacerse y no afecta a otros profesores.'))
-  if(confirm('Confirmación final: se eliminarán todos SUS registros.'))
-    db.ref('reportes/'+currentUser.uid).remove().then(()=>toast('Bitácora vaciada','err')).catch(err=>toast('Error: '+err.message,'err'))};
 
 $('ia-show').onclick=()=>{const k=$('ia_key');k.type=k.type==='password'?'text':'password'};
 $('btn-test-ia').onclick=async()=>{
@@ -1420,7 +1405,6 @@ function renderAll(){
   $('mh-cct').textContent=e.cct||'—';$('mh-zona').textContent=e.zona||'—';$('mh-sector').textContent=e.sector||'—';
   $('mh-nivel').textContent=e.nivel?'Nivel: '+e.nivel:'';$('mh-ciclo').textContent=e.ciclo||'—';$('mh-muni').textContent=e.muni||'';
   $('mh-folio').textContent=pad(nextFolio);
-  $('aside-tel').textContent=e.telSeguro||'—';
   $('st-total').textContent=regs.length;
   $('st-ultimo').textContent=regs.length?regs[0].folio:'—';
   $('st-directivos').textContent=cfg.directivos.length;$('st-docentes').textContent=cfg.docentes.length;
@@ -1785,8 +1769,7 @@ function parseGrado(t){
 function parseTurno(t){
   const bajo=t.toLowerCase();
   if(bajo.includes('matut'))return 'Matutino';
-  if(bajo.includes('vesper'))return 'Vespertino';
-  if(bajo.includes('completo')||bajo.includes('extendido'))return 'Tiempo completo';
+  if(bajo.includes('mixt'))return 'Mixto';
   return null;
 }
 function parseParentesco(t){
@@ -1811,14 +1794,6 @@ function parseAcc(t){
   const mapa={separacion:['separ'],contencion:['conten'],primeros:['primeros','auxilio'],medico:['medic','enfermer','doctor','clinic','clínic'],resguardo:['resguard'],otra:['otra']};
   const vals=Object.keys(mapa).filter(k=>mapa[k].some(w=>bajo.includes(w)));
   return vals.length?vals:null;
-}
-function parseSeguro(t){
-  const bajo=t.toLowerCase();
-  if(bajo.includes('no acept')||bajo.includes('rechaz'))return 'Se informó y NO se aceptó el seguro escolar';
-  if(bajo.includes('espera'))return 'En espera de respuesta';
-  if(bajo.includes('no aplic')||bajo.includes('no fue neces')||bajo==='no')return 'No fue necesario / no aplicó';
-  if(bajo.includes('acept')||bajo.includes('sí')||bajo.includes('si'))return 'Se informó y se ACEPTÓ el seguro escolar';
-  return null;
 }
 function parseCanal(t){
   const bajo=t.toLowerCase();
@@ -1888,7 +1863,7 @@ const PASOS=[
   apply:v=>{setCampo('a_grado',v.g);setCampo('a_grupo',v.gr)},
   invalida:'Por ejemplo: dos B, o uno A.'},
  {campo:'a_turno',
-  pregunta:'¿Turno del alumno? Matutino, vespertino, o tiempo completo.',
+  pregunta:'¿Turno del alumno? Matutino o mixto.',
   ok:v=>`✔ Turno: ${v}`, parse:t=>parseTurno(t),
   invalida:'Di: matutino, vespertino o tiempo completo.'},
  {campo:'a_lenguaCual',
@@ -1962,10 +1937,6 @@ const PASOS=[
   parse:t=>{const hs=t.match(/\d{1,2}:\d{2}/g);return hs&&hs.length?hs.slice(0,3):null},
   apply:v=>{setCampo('notif_llamada',v[0]||'');setCampo('notif_respuesta',v[1]||'');setCampo('notif_llegada',v[2]||'')},
   invalida:'Di las horas en formato como diez veinte, diez treinta y cinco, once cero cinco.'},
- {campo:'notif_seguro',
-  pregunta:'¿Aceptaron el seguro escolar? Aceptó, no aceptó, en espera, o no aplicó. Recuerde siempre hacer hincapié en el seguro escolar.',
-  ok:v=>`✔ Seguro escolar: ${v}`, parse:t=>parseSeguro(t),
-  invalida:'Di: aceptó, no aceptó, en espera o no aplicó.'},
  {campo:'notif_obs',
   pregunta:'Observaciones de la atención a los padres: cómo llegaron, su actitud durante y después del incidente, acuerdos verbales. Opcional.',
   ok:()=>'✔ Observaciones registradas',
@@ -2186,7 +2157,8 @@ function updateChecklist(){
   });
 }
 document.getElementById('rep-form').addEventListener('input',()=>{updateChecklist();
-  document.querySelectorAll('.field.invalid').forEach(f=>f.classList.remove('invalid'))});
+  document.querySelectorAll('.field.invalid').forEach(f=>f.classList.remove('invalid'));
+  $('chips-tipos').classList.remove('invalid-box')});
 
 /* Tabs */
 function switchTab(name){
