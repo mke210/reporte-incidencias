@@ -960,7 +960,9 @@ function collect(){
 function setVal(id,v){$(id).value=v||''}
 function setCampo(id,v){const el=$(id);if(!el)return;el.value=v;el.dispatchEvent(new Event('input'))}
 function fillForm(d){
-  ['f_fecha','f_hora','f_fechaEnt','f_lugar','f_lugarDetalle','a_nombre','a_edad','a_grado','a_grupo','a_turno','a_lenguaCual','a_discapacidad',
+  setVal('f_fecha',d.fecha);setVal('f_hora',d.hora);setVal('f_fechaEnt',d.fechaEnt);
+  setVal('f_lugar',d.lugar);setVal('f_lugarDetalle',d.lugarDetalle);
+  ['a_nombre','a_edad','a_grado','a_grupo','a_turno','a_lenguaCual','a_discapacidad',
    'p_nombre','p_parentesco','p_tel','n_descripcion','n_tipoOtro','n_autoridadDetalle','acc_detalle','notif_llamada','notif_respuesta','notif_llegada',
    'notif_obs','canal_detalle','h_previas','h_compromisos','h_cumplimiento','g_alumno','g_padres','g_escuela','qui_docente','qui_directivo',
    'qui_otro','persona_reporta','x_fecha','x_descripcion','x_observaciones','x_acuerdos'].forEach(id=>setVal(id,d[id]));
