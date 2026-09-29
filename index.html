@@ -1181,14 +1181,49 @@ function renderAula(){
       <td title="Identidad reservada en vistas públicas">${esc(mask(r.data.alumno||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
       <td style="max-width:280px">${esc((r.data.incidente||'').slice(0,90))}${(r.data.incidente||'').length>90?'…':''}</td>
       <td><div class="row-acts" style="justify-content:flex-end">
-        <button class="icon-btn" title="Ver completo" onclick="verRegistroAula('${r.id}')">👁</button>
+        <button class="icon-btn" title="Ver / imprimir" onclick="verRegistroAula('${r.id}')">👁</button>
         <button class="icon-btn" title="Editar" onclick="editarRegistroAula('${r.id}')">✎</button>
       </div></td></tr>`).join('')}</tbody></table>
     ${rows.length!==regsAula.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regsAula.length} registros coinciden con la búsqueda.</p>`:''}`;
 }
+function buildDocAula(d){
+  const e=cfg.escuela;
+  return `
+  <div class="doc-topline">${esc(e.autoridad||'Autoridad Educativa Estatal')} · ${esc(e.nivel||'')}</div>
+  <div class="doc-inst">${esc(e.nombre||'Nombre de la escuela')}</div>
+  <div class="doc-meta">CCT: <b>${esc(e.cct||'—')}</b> · Ciclo Escolar: ${esc(e.ciclo||'—')}</div>
+  <div class="doc-title-row">
+    <div class="doc-folio">REGISTRO<b>AULA</b></div>
+    <div class="doc-title">REPORTE DE AULA</div>
+  </div>
+  <div class="doc-subtitle">Registro de falta cotidiana dentro del salón de clases</div>
+  <div class="doc-conf" style="background:#eef4ee;border-left-color:var(--green-700);color:#1f4d2e">📋 Este documento es un <b>REPORTE DE AULA</b>, para el seguimiento de faltas cotidianas y menores del salón de clases. No sustituye un Reporte de Incidencia formal.</div>
+
+  <div class="doc-sec"><h3>Datos del reporte</h3>
+    <div class="doc-kv">
+      <dt>Fecha</dt><dd>${esc(d.fecha)||'—'}</dd>
+      <dt>Grado y grupo</dt><dd>${esc([d.grado,d.grupo].filter(Boolean).join(' · '))||'—'}</dd>
+      <dt>Alumno(a) que comete la falta</dt><dd>${esc(d.alumno)||'—'}</dd>
+      <dt>Profesor(a) responsable</dt><dd>${esc(d.responsable)||'—'}</dd>
+    </div></div>
+
+  <div class="doc-sec"><h3>Incidente / falta cometida</h3>
+    <div class="doc-box">${esc(d.incidente)||'—'}</div></div>
+
+  <div class="sigs">
+    <div class="sig"><div class="line"></div><b>Nombre y firma del profesor(a) responsable</b><i>${esc(d.responsable||'')}</i></div>
+  </div>
+
+  <div class="doc-legal">Reporte de aula · ${esc(e.nombre||'')}</div>`;
+}
 window.verRegistroAula=id=>{
   const r=regsAula.find(x=>x.id===id);if(!r)return;
-  alert(`Fecha: ${r.data.fecha||'—'}\nGrado y grupo: ${r.data.grado||'—'} "${r.data.grupo||'—'}"\nAlumno(a): ${r.data.alumno||'—'}\nProfesor(a) responsable: ${r.data.responsable||'—'}\n\nIncidente:\n${r.data.incidente||'—'}`);
+  previewMode='view-aula';
+  $('doc').innerHTML=buildDocAula(r.data);
+  $('ov-tag').textContent='REPORTE DE AULA · GUARDADO';
+  $('overlay').classList.add('open');
+  document.body.classList.add('preview-open');
+  document.body.style.overflow='hidden';
 };
 window.editarRegistroAula=id=>{
   const r=regsAula.find(x=>x.id===id);if(!r)return;
@@ -1330,7 +1365,7 @@ function closePreview(){
 $('ov-close').onclick=closePreview;
 $('ov-print').onclick=()=>window.print();
 $('ov-save').onclick=async()=>{
-  if(previewMode==='view'){toast('Este registro ya está guardado. Use ✎ Editar en la bitácora para modificarlo.');return}
+  if(previewMode==='view'||previewMode==='view-aula'){toast('Este registro ya está guardado. Use ✎ Editar para modificarlo.');return}
   if(await guardarRegistro())closePreview();
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});
