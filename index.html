@@ -697,18 +697,30 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           <div class="field"><label>Profesor(a) responsable</label>
             <input type="text" id="au_responsable" readonly style="background:var(--gold-paper);font-weight:600"></div>
           <div class="field span3"><label>Incidente / falta cometida <span class="req">*</span></label>
-            <div class="chips" id="chips-au-rapidas">
-              <label class="chip" data-txt="No entregó tarea o trabajo"><span>No entregó tarea</span></label>
-              <label class="chip" data-txt="Interrumpe constantemente la clase"><span>Interrumpe la clase</span></label>
-              <label class="chip" data-txt="No trajo material de trabajo"><span>Falta de material</span></label>
-              <label class="chip" data-txt="Uso de celular sin autorización"><span>Uso de celular</span></label>
-              <label class="chip" data-txt="Falta de respeto a un compañero(a)"><span>Falta de respeto (compañero)</span></label>
-              <label class="chip" data-txt="Falta de respeto al docente"><span>Falta de respeto (docente)</span></label>
-              <label class="chip" data-txt="Salió del salón sin autorización"><span>Salió sin permiso</span></label>
-              <label class="chip" data-txt="Agresión verbal a un compañero(a)"><span>Agresión verbal</span></label>
-            </div>
-            <textarea id="au_incidente" placeholder="Describa brevemente lo ocurrido (puede tocar una etiqueta de arriba para completarlo más rápido)"></textarea>
-            <div class="hint">Toque una etiqueta para agregarla al texto; puede tocar varias y seguir editando a mano.</div></div>
+            <select id="au_tipo">
+              <option value="">— Seleccionar —</option>
+              <option>No entregó tarea o trabajo</option>
+              <option>Interrumpe constantemente la clase</option>
+              <option>No trajo material de trabajo</option>
+              <option>Uso de celular sin autorización</option>
+              <option>Falta de respeto a un compañero(a)</option>
+              <option>Falta de respeto al docente</option>
+              <option>Salió del salón sin autorización</option>
+              <option>Agresión verbal a un compañero(a)</option>
+              <option>Se duerme en clase</option>
+              <option value="Otros">Otros (especificar)</option>
+            </select></div>
+          <div class="field span3" id="au_tipoOtro_wrap" style="display:none">
+            <label>Especifique el incidente</label>
+            <input type="text" id="au_tipoOtro" placeholder="Escriba de qué se trata"></div>
+          <div class="field span3">
+            <label>Descripción de los hechos <span class="req">*</span></label>
+            <textarea id="au_incidente" rows="6" style="min-height:140px" placeholder="Describa lo ocurrido con el mayor detalle posible…"></textarea>
+            <div class="hint">
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-mic-aula" style="padding:.25rem .6rem;font-size:.72rem">🎤 Dictar</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-ai-narr-aula" style="padding:.25rem .6rem;font-size:.72rem">✨ Aleida: mejorar redacción · 3 opciones</button>
+              Aleida puede ayudarle a redactar o pulir esta descripción para que quede clara y profesional.
+            </div></div>
         </div>
         <div class="actions-bar">
           <button type="button" class="btn btn-gold" id="btn-save-aula">💾 Guardar reporte de aula</button>
@@ -1116,29 +1128,52 @@ async function guardarRegistro(){
 }
 
 /* ═══════════════ REPORTES DE AULA (rápidos) ═══════════════ */
-let regsAula=[], editIdAula=null;
+let regsAula=[], editIdAula=null, nextFolioAula=1;
+const pad3=n=>String(n).padStart(3,'0');
 function saveRegistroAulaRemoto(rec){return db.ref('reportesAula/'+currentUser.uid+'/'+rec.id).set(rec)}
+function siguienteFolioAulaDe(uid){
+  return db.ref('usuarios/'+uid+'/proximoFolioAula').transaction(v=>(v||1)+1).then(res=>{
+    const nuevo=res.snapshot.val()||2;
+    if(currentUser&&uid===currentUser.uid)nextFolioAula=nuevo;
+    return nuevo-1; // folio recién asignado
+  });
+}
 function collectAula(){
   const g=id=>$(id).value.trim();
+  const tipo=g('au_tipo');
   return {fecha:g('au_fecha'),grado:g('au_grado'),grupo:g('au_grupo'),alumno:g('au_alumno'),
-    responsable:g('au_responsable'),incidente:g('au_incidente')};
+    responsable:g('au_responsable'),tipo,tipoOtro:tipo==='Otros'?g('au_tipoOtro'):'',incidente:g('au_incidente')};
 }
+function tipoAulaLabel(d){
+  if(!d.tipo)return '—';
+  return d.tipo==='Otros'?(d.tipoOtro||'Otros'):d.tipo;
+}
+$('au_tipo').onchange=()=>{
+  $('au_tipoOtro_wrap').style.display=$('au_tipo').value==='Otros'?'':'none';
+};
 function resetFormAula(){
   editIdAula=null;
   $('au_fecha').value=new Date().toISOString().slice(0,10);
   $('au_grado').value='3°';$('au_grupo').value='';$('au_alumno').value='';$('au_incidente').value='';
+  $('au_tipo').value='';$('au_tipoOtro').value='';$('au_tipoOtro_wrap').style.display='none';
   $('au_responsable').value=miIdentidad();
   document.querySelectorAll('#aula-form .field.invalid').forEach(f=>f.classList.remove('invalid'));
 }
 function validateAula(d){
   const errs=[];let firstInvalid=null;
   [['fecha','au_fecha','fecha'],['grado','au_grado','grado'],['grupo','au_grupo','grupo'],
-   ['alumno','au_alumno','nombre del alumno(a)'],['incidente','au_incidente','incidente / falta cometida']]
+   ['alumno','au_alumno','nombre del alumno(a)'],['tipo','au_tipo','incidente / falta cometida'],
+   ['incidente','au_incidente','descripción de los hechos']]
    .forEach(([key,id,label])=>{
     const f=$(id).closest('.field');const bad=!d[key];
     f.classList.toggle('invalid',bad);
     if(bad){errs.push(label);if(!firstInvalid)firstInvalid=f;}
   });
+  if(d.tipo==='Otros'){
+    const f=$('au_tipoOtro').closest('.field');const bad=!d.tipoOtro;
+    f.classList.toggle('invalid',bad);
+    if(bad){errs.push('especificación del incidente');if(!firstInvalid)firstInvalid=f;}
+  }
   if(firstInvalid)firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});
   return errs;
 }
@@ -1155,11 +1190,13 @@ async function guardarRegistroAula(){
       if(!rec){toast('El registro ya no existe.','err');return false}
       const actualizado=Object.assign({},rec,{data:d,updatedAt:new Date().toISOString()});
       await saveRegistroAulaRemoto(actualizado);
-      toast('✔ Reporte de aula actualizado');
+      toast(`✔ Reporte de aula ${rec.folio||''} actualizado`);
     }else{
-      const rec={id:db.ref('reportesAula/'+currentUser.uid).push().key,savedAt:new Date().toISOString(),data:d};
+      const folioNum=await siguienteFolioAulaDe(currentUser.uid);
+      const folio=pad3(folioNum);
+      const rec={id:db.ref('reportesAula/'+currentUser.uid).push().key,folio,savedAt:new Date().toISOString(),data:d};
       await saveRegistroAulaRemoto(rec);
-      toast('✔ Reporte de aula guardado');
+      toast(`✔ Reporte de aula ${folio} guardado`);
     }
     resetFormAula();
     return true;
@@ -1168,32 +1205,41 @@ async function guardarRegistroAula(){
     return false;
   }finally{guardandoAula=false}
 }
+async function migrarFoliosAula(v){
+  const faltantes=Object.values(v).filter(r=>!r.folio).sort((a,b)=>(a.savedAt||'').localeCompare(b.savedAt||''));
+  for(const r of faltantes){
+    const n=await siguienteFolioAulaDe(currentUser.uid);
+    await db.ref('reportesAula/'+currentUser.uid+'/'+r.id+'/folio').set(pad3(n));
+  }
+  return faltantes.length>0;
+}
 function renderAula(){
   const q=($('aula-search').value||'').toLowerCase();
   const rows=regsAula.filter(r=>!q||JSON.stringify(r.data).toLowerCase().includes(q));
   $('tab-count-aula').textContent=regsAula.length;
   if(!regsAula.length){$('aula-body').innerHTML='<p style="font-size:.85rem;color:var(--muted);padding:20px 0">Aún no hay reportes de aula. Use el formulario de arriba — toma solo unos segundos.</p>';return}
   $('aula-body').innerHTML=`<table class="hist"><thead><tr>
-    <th>Fecha</th><th>Grado y grupo</th><th>Alumno(a)</th><th>Incidente</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
+    <th>No.</th><th>Fecha</th><th>Grado y grupo</th><th>Alumno(a)</th><th>Incidente</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
     ${rows.map(r=>`<tr>
+      <td><span class="folio-tag">${esc(r.folio||'—')}</span></td>
       <td>${esc(r.data.fecha||'—')}</td>
       <td>${esc(r.data.grado||'—')} "${esc(r.data.grupo||'—')}"</td>
       <td title="Identidad reservada en vistas públicas">${esc(mask(r.data.alumno||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
-      <td style="max-width:280px">${esc((r.data.incidente||'').slice(0,90))}${(r.data.incidente||'').length>90?'…':''}</td>
+      <td style="max-width:260px">${esc(tipoAulaLabel(r.data))}</td>
       <td><div class="row-acts" style="justify-content:flex-end">
         <button class="icon-btn" title="Ver / imprimir" onclick="verRegistroAula('${r.id}')">👁</button>
         <button class="icon-btn" title="Editar" onclick="editarRegistroAula('${r.id}')">✎</button>
       </div></td></tr>`).join('')}</tbody></table>
     ${rows.length!==regsAula.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regsAula.length} registros coinciden con la búsqueda.</p>`:''}`;
 }
-function buildDocAula(d){
+function buildDocAula(d,folio){
   const e=cfg.escuela;
   return `
   <div class="doc-topline">${esc(e.autoridad||'Autoridad Educativa Estatal')} · ${esc(e.nivel||'')}</div>
   <div class="doc-inst">${esc(e.nombre||'Nombre de la escuela')}</div>
   <div class="doc-meta">CCT: <b>${esc(e.cct||'—')}</b> · Ciclo Escolar: ${esc(e.ciclo||'—')}</div>
   <div class="doc-title-row">
-    <div class="doc-folio">REGISTRO<b>AULA</b></div>
+    <div class="doc-folio">REGISTRO AULA<b>${esc(folio||'—')}</b></div>
     <div class="doc-title">REPORTE DE AULA</div>
   </div>
   <div class="doc-subtitle">Registro de falta cotidiana dentro del salón de clases</div>
@@ -1204,23 +1250,24 @@ function buildDocAula(d){
       <dt>Fecha</dt><dd>${esc(d.fecha)||'—'}</dd>
       <dt>Grado y grupo</dt><dd>${esc([d.grado,d.grupo].filter(Boolean).join(' · '))||'—'}</dd>
       <dt>Alumno(a) que comete la falta</dt><dd>${esc(d.alumno)||'—'}</dd>
+      <dt>Incidente / falta cometida</dt><dd>${esc(tipoAulaLabel(d))}</dd>
       <dt>Profesor(a) responsable</dt><dd>${esc(d.responsable)||'—'}</dd>
     </div></div>
 
-  <div class="doc-sec"><h3>Incidente / falta cometida</h3>
+  <div class="doc-sec"><h3>Descripción de los hechos</h3>
     <div class="doc-box">${esc(d.incidente)||'—'}</div></div>
 
   <div class="sigs">
     <div class="sig"><div class="line"></div><b>Nombre y firma del profesor(a) responsable</b><i>${esc(d.responsable||'')}</i></div>
   </div>
 
-  <div class="doc-legal">Reporte de aula · ${esc(e.nombre||'')}</div>`;
+  <div class="doc-legal">Reporte de aula ${esc(folio||'')} · ${esc(e.nombre||'')}</div>`;
 }
 window.verRegistroAula=id=>{
   const r=regsAula.find(x=>x.id===id);if(!r)return;
   previewMode='view-aula';
-  $('doc').innerHTML=buildDocAula(r.data);
-  $('ov-tag').textContent='REPORTE DE AULA · GUARDADO';
+  $('doc').innerHTML=buildDocAula(r.data,r.folio);
+  $('ov-tag').textContent=`REPORTE DE AULA ${r.folio||''} · GUARDADO`;
   $('overlay').classList.add('open');
   document.body.classList.add('preview-open');
   document.body.style.overflow='hidden';
@@ -1230,21 +1277,16 @@ window.editarRegistroAula=id=>{
   editIdAula=id;
   $('au_fecha').value=r.data.fecha||'';$('au_grado').value=r.data.grado||'';$('au_grupo').value=r.data.grupo||'';
   $('au_alumno').value=r.data.alumno||'';$('au_incidente').value=r.data.incidente||'';
+  $('au_tipo').value=r.data.tipo||'';$('au_tipoOtro').value=r.data.tipoOtro||'';
+  $('au_tipoOtro_wrap').style.display=r.data.tipo==='Otros'?'':'none';
   $('au_responsable').value=r.data.responsable||miIdentidad();
   switchTab('aula');
-  toast('✎ Editando el reporte de aula');
+  toast(`✎ Editando el reporte de aula ${r.folio||''}`);
   window.scrollTo({top:0,behavior:'smooth'});
 };
 $('btn-save-aula').onclick=()=>guardarRegistroAula();
 $('btn-clear-aula').onclick=()=>resetFormAula();
 $('aula-search').oninput=renderAula;
-document.querySelectorAll('#chips-au-rapidas .chip').forEach(chip=>{
-  chip.onclick=()=>{
-    const ta=$('au_incidente'),txt=chip.dataset.txt;
-    ta.value=ta.value.trim()?ta.value.trim()+'; '+txt:txt;
-    ta.dispatchEvent(new Event('input'));
-  };
-});
 document.getElementById('aula-form').addEventListener('input',()=>{
   document.querySelectorAll('#aula-form .field.invalid').forEach(f=>f.classList.remove('invalid'));
 });
@@ -1780,13 +1822,13 @@ function mostrarOpciones(ops,onPick){
   });
   $('ai-msgs').scrollTop=$('ai-msgs').scrollHeight;
 }
-async function mejorarNarrativa(t){
+async function mejorarNarrativa(t,campo='n_descripcion',tab='form'){
   const ind=aiAdd('bot typing','✍ Redactando tres versiones objetivas…');
   try{
     const ops=await pedirOpciones(t);ind.remove();
     mostrarOpciones(ops,(i,op)=>{
-      setCampo('n_descripcion',op);
-      switchTab('form');
+      setCampo(campo,op);
+      switchTab(tab);
       toast('✔ Opción '+(i+1)+' insertada en el reporte');
     });
     hablar('Preparé tres versiones objetivas de la narrativa. Elige la que prefieras con el botón insertar.');
@@ -2322,6 +2364,15 @@ $('btn-ai-narr').onclick=()=>{
   if(!t){toast('Escriba o dicte primero los hechos en la narrativa; luego presione «Mejorar redacción».');return}
   mejorarNarrativa(t);
 };
+$('btn-mic-aula').onclick=function(){dictarA($('au_incidente'),this,{})};
+$('btn-ai-narr-aula').onclick=()=>{
+  if(!guardaGuia())return;
+  if(!aiOK()){toast('Configure la API key del asistente en ⚙ Configuración → Asistente IA.','err');switchTab('config');return}
+  aiOpen();
+  const t=$('au_incidente').value.trim();
+  if(!t){toast('Escriba o dicte primero los hechos; luego presione «Mejorar redacción».');return}
+  mejorarNarrativa(t,'au_incidente','aula');
+};
 
 /* ═══════════════ INTERACCIÓN VIVA ═══════════════ */
 function updateAlerta(){const on=checks('tipos').some(t=>t==='sexual'||t==='delito');$('alerta-fiscalia').classList.toggle('on',on)}
@@ -2446,8 +2497,9 @@ function escucharDatos(){
   });
   // Reportes de aula (rápidos): también privados, solo del usuario en sesión
   refReportesAula=db.ref('reportesAula/'+currentUser.uid);
-  refReportesAula.on('value',snap=>{
+  refReportesAula.on('value',async snap=>{
     const v=snap.val()||{};
+    if(await migrarFoliosAula(v))return; // ya asignó folios faltantes; el listener se vuelve a disparar
     regsAula=Object.values(v).sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||''));
     renderAula();
   });
@@ -2456,6 +2508,7 @@ function escucharDatos(){
   refMiUsuario.on('value',snap=>{
     const u=snap.val();if(!u)return;
     nextFolio=u.proximoFolio||1;
+    nextFolioAula=u.proximoFolioAula||1;
     currentUser.rol=u.rol||currentUser.rol;
     currentUser.nombre=u.nombre||currentUser.nombre;
     currentUser.cargo=u.cargo||'';
@@ -2483,7 +2536,7 @@ auth.onAuthStateChanged(async user=>{
     let datos=snap.val();
     if(!datos){
       if(user.email.toLowerCase()===ADMIN_MAESTRO.toLowerCase()){
-        datos={email:user.email,nombre:'Administrador',rol:'admin',activo:true,proximoFolio:1};
+        datos={email:user.email,nombre:'José Emmanuel Chan Ibáñez',rol:'admin',activo:true,proximoFolio:1};
         await db.ref('usuarios/'+user.uid).set(datos);
       }else{
         await auth.signOut();
