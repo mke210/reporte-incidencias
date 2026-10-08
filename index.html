@@ -795,7 +795,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
           <div id="cfg-directivos"></div>
           <div class="add-row">
             <input type="text" id="nd_nombre" placeholder="Nombre completo con grado (Mtro./Lic.)">
-            <select id="nd_cargo" style="max-width:220px"><option>Director(a) Escolar</option><option>Subdirector(a)</option><option>Supervisor(a)</option></select>
+            <select id="nd_cargo" style="max-width:300px"></select>
             <button type="button" class="btn btn-green btn-sm" id="btn-add-dir">+ Dar de alta</button>
           </div>
         </div>
@@ -1489,8 +1489,21 @@ function loadCfgForm(){
   $('ia_model').value=GROQ_MODELS.some(m=>m.id===cfg.ia.model)?cfg.ia.model:'llama-3.3-70b-versatile';
   renderCfgLists();
 }
+const CARGOS_DIR=['Director(a) Escolar','Subdirector(a) encargado(a) de la Dirección','Subdirector(a) del turno matutino','Subdirector(a) del turno mixto','Subdirector(a)','Supervisor(a)'];
+function opcionesCargo(sel){
+  const lista=CARGOS_DIR.includes(sel)||!sel?CARGOS_DIR:[sel,...CARGOS_DIR];
+  return lista.map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('');
+}
+window.cambiarCargoDir=(id,cargo)=>{
+  if(!esAdmin())return;
+  const d=cfg.directivos.find(x=>x.id===id);if(!d)return;
+  d.cargo=cargo;renderSelects();
+  toast('✎ Cargo cambiado. Presione «Guardar configuración» para aplicarlo.');
+};
 function renderCfgLists(){
-  $('cfg-directivos').innerHTML=cfg.directivos.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b><span>${esc(d.cargo)}</span>
+  $('nd_cargo').innerHTML=opcionesCargo($('nd_cargo').value||'Director(a) Escolar');
+  $('cfg-directivos').innerHTML=cfg.directivos.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b>
+    <select title="Cargo" onchange="cambiarCargoDir(${d.id},this.value)" style="padding:.35rem .5rem;border:1px solid var(--line);border-radius:6px;background:#fffef9;font-size:.78rem;max-width:300px">${opcionesCargo(d.cargo)}</select>
     <button class="icon-btn del x" onclick="delPersona('directivos',${d.id})">✕</button></div>`).join('')||'<p style="font-size:.82rem;color:var(--muted)">Sin directivos registrados.</p>';
   $('cfg-docentes').innerHTML=cfg.docentes.map(d=>`<div class="persona-item"><b>${esc(d.nombre)}</b><span>${esc(d.asignatura||'Sin asignatura')}</span>
     <button class="icon-btn del x" onclick="delPersona('docentes',${d.id})">✕</button></div>`).join('')||'<p style="font-size:.82rem;color:var(--muted)">Sin docentes registrados.</p>';
