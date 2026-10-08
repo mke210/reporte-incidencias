@@ -1567,7 +1567,11 @@ $('btn-add-user').onclick=async()=>{
   $('btn-add-user').disabled=true;
   try{
     if(editandoUsuarioUid){
-      await db.ref('usuarios/'+editandoUsuarioUid).update({nombre,cargo,rol});
+      const ed=usuarios[editandoUsuarioUid]||{};
+      const esMaestro=(ed.email||'').toLowerCase()===ADMIN_MAESTRO.toLowerCase();
+      const rolFinal=(esMaestro||editandoUsuarioUid===currentUser.uid)?'admin':rol;
+      if(rolFinal!==rol)toast('ℹ No puede quitarse a sí mismo (ni al administrador principal) el rol de administrador.');
+      await db.ref('usuarios/'+editandoUsuarioUid).update({nombre,cargo,rol:rolFinal});
       toast(`✔ Datos de ${nombre} actualizados`);
       cancelarEdicionUsuario();
     }else{
@@ -2509,7 +2513,7 @@ function escucharDatos(){
     const u=snap.val();if(!u)return;
     nextFolio=u.proximoFolio||1;
     nextFolioAula=u.proximoFolioAula||1;
-    currentUser.rol=u.rol||currentUser.rol;
+    currentUser.rol=(currentUser.email||'').toLowerCase()===ADMIN_MAESTRO.toLowerCase()?'admin':(u.rol||currentUser.rol);
     currentUser.nombre=u.nombre||currentUser.nombre;
     currentUser.cargo=u.cargo||'';
     $('ub-email').textContent=miIdentidad();
@@ -2543,6 +2547,12 @@ auth.onAuthStateChanged(async user=>{
         mostrarLogin('Su cuenta no está autorizada todavía. Pida a un administrador que lo dé de alta.');
         return;
       }
+    }
+    // El administrador maestro SIEMPRE conserva el rol de administrador
+    if(user.email.toLowerCase()===ADMIN_MAESTRO.toLowerCase()&&(datos.rol!=='admin'||datos.activo===false)){
+      await db.ref('usuarios/'+user.uid).update({rol:'admin',activo:true});
+      datos.rol='admin';datos.activo=true;
+      toast('🔑 Se restauró su rol de administrador.');
     }
     if(datos.activo===false){
       await auth.signOut();
