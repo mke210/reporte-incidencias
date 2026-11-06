@@ -1,5 +1,5 @@
-const CACHE='incidencias-v2';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./escudo.png','./icono-192.png','./icono-512.png'];
+const CACHE='incidencias-v3';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./escudo.png','./icono-192.png','./icono-512.png','./icono-maskable-512.png'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
