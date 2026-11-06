@@ -79,7 +79,9 @@ input,select,textarea{font-family:inherit;font-size:.94rem;color:var(--ink)}
 
 /* ============ TABS ============ */
 .tabs{position:sticky;top:0;z-index:40;background:rgba(251,248,240,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.tabs-inner{max-width:1240px;margin:0 auto;padding:0 28px;display:flex;gap:.25rem}
+.tabs-inner{max-width:1240px;margin:0 auto;padding:0 28px;display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:thin}
+.tabs-inner .tab{flex:none;white-space:nowrap}
+@media(max-width:600px){.tabs-inner{padding:0 12px}}
 .tab{
   background:none;border:none;padding:.95rem 1.3rem;font-family:var(--disp);font-weight:700;font-size:.95rem;
   color:var(--muted);position:relative;transition:color .2s;letter-spacing:.02em;
@@ -109,7 +111,7 @@ main{max-width:1240px;margin:0 auto;padding:30px 28px 90px}
 .card-body{padding:22px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 22px}
-.span2{grid-column:1/-1}
+.span2,.span3{grid-column:1/-1}
 @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
 
 .field label{display:block;font-weight:600;font-size:.83rem;margin-bottom:.35rem;color:var(--green-900)}
@@ -350,6 +352,120 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 .userbar button{background:none;border:1px solid rgba(244,228,189,.4);color:var(--gold-soft);border-radius:6px;padding:.25rem .6rem;font-size:.72rem}
 .userbar button:hover{background:var(--gold);color:#241a04}
 
+
+/* ============ BITÁCORA DISCIPLINARIA ============ */
+.disc-intro{display:flex;gap:18px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);
+  border-left:5px solid var(--gold);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.disc-intro h2{font-family:var(--disp);font-size:1.15rem;color:var(--green-900);margin-bottom:.25rem}
+.disc-intro p{font-size:.82rem;color:var(--muted);line-height:1.5;max-width:780px}
+.semaforo-mini{display:flex;gap:6px;flex:none}
+.semaforo-mini i{width:16px;height:16px;border-radius:50%;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.subtab{padding:.5rem 1rem;border:1px solid var(--line);border-radius:99px;background:#fff;font-weight:600;font-size:.82rem;color:var(--green-900);cursor:pointer;transition:.18s}
+.subtab:hover{border-color:var(--gold)}
+.subtab.active{background:var(--green-900);color:var(--gold-soft);border-color:var(--green-900)}
+.subtab .count{display:inline-block;min-width:1.4em;padding:0 .35em;margin-left:.25em;border-radius:99px;background:var(--gold-soft);color:var(--gold-dark);font-size:.7rem;text-align:center}
+.dsub{display:none;animation:panelIn .3s ease both}
+.dsub.active{display:block}
+.hist-tools input.tool-sel{flex:none;min-width:0;width:auto}
+.tool-sel{padding:.6rem .8rem;border:1px solid var(--line);border-radius:8px;background:#fffef9;font:inherit;font-size:.85rem}
+.edit-pill{display:inline-block;font-size:.66rem;background:var(--gold);color:#241a04;padding:.12rem .5rem;border-radius:99px;margin-left:6px;vertical-align:middle;letter-spacing:.04em}
+.niv-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:620px){.niv-chips{grid-template-columns:1fr 1fr}}
+.niv{position:relative;cursor:pointer}
+.niv input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.niv span{display:block;text-align:center;padding:.6rem .4rem;border-radius:8px;font-weight:700;font-size:.85rem;border:2px solid transparent;transition:.18s;opacity:.55}
+.niv input:checked + span{opacity:1;border-color:#1d2a24;box-shadow:0 4px 12px -4px rgba(0,0,0,.35);transform:translateY(-1px)}
+.niv input:focus-visible + span{outline:3px solid var(--gold);outline-offset:2px}
+.niv-L span{background:#6aa84f;color:#fff}.niv-I span{background:#f1c232;color:#3b2f00}
+.niv-G span{background:#e69138;color:#2e1600}.niv-E span{background:#cc0000;color:#fff}
+.niv-tag{display:inline-block;font-weight:700;font-size:.7rem;padding:.12rem .5rem;border-radius:99px;white-space:nowrap}
+.cod-tag{font-family:var(--disp);font-weight:800;font-size:.78rem;padding:.12rem .45rem;border-radius:5px;white-space:nowrap}
+.semaforo-box{border-radius:8px;padding:12px 14px;border-left:6px solid;font-size:.82rem;line-height:1.5}
+.semaforo-box b{font-family:var(--disp)}
+.semaforo-box .reinc{display:inline-block;margin-top:6px;background:#fff;border:1px solid currentColor;border-radius:99px;padding:.05rem .55rem;font-weight:700;font-size:.74rem}
+.cons-list{display:flex;flex-direction:column;gap:6px}
+.cons-list label{display:flex;gap:9px;align-items:flex-start;font-size:.83rem;padding:.45rem .6rem;border:1px solid var(--line-soft);border-radius:7px;background:#fffef9;cursor:pointer}
+.cons-list label:hover{border-color:var(--gold)}
+.cons-list input{margin-top:3px;flex:none}
+.cons-list.invalid-box{outline:2px solid var(--red);outline-offset:4px;border-radius:8px}
+.al-varios{padding:0 22px 18px}
+.al-varios summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--green-800);padding:12px 0}
+.al-varios textarea{width:100%;padding:.6rem .7rem;border:1px solid var(--line);border-radius:7px;background:#fffef9;font:inherit;margin-bottom:10px}
+.grp-title{font-family:var(--disp);font-size:.95rem;color:var(--green-900);margin:22px 0 8px;display:flex;align-items:center;gap:10px}
+.grp-title small{font-family:var(--body);font-weight:400;color:var(--muted);font-size:.75rem}
+.mini-counts{display:inline-flex;gap:3px}
+.mini-counts span{min-width:20px;text-align:center;font-size:.68rem;font-weight:700;border-radius:4px;padding:.05rem .25rem}
+.estado{font-size:.7rem;font-weight:700;padding:.12rem .5rem;border-radius:99px;white-space:nowrap}
+.estado.Pendiente{background:#fff4d6;color:#7a5600}.estado.Cumplido{background:var(--green-100);color:var(--green-900)}
+.estado.No{background:var(--red-soft);color:var(--red)}.estado.Turnado{background:#e4e7f7;color:#2c3a7a}
+/* Hoja semanal */
+.wk-scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+table.wk{border-collapse:collapse;width:100%;min-width:980px;font-size:.74rem}
+table.wk th,table.wk td{border:1px solid #cfc8b4;padding:2px 4px}
+table.wk thead th{background:#f3efe2;font-family:var(--disp);font-size:.68rem;letter-spacing:.03em;color:var(--green-900)}
+table.wk td.num{text-align:center;width:30px;font-weight:700}
+table.wk td.nom{min-width:190px;font-size:.72rem;text-transform:uppercase}
+table.wk td.c{width:30px;min-width:30px;height:26px;text-align:center;font-weight:800;font-size:.6rem;cursor:pointer;padding:0}
+table.wk td.c:hover{outline:2px solid var(--green-900);outline-offset:-2px}
+table.wk td.desc{min-width:200px;font-size:.66rem;color:#3d463f}
+.lvL{background:#e3f0db}.lvI{background:#fff4c2}.lvG{background:#fde3c8}.lvE{background:#f9d0d0}
+.lvL.on{background:#6aa84f;color:#fff}.lvI.on{background:#f1c232;color:#3b2f00}.lvG.on{background:#e69138;color:#2e1600}.lvE.on{background:#cc0000;color:#fff}
+/* Catálogo */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:22px}
+.cat-col{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.cat-col h4{padding:.6rem .9rem;font-family:var(--disp);font-size:.85rem;letter-spacing:.04em}
+.cat-col ol{list-style:none;padding:.4rem .9rem .8rem}
+.cat-col li{display:flex;gap:8px;font-size:.8rem;padding:.3rem 0;border-bottom:1px dotted var(--line-soft)}
+.cat-col li b{font-family:var(--disp);flex:none;width:38px}
+.cat-sec{font-family:var(--disp);font-size:1rem;color:var(--green-900);margin:6px 0 12px}
+.legal-box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px;font-size:.82rem;line-height:1.6;box-shadow:var(--shadow)}
+.legal-box li{margin-left:1.1rem;margin-bottom:.35rem}
+/* Diálogo */
+#dlg{position:fixed;inset:0;z-index:300;background:rgba(8,42,32,.55);display:none;align-items:center;justify-content:center;padding:16px}
+#dlg.open{display:flex}
+.dlg-card{background:var(--card);border-radius:12px;width:100%;max-width:640px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 60px -12px rgba(8,42,32,.6);animation:panelIn .25s both}
+.dlg-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:2px solid var(--gold)}
+.dlg-head b{font-family:var(--disp);color:var(--green-900);flex:1}
+.dlg-head button{border:none;background:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.dlg-body{padding:16px 18px;overflow:auto}
+.dlg-body .field{margin-bottom:12px}
+.dlg-foot{display:flex;gap:10px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--line-soft);background:var(--gold-paper);border-radius:0 0 12px 12px}
+.seg-notas{font-size:.78rem;border-left:3px solid var(--gold);padding-left:10px;margin:6px 0 12px;color:#3d463f}
+/* Créditos */
+.cred-wrap{max-width:980px;margin:0 auto}
+.cred-hero{display:flex;gap:20px;align-items:center;background:linear-gradient(120deg,var(--green-950),var(--green-800));color:#f3efe2;border-radius:14px;padding:26px 28px;margin-bottom:22px;box-shadow:var(--shadow)}
+.cred-hero img{width:78px;height:78px;object-fit:contain;flex:none}
+.cred-hero small{text-transform:uppercase;letter-spacing:.22em;font-size:.68rem;color:var(--gold-soft)}
+.cred-hero h2{font-family:var(--disp);font-size:1.35rem;margin:.2rem 0 .35rem}
+.cred-hero p{font-size:.85rem;opacity:.85}
+.cred-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.cred-card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:var(--r);padding:20px 18px;box-shadow:var(--shadow);text-align:center}
+.cred-av{width:62px;height:62px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-family:var(--disp);font-weight:900;font-size:1.15rem;background:var(--green-900);color:var(--gold-soft);box-shadow:0 0 0 4px var(--gold-soft)}
+.cred-area{display:inline-block;font-size:.66rem;text-transform:uppercase;letter-spacing:.16em;color:var(--gold-dark);font-weight:700;margin-bottom:.35rem}
+.cred-card b{display:block;font-family:var(--disp);color:var(--green-900);font-size:.98rem;margin-bottom:.4rem}
+.cred-card p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.cred-foot{text-align:center;font-size:.76rem;color:var(--muted);margin-top:24px;line-height:1.7}
+.powered{display:inline-block;margin-top:6px;font-family:var(--disp);font-weight:800;letter-spacing:.08em;color:var(--green-900)}
+@media(max-width:600px){.cred-hero{flex-direction:column;text-align:center}.disc-intro{flex-direction:column;align-items:flex-start}}
+/* Documentos de la bitácora disciplinaria */
+.doc-sheet.landscape{max-width:1060px}
+.doc-3col{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
+.doc-3col th{background:#f0ebdb;font-family:var(--body);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem;border:1px solid #b9b094}
+.doc-3col td{border:1px solid #b9b094;padding:.6rem .7rem;vertical-align:top;white-space:pre-wrap;width:33.3%}
+.doc-3col ul{margin:0;padding-left:1rem}
+table.wk-print{border-collapse:collapse;width:100%;font-size:7.5pt;font-family:var(--body)}
+table.wk-print th,table.wk-print td{border:1px solid #777;padding:1px 3px;text-align:center}
+table.wk-print td.nom{text-align:left;white-space:nowrap}
+table.wk-print td.desc{text-align:left;font-size:6.8pt}
+.acta p{font-size:.86rem;line-height:1.75;text-align:justify;margin-bottom:.7rem}
+.acta .fill{border-bottom:1px solid #333;padding:0 .3rem;font-weight:600}
+@media print{
+  @page wk{size:Letter landscape;margin:8mm}
+  body.preview-open .doc-sheet.landscape{page:wk}
+  .wk-print td,.wk-print th,.lvL,.lvI,.lvG,.lvE,.niv-tag,.doc-3col th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
 /* ============ IMPRESIÓN ============ */
 @media print{
   @page{size:Letter;margin:11mm}
@@ -420,9 +536,10 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
 <nav class="tabs">
   <div class="tabs-inner">
     <button class="tab active" data-tab="form">✎ Nuevo Reporte</button>
-    <button class="tab" data-tab="aula">📝 Reportes de aula <span class="count" id="tab-count-aula">0</span></button>
+    <button class="tab" data-tab="aula">📋 Bitácora disciplinaria <span class="count" id="tab-count-aula">0</span></button>
     <button class="tab" data-tab="hist">📚 Mi bitácora <span class="count" id="tab-count">0</span></button>
     <button class="tab" data-tab="config">⚙ Configuración</button>
+    <button class="tab" data-tab="cred">🤝 Créditos</button>
   </div>
 </nav>
 
@@ -442,11 +559,11 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
             <div class="hint">Se asigna automáticamente al guardar. Garantiza el seguimiento sin exponer el nombre del menor.</div></div>
           <div class="field"><label>Fecha del incidente <span class="req">*</span></label>
             <input type="date" id="f_fecha"><div class="hint">Día exacto en que ocurrió el incidente.</div></div>
-          <div class="field"><label>Hora aproximada</label>
+          <div class="field"><label>Hora aproximada <span class="req">*</span></label>
             <input type="time" id="f_hora"><div class="hint">Hora en que ocurrieron los hechos.</div></div>
           <div class="field"><label>Fecha y hora en que se enteró la escuela</label>
             <input type="datetime-local" id="f_fechaEnt"><div class="hint">Si el reporte no fue en flagrancia: cuándo ocurrió o cuándo se enteraron.</div></div>
-          <div class="field"><label>Lugar de los hechos</label>
+          <div class="field"><label>Lugar de los hechos <span class="req">*</span></label>
             <select id="f_lugar">
               <option value="">— Seleccionar —</option><option>Aula</option><option>Patio / cancha</option>
               <option>Baños</option><option>Pasillos</option><option>Entrada / salida</option><option>Alrededores del plantel</option>
@@ -480,7 +597,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
               <label><input type="radio" name="sexo" value="Niño"> Niño</label>
               <label><input type="radio" name="sexo" value="Adolescente"> Adolescente</label>
             </div></div>
-          <div class="field"><label>Grado y grupo</label>
+          <div class="field"><label>Grado y grupo <span class="req">*</span></label>
             <div style="display:flex;gap:10px"><input type="text" id="a_grado" placeholder="Grado" style="width:45%">
             <input type="text" id="a_grupo" placeholder="Grupo"></div></div>
           <div class="field"><label>Turno</label>
@@ -516,7 +633,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
               <button type="button" class="btn btn-ghost btn-sm" id="btn-mic-narr">🎤 Dictar por voz</button>
             </div>
             <div class="hint">Aleida genera 3 versiones estrictamente objetivas, cronológicas, en tercera persona y sin opiniones, emociones, suposiciones ni generalizaciones. Tú eliges cuál insertar.</div></div>
-          <div class="field" style="margin-top:16px"><label>Tipificación de la conducta</label>
+          <div class="field" style="margin-top:16px"><label>Tipificación de la conducta <span class="req">*</span></label>
             <div class="chips" id="chips-tipos">
               <label class="chip"><input type="checkbox" name="tipos" value="fisica"><span>Violencia física</span></label>
               <label class="chip"><input type="checkbox" name="tipos" value="verbal"><span>Violencia verbal</span></label>
@@ -678,62 +795,197 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
   </div>
 </section>
 
-<!-- ══════════ PANEL: REPORTES DE AULA (rápido) ══════════ -->
+<!-- ══════════ PANEL: BITÁCORA DISCIPLINARIA (incluye los reportes de aula) ══════════ -->
 <section class="tab-panel" id="tab-aula">
-  <div class="form-layout">
+  <div class="disc-intro">
+    <div>
+      <h2>Bitácora disciplinaria del profesor</h2>
+      <p>Registro paso a paso de las faltas de sus alumnos con base en la guía protocolaria <b>«Conducta Inteligente»</b>: identifique la falta en el catálogo oficial, su nivel de gravedad, aplique una consecuencia formativa y dé seguimiento. Su bitácora es privada: solo usted la ve.</p>
+    </div>
+    <div class="semaforo-mini" aria-hidden="true"><i style="background:#6aa84f"></i><i style="background:#f1c232"></i><i style="background:#e69138"></i><i style="background:#cc0000"></i></div>
+  </div>
+  <div class="subtabs" role="tablist">
+    <button type="button" class="subtab active" data-dsub="reg">📝 Registrar falta</button>
+    <button type="button" class="subtab" data-dsub="sem">🗓 Hoja semanal</button>
+    <button type="button" class="subtab" data-dsub="alu">👥 Mis alumnos <span class="count" id="count-alumnos">0</span></button>
+    <button type="button" class="subtab" data-dsub="his">📚 Registros <span class="count" id="count-registros">0</span></button>
+    <button type="button" class="subtab" data-dsub="cat">📖 Catálogo y protocolo</button>
+  </div>
+
+  <!-- ── Registrar falta ── -->
+  <div class="dsub active" id="dsub-reg">
     <form id="aula-form" autocomplete="off" novalidate>
       <div class="card">
         <div class="card-head"><span class="card-num">📝</span>
-          <div><h3>Reporte rápido de aula</h3><p>Para faltas cotidianas y menores dentro del salón de clases: solo lo esencial, en unos segundos. Para incidentes graves, use «✎ Nuevo Reporte» (el formulario completo).</p></div></div>
+          <div><h3>Registrar falta <span class="edit-pill" id="dr_edit" style="display:none"></span></h3><p>1 · Elija al alumno · 2 · Identifique el nivel y la falta · 3 · Describa lo ocurrido · 4 · Aplique una consecuencia · 5 · Programe el seguimiento.</p></div></div>
         <div class="card-body grid3">
-          <div class="field"><label>Fecha <span class="req">*</span></label>
+          <div class="field"><label>Fecha de la falta <span class="req">*</span></label>
             <input type="date" id="au_fecha"></div>
-          <div class="field"><label>Grado <span class="req">*</span></label>
-            <input type="text" id="au_grado" placeholder="p. ej. 3°"></div>
-          <div class="field"><label>Grupo <span class="req">*</span></label>
-            <input type="text" id="au_grupo" placeholder="p. ej. A"></div>
-          <div class="field span2"><label>Nombre del alumno(a) que comete la falta <span class="req">*</span></label>
-            <input type="text" id="au_alumno" placeholder="Nombre completo"></div>
-          <div class="field"><label>Profesor(a) responsable</label>
-            <input type="text" id="au_responsable" readonly style="background:var(--gold-paper);font-weight:600"></div>
-          <div class="field span3"><label>Incidente / falta cometida <span class="req">*</span></label>
-            <select id="au_tipo">
-              <option value="">— Seleccionar —</option>
-              <option>No entregó tarea o trabajo</option>
-              <option>Interrumpe constantemente la clase</option>
-              <option>No trajo material de trabajo</option>
-              <option>Uso de celular sin autorización</option>
-              <option>Falta de respeto a un compañero(a)</option>
-              <option>Falta de respeto al docente</option>
-              <option>Salió del salón sin autorización</option>
-              <option>Agresión verbal a un compañero(a)</option>
-              <option>Se duerme en clase</option>
-              <option value="Otros">Otros (especificar)</option>
-            </select></div>
-          <div class="field span3" id="au_tipoOtro_wrap" style="display:none">
-            <label>Especifique el incidente</label>
-            <input type="text" id="au_tipoOtro" placeholder="Escriba de qué se trata"></div>
-          <div class="field span3">
-            <label>Descripción de los hechos <span class="req">*</span></label>
-            <textarea id="au_incidente" rows="6" style="min-height:140px" placeholder="Describa lo ocurrido con el mayor detalle posible…"></textarea>
+          <div class="field"><label>Grado y grupo <span class="req">*</span></label>
+            <select id="dr_grupo"></select></div>
+          <div class="field"><label>Alumno(a) <span class="req">*</span></label>
+            <select id="dr_alumno"></select>
+            <div class="hint" id="dr_alumno_info">Elija primero el grupo.</div></div>
+
+          <div class="field span3"><label>Nivel de gravedad de la falta <span class="req">*</span></label>
+            <div class="niv-chips" id="dr_niveles">
+              <label class="niv niv-L"><input type="radio" name="dr_nivel" value="L"><span>Leve</span></label>
+              <label class="niv niv-I"><input type="radio" name="dr_nivel" value="I"><span>Intermedia</span></label>
+              <label class="niv niv-G"><input type="radio" name="dr_nivel" value="G"><span>Grave</span></label>
+              <label class="niv niv-E"><input type="radio" name="dr_nivel" value="E"><span>Extraordinaria</span></label>
+            </div>
+            <div class="hint">Si duda entre leve e intermedia, o entre grave y extraordinaria, consulte «📖 Catálogo y protocolo». La repetición de una falta no cambia su nivel.</div></div>
+
+          <div class="field span3"><label>Falta cometida · catálogo oficial <span class="req">*</span></label>
+            <select id="dr_codigo"><option value="">— Elija primero el nivel —</option></select></div>
+          <div class="field span3" id="dr_otra_wrap" style="display:none"><label>Especifique la falta <span class="req">*</span></label>
+            <input type="text" id="dr_otra" placeholder="Falta no incluida en el catálogo"></div>
+
+          <div class="span3" id="dr_semaforo"></div>
+
+          <div class="field span3"><label>Descripción de los hechos <span class="req">*</span></label>
+            <textarea id="au_incidente" rows="6" style="min-height:140px" placeholder="¿Qué ocurrió? ¿Quiénes participaron (activa o pasivamente)? ¿Cómo, cuándo y dónde ocurrió? ¿Qué manejo o intervención realizó usted?"></textarea>
             <div class="hint">
               <button type="button" class="btn btn-ghost btn-sm" id="btn-mic-aula" style="padding:.25rem .6rem;font-size:.72rem">🎤 Dictar</button>
               <button type="button" class="btn btn-ghost btn-sm" id="btn-ai-narr-aula" style="padding:.25rem .6rem;font-size:.72rem">✨ Aleida: mejorar redacción · 3 opciones</button>
-              Aleida puede ayudarle a redactar o pulir esta descripción para que quede clara y profesional.
+              Responda: qué ocurrió, quiénes participaron, cómo, cuándo, dónde y qué intervención realizó.
             </div></div>
+
+          <div class="field span3"><label>Consecuencia(s) aplicada(s) <span class="req">*</span></label>
+            <div id="dr_cons" class="cons-list"><p class="hint">Elija primero el nivel de la falta.</p></div>
+            <input type="text" id="dr_consOtra" placeholder="Otra consecuencia o ajuste según el contexto (opcional)" style="margin-top:8px"></div>
+
+          <div class="field span2"><label>Seguimiento / compromiso</label>
+            <textarea id="dr_seg" rows="2" style="min-height:64px" placeholder="p. ej. Solicitar a los padres evidencia de las medidas tomadas en casa"></textarea></div>
+          <div class="field"><label>Fecha para verificar</label>
+            <input type="date" id="dr_segFecha"></div>
+
+          <div class="field span3" id="dr_aviso_wrap" style="display:none">
+            <label class="check-line"><input type="checkbox" id="dr_aviso"> <span><b>Se dio aviso inmediato a la autoridad competente</b> (posible delito · LGE art. 73)</span></label>
+            <input type="text" id="dr_avisoDet" placeholder="¿A quién, cuándo y por qué medio? (Fiscalía, DIF, etc.)" style="margin-top:6px"></div>
+
+          <div class="field span3"><label>Profesor(a) responsable</label>
+            <input type="text" id="au_responsable" readonly style="background:var(--gold-paper);font-weight:600"></div>
         </div>
         <div class="actions-bar">
-          <button type="button" class="btn btn-gold" id="btn-save-aula">💾 Guardar reporte de aula</button>
+          <button type="button" class="btn btn-gold" id="btn-save-aula">💾 Guardar en bitácora</button>
+          <button type="button" class="btn btn-ghost" id="btn-prev-aula">👁 Vista previa</button>
           <button type="button" class="btn btn-ghost" id="btn-clear-aula">Limpiar</button>
         </div>
       </div>
     </form>
   </div>
 
-  <div class="hist-tools" style="margin-top:22px">
-    <input type="search" id="aula-search" placeholder="Buscar por alumno, grado/grupo o incidente…">
+  <!-- ── Hoja semanal (Anexo) ── -->
+  <div class="dsub" id="dsub-sem">
+    <div class="hist-tools">
+      <select id="sem_grupo" class="tool-sel"></select>
+      <button type="button" class="btn btn-ghost btn-sm" id="sem_prev" title="Semana anterior">◀</button>
+      <input type="date" id="sem_fecha" class="tool-sel" title="Cualquier día de la semana">
+      <button type="button" class="btn btn-ghost btn-sm" id="sem_next" title="Semana siguiente">▶</button>
+      <button type="button" class="btn btn-gold btn-sm" id="sem_print">🖨 Imprimir hoja semanal</button>
+    </div>
+    <p class="hint" style="margin:-8px 0 12px">Toque una casilla vacía para registrar una falta de ese alumno, en ese día y nivel. Toque una casilla con código para ver el registro.</p>
+    <div id="sem-body"></div>
   </div>
-  <div id="aula-body"></div>
+
+  <!-- ── Mis alumnos ── -->
+  <div class="dsub" id="dsub-alu">
+    <div class="card">
+      <div class="card-head"><span class="card-num">👥</span>
+        <div><h3 id="al_titulo">Agregar alumno</h3><p>Capture manualmente la lista de sus grupos. Cada profesor ve únicamente a sus alumnos.</p></div></div>
+      <div class="card-body grid3">
+        <div class="field span2"><label>Nombre completo (apellidos y nombre) <span class="req">*</span></label>
+          <input type="text" id="al_nombre" placeholder="p. ej. GÓMEZ CASTRO YARETZI"></div>
+        <div class="field"><label>Grado <span class="req">*</span></label>
+          <select id="al_grado"><option>1°</option><option>2°</option><option selected>3°</option></select></div>
+        <div class="field"><label>Grupo <span class="req">*</span></label>
+          <input type="text" id="al_grupo" maxlength="3" placeholder="p. ej. A" style="text-transform:uppercase"></div>
+        <div class="field"><label>Turno <span class="req">*</span></label>
+          <select id="al_turno"><option>Matutino</option><option>Mixto</option></select></div>
+        <div class="field"><label>Padre, madre o tutor</label>
+          <input type="text" id="al_tutor"></div>
+        <div class="field"><label>Teléfono de contacto</label>
+          <input type="tel" id="al_tel"></div>
+        <div class="field span2"><label>Observaciones</label>
+          <input type="text" id="al_obs" placeholder="Opcional"></div>
+        <div class="field span3"><label class="check-line"><input type="checkbox" id="al_acuse"> <span>El padre, madre o tutor <b>firmó el acuse de conocimiento del protocolo</b> (Anexo C)</span></label></div>
+      </div>
+      <div class="actions-bar">
+        <button type="button" class="btn btn-gold" id="btn-al-save">➕ Agregar alumno</button>
+        <button type="button" class="btn btn-ghost" id="btn-al-cancel" style="display:none">Cancelar edición</button>
+      </div>
+      <details class="al-varios">
+        <summary>Agregar varios alumnos a la vez (mismo grado, grupo y turno de arriba)</summary>
+        <textarea id="al_varios" rows="6" placeholder="Escriba un nombre completo por renglón"></textarea>
+        <button type="button" class="btn btn-green btn-sm" id="btn-al-varios">➕ Agregar todos</button>
+      </details>
+    </div>
+    <div class="hist-tools">
+      <select id="al_filtro" class="tool-sel"></select>
+      <input type="search" id="al_buscar" placeholder="Buscar alumno…">
+    </div>
+    <div id="al-body"></div>
+  </div>
+
+  <!-- ── Registros ── -->
+  <div class="dsub" id="dsub-his">
+    <div class="hist-tools">
+      <input type="search" id="aula-search" placeholder="Buscar por alumno, grupo, código o falta…">
+      <select id="his_nivel" class="tool-sel">
+        <option value="">Todos los niveles</option><option value="L">Leves</option><option value="I">Intermedias</option>
+        <option value="G">Graves</option><option value="E">Extraordinarias</option><option value="-">Reportes de aula anteriores</option>
+      </select>
+      <select id="his_estado" class="tool-sel">
+        <option value="">Todo seguimiento</option><option>Pendiente</option><option>Cumplido</option><option>No cumplido</option><option>Turnado a dirección</option>
+      </select>
+    </div>
+    <div id="aula-body"></div>
+  </div>
+
+  <!-- ── Catálogo y protocolo ── -->
+  <div class="dsub" id="dsub-cat"><div id="cat-body"></div></div>
+</section>
+
+<!-- ══════════ PANEL: CRÉDITOS ══════════ -->
+<section class="tab-panel" id="tab-cred">
+  <div class="cred-wrap">
+    <div class="cred-hero">
+      <img src="escudo.png" alt="">
+      <div>
+        <small>Créditos</small>
+        <h2>Bitácora de Incidencias y Bitácora Disciplinaria</h2>
+        <p>Este proyecto fue posible gracias al trabajo y al material que aportaron las siguientes personas.</p>
+      </div>
+    </div>
+    <div class="cred-grid">
+      <div class="cred-card">
+        <div class="cred-av">VD</div>
+        <span class="cred-area">Psicología</span>
+        <b>Mtro. Psic. Vladimir Domínguez Ramírez</b>
+        <p>Responsable del protocolo disciplinario y autor de la guía protocolaria rápida «Conducta Inteligente», base de la bitácora disciplinaria.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-av">JC</div>
+        <span class="cred-area">Ingeniería</span>
+        <b>Ing. José Emmanuel Chan Ibáñez</b>
+        <p>Diseño y desarrollo del sistema.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-av">AP</div>
+        <span class="cred-area">Trabajo Social</span>
+        <b>Aleida Piedad Paz</b>
+        <p>Colaboración en el proyecto.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-av">SM</div>
+        <span class="cred-area">Trabajo Social</span>
+        <b>Soledad Miguel Zárate</b>
+        <p>Colaboración en el proyecto.</p>
+      </div>
+    </div>
+    <p class="cred-foot">Material base: Guía protocolaria rápida «Conducta Inteligente» · Protocolo para abordar el comportamiento inaceptable, disruptivo y con necesidad en el autocontrol y emociones dentro de la comunidad escolar · Edición 2026-2027.<br><span class="powered">powered by elprofe chan</span></p>
+  </div>
 </section>
 
 <!-- ══════════ PANEL: BITÁCORA ══════════ -->
@@ -779,7 +1031,7 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
                 <input type="password" id="ia_key" placeholder="gsk_…" style="flex:1">
                 <button type="button" class="btn btn-ghost btn-sm" id="ia-show" title="Mostrar/ocultar">👁</button>
               </div>
-              <div class="hint">Se guarda solo en este navegador. Obtenga una gratis en <b>console.groq.com/keys</b></div></div>
+              <div class="hint">Se guarda en la base de datos de la escuela y la usan todos los profesores con sesión activa (no se incluye en los respaldos). Use una cuenta de Groq exclusiva de la escuela. Obtenga una gratis en <b>console.groq.com/keys</b></div></div>
             <div class="field"><label>Modelo (activos y gratuitos)</label>
               <select id="ia_model"></select>
               <div class="hint">Llama 3.3 70B ofrece la mejor calidad de redacción; 8B Instant es más rápido.</div></div>
@@ -860,6 +1112,13 @@ table.hist{width:100%;border-collapse:collapse;background:var(--card);border:1px
   <div class="ov-scroll"><div class="doc-sheet" id="doc"></div></div>
 </div>
 
+<!-- ══════════ DIÁLOGO (seguimiento / comité / alumno) ══════════ -->
+<div id="dlg"><div class="dlg-card" role="dialog" aria-modal="true">
+  <div class="dlg-head"><b id="dlg-title"></b><button type="button" id="dlg-x" title="Cerrar">✕</button></div>
+  <div class="dlg-body" id="dlg-body"></div>
+  <div class="dlg-foot" id="dlg-foot"></div>
+</div></div>
+
 <!-- ══════════ ASISTENTE FLOTANTE (ALEIDA) ══════════ -->
 <div id="ai-fab" title="Aleida · Asistente escolar (arrástrame para moverme)"></div>
 <div id="ai-panel">
@@ -918,6 +1177,8 @@ const loadLocal=(k,f)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(
 const saveLocal=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const pad=n=>String(n).padStart(4,'0');
 const pad2=n=>String(n).padStart(2,'0');
+/* Fecha de HOY en hora local (evita que después de las 18:00 en México salga el día siguiente por UTC) */
+const hoyISO=()=>{const d=new Date();return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`};
 const esc=s=>(s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const DEFAULT_CFG={
@@ -954,8 +1215,7 @@ const GROQ_MODELS=[
   {id:'llama-3.1-8b-instant',label:'Llama 3.1 8B Instant (más rápido)'},
   {id:'meta-llama/llama-4-scout-17b-16e-instruct',label:'Llama 4 Scout 17B'},
   {id:'openai/gpt-oss-120b',label:'GPT-OSS 120B'},
-  {id:'openai/gpt-oss-20b',label:'GPT-OSS 20B'},
-  {id:'gemma2-9b-it',label:'Gemma 2 9B'}
+  {id:'openai/gpt-oss-20b',label:'GPT-OSS 20B'}
 ];
 const $=id=>document.getElementById(id);
 
@@ -1037,7 +1297,7 @@ function fillForm(d){
 function resetForm(){
   document.getElementById('rep-form').reset();
   $('testigos-list').innerHTML='';editId=null;$('edit-badge').style.display='none';
-  $('f_fecha').value=new Date().toISOString().slice(0,10);
+  $('f_fecha').value=hoyISO();
   const miNombre=miIdentidad();
   $('persona_reporta').value=miNombre;
   $('qui_docente').value=miNombre;
@@ -1127,9 +1387,112 @@ async function guardarRegistro(){
   }finally{guardando=false}
 }
 
-/* ═══════════════ REPORTES DE AULA (rápidos) ═══════════════ */
-let regsAula=[], editIdAula=null, nextFolioAula=1;
+/* ═══════════════ BITÁCORA DISCIPLINARIA · protocolo «Conducta Inteligente» ═══════════════
+   Los registros se guardan en reportesAula/{uid} (los reportes de aula anteriores se conservan
+   y se muestran como «reportes de aula anteriores»). La lista de alumnos va en alumnosDisc/{uid}. */
+let regsAula=[], editIdAula=null, nextFolioAula=1, alumnosDisc={}, segEditando=null;
 const pad3=n=>String(n).padStart(3,'0');
+const NIVELES={
+  L:{nombre:'Leve',plural:'Leves',color:'#6aa84f',suave:'#e6f2df',txt:'#fff',interv:'Intervención ligera',
+     resp:'La resuelve el docente en turno; no se canaliza a nadie más.'},
+  I:{nombre:'Intermedia',plural:'Intermedias',color:'#f1c232',suave:'#fff6cc',txt:'#3b2f00',interv:'Intervención moderada',
+     resp:'Responsabilidad compartida del docente con la dirección, el apoyo psicopedagógico o la prefectura, quienes asesoran y dan seguimiento.'},
+  G:{nombre:'Grave',plural:'Graves',color:'#e69138',suave:'#fde3c8',txt:'#2e1600',interv:'Intervención contundente',
+     resp:'La atiende el Comité Disciplinario con decisiones colegiadas; debe sesionar antes de 24 horas. Ningún docente decide de forma unilateral.'},
+  E:{nombre:'Extraordinaria',plural:'Extraordinarias',color:'#cc0000',suave:'#f9d0d0',txt:'#fff',interv:'Canalización a instancias especializadas externas a la escuela',
+     resp:'Rebasa la competencia de la escuela. Comité Disciplinario antes de 24 horas y, si el hecho puede constituir delito, aviso inmediato a la autoridad competente (LGE, art. 73).'}
+};
+const ORDEN_NIV=['L','I','G','E'];
+/* Catálogo oficial de faltas y códigos (Anexo de la guía «Conducta Inteligente») */
+const CATALOGO={
+  L:[['L-1','Desorden en el aula en ausencia del docente'],['L-2','Gritar durante clase'],['L-3','Perder objetos'],
+     ['L-4','Ensuciar el salón'],['L-5','Comer durante clase'],['L-6','No respetar los turnos establecidos en el aula']],
+  I:[['I-1','Ofensas y burlas entre alumnos'],['I-2','Ridiculizar a un compañero'],['I-3','Aplicar la ley de hielo'],['I-4','Poner apodos'],
+     ['I-5','Aventarse objetos en el aula'],['I-6','Rechazar y/o excluir de juegos y trabajos en equipos'],
+     ['I-7','Negarse a obedecer indicaciones del docente'],['I-8','Descomponer o romper materiales durante el juego o accidentalmente'],
+     ['I-9','Reírse de sus compañeros cuando se equivocan'],['I-10','No portar adecuadamente el uniforme, credencial y corte de cabello escolar'],
+     ['I-11','Interrumpir a docentes y compañeros de otros grados para beneficio propio']],
+  G:[['G-1','Insultos a docentes'],['G-2','Hacer bromas pesadas'],['G-3','Decir mentiras'],['G-4','Obligar a hacer algo en contra de su voluntad'],
+     ['G-5','Falta de remordimiento o culpabilidad'],['G-6','Hostigamiento físico o verbal'],['G-7','Robos'],['G-8','Pandillerismo'],
+     ['G-9','Grabar, exhibir fotos y videos de compañero por internet o celular'],['G-10','Intimidación entre alumnos'],
+     ['G-11','Evadir clases intencionadamente (permanecer en áreas no correspondientes a su actividad escolar)']],
+  E:[['E-1','Tráfico o portación de drogas dentro de la escuela'],['E-2','Introducción de armas'],['E-3','Abuso sexual'],
+     ['E-4','Lesiones físicas mayores'],['E-5','Amenazas a un docente o personal de la escuela'],['E-6','Golpizas'],
+     ['E-7','Conductas sexuales ofensivas o agresivas'],['E-8','Conductas peligrosas en actividades fuera de la escuela'],
+     ['E-9','Introducir o consumir sustancias tóxicas dentro y fuera de la escuela (alcohol, medicamentos, cigarros y alimentos modificados)']]
+};
+/* Catálogo de consecuencias (Anexo) */
+const CONSECUENCIAS={
+  L:['Llamarle la atención usando un tono de voz firme, sin «etiquetar», indicándole la mala conducta, sin faltarle al respeto.',
+     'Ponerse serio(a) con el alumno y decirle que hasta que no cambie su actitud o su conducta, el docente no cambiará la suya.',
+     'Cambiarlo de lugar, ya sea acercándolo al docente o separándolo de quienes se sienta comúnmente.',
+     'Pedirle ayuda en algo que se necesite, para desviar su atención.',
+     'Resarcir la conducta efectuada inmediatamente.',
+     'Responsabilizarse y asumir consecuencias sobre pertenencias propias y de terceros.'],
+  I:['Que repare el daño que causó y supervisar que lo haga.',
+     'Amonestación escrita con notificación a casa.',
+     'Entrevista con los padres para llegar a acuerdos y compromisos sobre el manejo de conducta.',
+     'Hacer que cumpla horas de trabajo compensatorio vinculado con la falta.',
+     'Promoción de campañas para la convivencia armónica, pacífica y democrática.',
+     'Aplicación del manual de convivencia escolar: asumir responsabilidades y consecuencias generadas por negligencia y conductas inaceptables.'],
+  GE:['Notificar inmediatamente al padre de familia o tutor.',
+     'Acción inmediata que impacte a quien causó la falta (detener, impedir físicamente una acción).',
+     'Suspender temporalmente sus privilegios como alumno de la escuela hasta que el asunto se resuelva, acompañándolo y orientándolo sobre su proceso de resolución.',
+     'Canalizar personalmente al alumno a dirección o al área correspondiente, informando a detalle el caso, con notificación a las dependencias institucionales competentes.',
+     'Convocar y participar en el comité disciplinario que de manera colegiada deberá determinar las acciones.']
+};
+const consDe=n=>(n==='G'||n==='E')?CONSECUENCIAS.GE:(CONSECUENCIAS[n]||[]);
+const faltaDe=cod=>{const n=(cod||'')[0];return (CATALOGO[n]||[]).find(f=>f[0]===cod)};
+const esOtra=cod=>/-OT$/.test(cod||'');
+const codLabel=d=>d.codigo?(esOtra(d.codigo)?d.nivel+'-OTRA':d.codigo):'—';
+const nivTag=n=>NIVELES[n]?`<span class="niv-tag" style="background:${NIVELES[n].color};color:${NIVELES[n].txt}">${NIVELES[n].nombre}</span>`:'<span class="niv-tag" style="background:#e7e3d6;color:#555">Reporte de aula</span>';
+const codTag=d=>d.nivel?`<span class="cod-tag" style="background:${NIVELES[d.nivel].suave};color:#1d2a24">${esc(codLabel(d))}</span>`:'';
+function tipoAulaLabel(d){
+  if(d.nivel)return d.falta||codLabel(d);
+  if(!d.tipo)return '—';
+  return d.tipo==='Otros'?(d.tipoOtro||'Otros'):d.tipo;
+}
+
+/* ── Utilidades de fecha ── */
+const isoLocal=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const deISO=s=>{const [y,m,d]=(s||'').split('-').map(Number);return y?new Date(y,m-1,d):new Date()};
+const fechaCorta=s=>{if(!s)return '—';const [y,m,d]=s.split('-');return `${d}/${m}/${y}`};
+function lunesDe(s){const d=deISO(s);const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return d}
+const DIAS=['L','M','Mi','J','V'];
+
+/* ── Alumnos ── */
+const normNom=s=>(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();
+const grupoKey=a=>`${a.grado}|${a.grupo}`;
+const listaAlumnos=()=>Object.values(alumnosDisc||{}).filter(a=>a&&a.id);
+function gruposDisc(){
+  const m={};
+  listaAlumnos().forEach(a=>{const k=grupoKey(a);(m[k]=m[k]||{key:k,grado:a.grado,grupo:a.grupo,turno:a.turno,alumnos:[]}).alumnos.push(a)});
+  Object.values(m).forEach(g=>g.alumnos.sort((x,y)=>normNom(x.nombre).localeCompare(normNom(y.nombre))));
+  return Object.keys(m).sort((a,b)=>a.localeCompare(b,'es',{numeric:true})).map(k=>m[k]);
+}
+const gLabel=g=>`${g.grado} «${g.grupo}»`;
+function numLista(a){const g=gruposDisc().find(x=>x.key===grupoKey(a));return g?g.alumnos.findIndex(x=>x.id===a.id)+1:0}
+function mismoAlumno(a,b){
+  if(a.alumnoId&&b.alumnoId)return a.alumnoId===b.alumnoId;
+  return normNom(a.alumno)===normNom(b.alumno||b.nombre)&&String(a.grupo||'').toUpperCase()===String(b.grupo||'').toUpperCase();
+}
+const regsDeAlumno=a=>regsAula.filter(r=>r.data&&mismoAlumno(r.data,{alumnoId:a.id,alumno:a.nombre,grupo:a.grupo}));
+function conteoNiveles(lista){const c={L:0,I:0,G:0,E:0};lista.forEach(r=>{if(c[r.data.nivel]!==undefined)c[r.data.nivel]++});return c}
+const miniCounts=c=>`<span class="mini-counts">${ORDEN_NIV.map(n=>`<span title="${NIVELES[n].plural}" style="background:${c[n]?NIVELES[n].color:'#efece2'};color:${c[n]?NIVELES[n].txt:'#999'}">${c[n]}</span>`).join('')}</span>`;
+
+/* ── Reincidencia: R-L-n, R-I-n, R-G-n, R-E-n (n = número de faltas de ese nivel del alumno) ── */
+const ULTIMO='\uffff'; // marca «aún sin guardar»: siempre al final del orden cronológico
+const claveCrono=r=>(r.data.fecha||'')+(r.savedAt||ULTIMO);
+const ordenCrono=l=>l.slice().sort((a,b)=>{const x=claveCrono(a),y=claveCrono(b);return x<y?-1:x>y?1:0});
+function reincidencia(rec){
+  const d=rec.data;if(!d||!d.nivel)return '';
+  const base=regsAula.filter(r=>r.id!==rec.id).concat([rec]);
+  const mismos=ordenCrono(base.filter(r=>r.data&&r.data.nivel===d.nivel&&mismoAlumno(r.data,d)));
+  const n=mismos.findIndex(r=>r.id===rec.id)+1;
+  return n>=2?`R-${d.nivel}-${n}`:'';
+}
+
+/* ── Firebase ── */
 function saveRegistroAulaRemoto(rec){return db.ref('reportesAula/'+currentUser.uid+'/'+rec.id).set(rec)}
 function siguienteFolioAulaDe(uid){
   return db.ref('usuarios/'+uid+'/proximoFolioAula').transaction(v=>(v||1)+1).then(res=>{
@@ -1137,73 +1500,6 @@ function siguienteFolioAulaDe(uid){
     if(currentUser&&uid===currentUser.uid)nextFolioAula=nuevo;
     return nuevo-1; // folio recién asignado
   });
-}
-function collectAula(){
-  const g=id=>$(id).value.trim();
-  const tipo=g('au_tipo');
-  return {fecha:g('au_fecha'),grado:g('au_grado'),grupo:g('au_grupo'),alumno:g('au_alumno'),
-    responsable:g('au_responsable'),tipo,tipoOtro:tipo==='Otros'?g('au_tipoOtro'):'',incidente:g('au_incidente')};
-}
-function tipoAulaLabel(d){
-  if(!d.tipo)return '—';
-  return d.tipo==='Otros'?(d.tipoOtro||'Otros'):d.tipo;
-}
-$('au_tipo').onchange=()=>{
-  $('au_tipoOtro_wrap').style.display=$('au_tipo').value==='Otros'?'':'none';
-};
-function resetFormAula(){
-  editIdAula=null;
-  $('au_fecha').value=new Date().toISOString().slice(0,10);
-  $('au_grado').value='3°';$('au_grupo').value='';$('au_alumno').value='';$('au_incidente').value='';
-  $('au_tipo').value='';$('au_tipoOtro').value='';$('au_tipoOtro_wrap').style.display='none';
-  $('au_responsable').value=miIdentidad();
-  document.querySelectorAll('#aula-form .field.invalid').forEach(f=>f.classList.remove('invalid'));
-}
-function validateAula(d){
-  const errs=[];let firstInvalid=null;
-  [['fecha','au_fecha','fecha'],['grado','au_grado','grado'],['grupo','au_grupo','grupo'],
-   ['alumno','au_alumno','nombre del alumno(a)'],['tipo','au_tipo','incidente / falta cometida'],
-   ['incidente','au_incidente','descripción de los hechos']]
-   .forEach(([key,id,label])=>{
-    const f=$(id).closest('.field');const bad=!d[key];
-    f.classList.toggle('invalid',bad);
-    if(bad){errs.push(label);if(!firstInvalid)firstInvalid=f;}
-  });
-  if(d.tipo==='Otros'){
-    const f=$('au_tipoOtro').closest('.field');const bad=!d.tipoOtro;
-    f.classList.toggle('invalid',bad);
-    if(bad){errs.push('especificación del incidente');if(!firstInvalid)firstInvalid=f;}
-  }
-  if(firstInvalid)firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});
-  return errs;
-}
-let guardandoAula=false;
-async function guardarRegistroAula(){
-  const d=collectAula();const errs=validateAula(d);
-  if(errs.length){toast('⚠ Complete los campos obligatorios: '+errs.join(', '),'err');return false}
-  if(!currentUser){toast('Su sesión expiró. Vuelva a iniciar sesión.','err');return false}
-  if(guardandoAula)return false;
-  guardandoAula=true;
-  try{
-    if(editIdAula){
-      const rec=regsAula.find(r=>r.id===editIdAula);
-      if(!rec){toast('El registro ya no existe.','err');return false}
-      const actualizado=Object.assign({},rec,{data:d,updatedAt:new Date().toISOString()});
-      await saveRegistroAulaRemoto(actualizado);
-      toast(`✔ Reporte de aula ${rec.folio||''} actualizado`);
-    }else{
-      const folioNum=await siguienteFolioAulaDe(currentUser.uid);
-      const folio=pad3(folioNum);
-      const rec={id:db.ref('reportesAula/'+currentUser.uid).push().key,folio,savedAt:new Date().toISOString(),data:d};
-      await saveRegistroAulaRemoto(rec);
-      toast(`✔ Reporte de aula ${folio} guardado`);
-    }
-    resetFormAula();
-    return true;
-  }catch(err){
-    toast('No se pudo guardar: '+err.message,'err');
-    return false;
-  }finally{guardandoAula=false}
 }
 async function migrarFoliosAula(v){
   const faltantes=Object.values(v).filter(r=>!r.folio).sort((a,b)=>(a.savedAt||'').localeCompare(b.savedAt||''));
@@ -1213,38 +1509,530 @@ async function migrarFoliosAula(v){
   }
   return faltantes.length>0;
 }
+
+/* ── Subpestañas ── */
+function switchDsub(name){
+  document.querySelectorAll('.subtab').forEach(b=>b.classList.toggle('active',b.dataset.dsub===name));
+  document.querySelectorAll('.dsub').forEach(p=>p.classList.toggle('active',p.id==='dsub-'+name));
+  if(name==='sem')renderSemana();
+}
+document.querySelectorAll('.subtab').forEach(b=>b.onclick=()=>switchDsub(b.dataset.dsub));
+
+/* ═════════ REGISTRAR FALTA ═════════ */
+function nivelSel(){const r=document.querySelector('input[name=dr_nivel]:checked');return r?r.value:''}
+function llenarGruposSel(sel,conTodos){
+  const gs=gruposDisc(),prev=sel.value;
+  if(!gs.length){sel.innerHTML=`<option value="">${conTodos?'Sin alumnos capturados':'— Primero capture alumnos en «Mis alumnos» —'}</option>`;return}
+  sel.innerHTML=(conTodos?'<option value="">Todos los grupos</option>':'<option value="">— Seleccionar —</option>')+
+    gs.map(g=>`<option value="${esc(g.key)}">${esc(gLabel(g))} · ${esc(g.turno||'')} (${g.alumnos.length})</option>`).join('');
+  if([...sel.options].some(o=>o.value===prev))sel.value=prev;
+}
+function llenarAlumnosSel(){
+  const g=gruposDisc().find(x=>x.key===$('dr_grupo').value),prev=$('dr_alumno').value;
+  $('dr_alumno').innerHTML=g?'<option value="">— Seleccionar alumno —</option>'+g.alumnos.map((a,i)=>`<option value="${esc(a.id)}">${pad2(i+1)} · ${esc(a.nombre)}</option>`).join('')
+    :'<option value="">— Elija primero el grupo —</option>';
+  if([...$('dr_alumno').options].some(o=>o.value===prev))$('dr_alumno').value=prev;
+  infoAlumno();
+}
+function infoAlumno(){
+  const a=alumnosDisc[$('dr_alumno').value];
+  if(!a){$('dr_alumno_info').textContent=$('dr_grupo').value?'Elija al alumno.':'Elija primero el grupo.';return}
+  const l=regsDeAlumno(a).filter(r=>r.id!==editIdAula),c=conteoNiveles(l);
+  $('dr_alumno_info').innerHTML=`Núm. ${pad2(numLista(a))} · ${esc(a.turno||'')} · ${l.length?`${l.length} falta(s) registradas ${miniCounts(c)}`:'sin faltas registradas'}${a.acuse?'':' · <span style="color:var(--red)">sin acuse de padres</span>'}`;
+  actualizarSemaforo();
+}
+function llenarCodigos(){
+  const n=nivelSel(),prev=$('dr_codigo').value;
+  $('dr_codigo').innerHTML=n?'<option value="">— Seleccionar falta —</option>'+CATALOGO[n].map(([c,t])=>`<option value="${c}">${c} · ${esc(t)}</option>`).join('')+
+    `<option value="${n}-OT">${n}-OTRA · Otra falta de nivel ${NIVELES[n].nombre.toLowerCase()} (especificar)</option>`
+    :'<option value="">— Elija primero el nivel —</option>';
+  if([...$('dr_codigo').options].some(o=>o.value===prev))$('dr_codigo').value=prev;
+  $('dr_otra_wrap').style.display=esOtra($('dr_codigo').value)?'':'none';
+}
+function llenarConsecuencias(marcadas){
+  const n=nivelSel();
+  const prev=marcadas||[...document.querySelectorAll('#dr_cons input:checked')].map(c=>c.value);
+  if(!n){$('dr_cons').innerHTML='<p class="hint">Elija primero el nivel de la falta.</p>';return}
+  $('dr_cons').innerHTML=consDe(n).map((t,i)=>`<label><input type="checkbox" value="${esc(t)}"${prev.includes(t)?' checked':''}><span>${esc(t)}</span></label>`).join('')+
+    ((n==='G'||n==='E')?'<p class="hint">La suspensión de privilegios y las demás medidas de una falta grave o extraordinaria las determina el Comité Disciplinario de forma colegiada; ninguna medida debe impedir que el alumno siga recibiendo educación.</p>':'');
+}
+function actualizarSemaforo(){
+  const n=nivelSel();
+  $('dr_aviso_wrap').style.display=n==='E'?'':'none';
+  if(!n){$('dr_semaforo').innerHTML='';return}
+  const N=NIVELES[n],a=alumnosDisc[$('dr_alumno').value];
+  let reinc='';
+  if(a){
+    const tmp={id:editIdAula||'_nuevo',savedAt:editIdAula?(regsAula.find(r=>r.id===editIdAula)||{}).savedAt:ULTIMO,data:{nivel:n,alumnoId:a.id,alumno:a.nombre,grupo:a.grupo,fecha:$('au_fecha').value}};
+    const r=reincidencia(tmp);
+    if(r)reinc=`<span class="reinc">Reincidencia ${r}</span>`;
+  }
+  $('dr_semaforo').innerHTML=`<div class="semaforo-box" style="background:${N.suave};border-color:${N.color}">
+    🚦 <b>${N.interv}</b> · Falta ${N.nombre.toLowerCase()}<br>${esc(N.resp)}${n==='G'||n==='E'?'<br>Después de guardar, use <b>«Acta del comité»</b> en Registros para documentar la sesión (Anexo B).':''}<br>${reinc}</div>`;
+}
+document.querySelectorAll('input[name=dr_nivel]').forEach(r=>r.addEventListener('change',()=>{
+  $('dr_codigo').value='';llenarCodigos();llenarConsecuencias([]);actualizarSemaforo();
+  $('dr_niveles').closest('.field').classList.remove('invalid');
+}));
+$('dr_codigo').onchange=()=>{$('dr_otra_wrap').style.display=esOtra($('dr_codigo').value)?'':'none'};
+$('dr_grupo').onchange=llenarAlumnosSel;
+$('dr_alumno').onchange=infoAlumno;
+$('au_fecha').onchange=actualizarSemaforo;
+
+function collectAula(){
+  const g=id=>($(id).value||'').trim();
+  const a=alumnosDisc[g('dr_alumno')]||{};
+  const nivel=nivelSel(),codigo=g('dr_codigo'),f=faltaDe(codigo);
+  const prev=editIdAula?((regsAula.find(r=>r.id===editIdAula)||{}).data||{}):{};
+  const segPrev=prev.seguimiento||{};
+  return {fecha:g('au_fecha'),alumnoId:a.id||'',alumno:a.nombre||'',grado:a.grado||'',grupo:a.grupo||'',turno:a.turno||'',
+    nivel,codigo,falta:esOtra(codigo)?g('dr_otra'):(f?f[1]:''),
+    incidente:g('au_incidente'),
+    consecuencias:[...document.querySelectorAll('#dr_cons input:checked')].map(c=>c.value),
+    consOtra:g('dr_consOtra'),
+    seguimiento:{compromiso:g('dr_seg'),fecha:g('dr_segFecha'),estado:segPrev.estado||'Pendiente',notas:segPrev.notas||[]},
+    aviso:nivel==='E'?{dado:$('dr_aviso').checked,detalle:g('dr_avisoDet')}:null,
+    comite:prev.comite||null,
+    responsable:g('au_responsable')};
+}
+function validateAula(d){
+  const errs=[];let first=null;
+  const marca=(bad,el,label)=>{const f=el.closest('.field');if(f)f.classList.toggle('invalid',bad);if(bad){errs.push(label);if(!first)first=f||el}};
+  marca(!d.fecha,$('au_fecha'),'fecha');
+  marca(!d.alumnoId,$('dr_alumno'),'alumno(a)');
+  marca(!d.nivel,$('dr_niveles'),'nivel de la falta');
+  marca(!d.codigo,$('dr_codigo'),'falta cometida');
+  if(esOtra(d.codigo))marca(!d.falta,$('dr_otra'),'especificación de la falta');
+  marca(!d.incidente,$('au_incidente'),'descripción de los hechos');
+  const sinCons=!d.consecuencias.length&&!d.consOtra;
+  $('dr_cons').classList.toggle('invalid-box',sinCons);
+  if(sinCons){errs.push('al menos una consecuencia');if(!first)first=$('dr_cons')}
+  if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+  return errs;
+}
+function resetFormAula(){
+  editIdAula=null;$('dr_edit').style.display='none';
+  $('au_fecha').value=hoyISO();
+  llenarGruposSel($('dr_grupo'),false);llenarAlumnosSel();$('dr_alumno').value='';
+  document.querySelectorAll('input[name=dr_nivel]').forEach(r=>r.checked=false);
+  ['dr_otra','au_incidente','dr_consOtra','dr_seg','dr_segFecha','dr_avisoDet'].forEach(id=>$(id).value='');
+  $('dr_aviso').checked=false;
+  llenarCodigos();llenarConsecuencias([]);actualizarSemaforo();infoAlumno();
+  $('au_responsable').value=miIdentidad();
+  document.querySelectorAll('#aula-form .field.invalid').forEach(f=>f.classList.remove('invalid'));
+  $('dr_cons').classList.remove('invalid-box');
+}
+let guardandoAula=false;
+async function guardarRegistroAula(){
+  const d=collectAula();const errs=validateAula(d);
+  if(errs.length){toast('⚠ Complete los campos obligatorios: '+errs.join(', '),'err');return false}
+  if(!currentUser){toast('Su sesión expiró. Vuelva a iniciar sesión.','err');return false}
+  if(guardandoAula)return false;
+  guardandoAula=true;
+  try{
+    let folio;
+    if(editIdAula){
+      const rec=regsAula.find(r=>r.id===editIdAula);
+      if(!rec){toast('El registro ya no existe.','err');return false}
+      folio=rec.folio;
+      await saveRegistroAulaRemoto(Object.assign({},rec,{data:d,updatedAt:new Date().toISOString()}));
+      toast(`✔ Registro ${folio||''} actualizado`);
+    }else{
+      folio=pad3(await siguienteFolioAulaDe(currentUser.uid));
+      const rec={id:db.ref('reportesAula/'+currentUser.uid).push().key,folio,savedAt:new Date().toISOString(),data:d};
+      await saveRegistroAulaRemoto(rec);
+      toast(`✔ Falta ${codLabel(d)} registrada con el número ${folio}`);
+    }
+    if(d.nivel==='G'||d.nivel==='E')toast('🚦 Falta '+NIVELES[d.nivel].nombre.toLowerCase()+': convoque al Comité Disciplinario antes de 24 horas.','err');
+    const grupoActual=$('dr_grupo').value;
+    resetFormAula();
+    $('dr_grupo').value=grupoActual;llenarAlumnosSel();
+    return true;
+  }catch(err){
+    toast('No se pudo guardar: '+err.message,'err');
+    return false;
+  }finally{guardandoAula=false}
+}
+function irARegistrar(alumnoId,fecha,nivel){
+  const a=alumnosDisc[alumnoId];if(!a)return;
+  resetFormAula();
+  $('dr_grupo').value=grupoKey(a);llenarAlumnosSel();$('dr_alumno').value=a.id;
+  if(fecha)$('au_fecha').value=fecha;
+  if(nivel){const r=document.querySelector(`input[name=dr_nivel][value="${nivel}"]`);if(r){r.checked=true;llenarCodigos();llenarConsecuencias([])}}
+  infoAlumno();
+  switchTab('aula');switchDsub('reg');
+}
+window.irARegistrar=irARegistrar;
+
+/* ═════════ REGISTROS (historial) ═════════ */
+const estadoTag=s=>{const e=(s&&s.estado)||'Pendiente';return `<span class="estado ${e.split(' ')[0]}">${esc(e)}</span>`};
 function renderAula(){
-  const q=($('aula-search').value||'').toLowerCase();
-  const rows=regsAula.filter(r=>!q||JSON.stringify(r.data).toLowerCase().includes(q));
   $('tab-count-aula').textContent=regsAula.length;
-  if(!regsAula.length){$('aula-body').innerHTML='<p style="font-size:.85rem;color:var(--muted);padding:20px 0">Aún no hay reportes de aula. Use el formulario de arriba — toma solo unos segundos.</p>';return}
-  $('aula-body').innerHTML=`<table class="hist"><thead><tr>
-    <th>No.</th><th>Fecha</th><th>Grado y grupo</th><th>Alumno(a)</th><th>Incidente</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
-    ${rows.map(r=>`<tr>
+  $('count-registros').textContent=regsAula.length;
+  const q=normNom($('aula-search').value),fn=$('his_nivel').value,fe=$('his_estado').value;
+  const rows=regsAula.filter(r=>{
+    const d=r.data||{};
+    if(fn==='-'&&d.nivel)return false;
+    if(fn&&fn!=='-'&&d.nivel!==fn)return false;
+    if(fe&&(!d.nivel||((d.seguimiento&&d.seguimiento.estado)||'Pendiente')!==fe))return false;
+    if(q&&!normNom([r.folio,d.alumno,d.grado,d.grupo,codLabel(d),tipoAulaLabel(d)].join(' ')).includes(q))return false;
+    return true;
+  });
+  if(!regsAula.length){$('aula-body').innerHTML='<div class="card in"><div class="empty"><div class="big">📋</div><p><b>Aún no hay registros.</b><br>Capture a sus alumnos en «Mis alumnos» y registre la primera falta en «Registrar falta».</p></div></div>';return}
+  $('aula-body').innerHTML=`<div style="overflow-x:auto"><table class="hist"><thead><tr>
+    <th>No.</th><th>Fecha</th><th>Alumno(a)</th><th>Grupo</th><th>Falta</th><th>Seguimiento</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
+    ${rows.map(r=>{const d=r.data||{},ri=d.nivel?reincidencia(r):'';return `<tr>
       <td><span class="folio-tag">${esc(r.folio||'—')}</span></td>
-      <td>${esc(r.data.fecha||'—')}</td>
-      <td>${esc(r.data.grado||'—')} "${esc(r.data.grupo||'—')}"</td>
-      <td title="Identidad reservada en vistas públicas">${esc(mask(r.data.alumno||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
-      <td style="max-width:260px">${esc(tipoAulaLabel(r.data))}</td>
+      <td style="white-space:nowrap">${esc(fechaCorta(d.fecha))}</td>
+      <td title="Identidad reservada en vistas públicas">${esc(mask(d.alumno||'N/D'))} <span style="font-size:.68rem;color:var(--muted)">🔒</span></td>
+      <td style="white-space:nowrap">${esc(d.grado||'—')} «${esc(d.grupo||'—')}»</td>
+      <td style="max-width:300px">${nivTag(d.nivel)} ${codTag(d)}${ri?` <span class="cod-tag" style="background:#1d2a24;color:#fff">${ri}</span>`:''}<div style="font-size:.76rem;margin-top:3px">${esc(tipoAulaLabel(d))}</div></td>
+      <td>${d.nivel?estadoTag(d.seguimiento):'<span style="font-size:.72rem;color:var(--muted)">—</span>'}${d.seguimiento&&d.seguimiento.fecha?`<div style="font-size:.68rem;color:var(--muted);margin-top:2px">${esc(fechaCorta(d.seguimiento.fecha))}</div>`:''}</td>
       <td><div class="row-acts" style="justify-content:flex-end">
         <button class="icon-btn" title="Ver / imprimir" onclick="verRegistroAula('${r.id}')">👁</button>
-        <button class="icon-btn" title="Editar" onclick="editarRegistroAula('${r.id}')">✎</button>
-      </div></td></tr>`).join('')}</tbody></table>
-    ${rows.length!==regsAula.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regsAula.length} registros coinciden con la búsqueda.</p>`:''}`;
+        <button class="icon-btn" title="${d.nivel?'Editar':'Clasificar con el catálogo oficial'}" onclick="editarRegistroAula('${r.id}')">✎</button>
+        ${d.nivel?`<button class="icon-btn" title="Seguimiento" onclick="abrirSeguimiento('${r.id}')">✔</button>`:''}
+        ${d.nivel==='G'||d.nivel==='E'?`<button class="icon-btn" title="Acta del Comité Disciplinario (Anexo B)" onclick="abrirComite('${r.id}')">⚖</button>`:''}
+      </div></td></tr>`}).join('')}</tbody></table></div>
+    ${rows.length!==regsAula.length?`<p style="font-size:.78rem;color:var(--muted);margin-top:10px">${rows.length} de ${regsAula.length} registros coinciden con los filtros.</p>`:''}`;
+}
+$('aula-search').oninput=renderAula;$('his_nivel').onchange=renderAula;$('his_estado').onchange=renderAula;
+
+window.editarRegistroAula=id=>{
+  const r=regsAula.find(x=>x.id===id);if(!r)return;
+  const d=r.data||{};
+  resetFormAula();
+  editIdAula=id;
+  $('dr_edit').textContent=d.nivel?`Editando el registro ${r.folio||''}`:`Clasificando el reporte de aula ${r.folio||''}`;
+  $('dr_edit').style.display='';
+  $('au_fecha').value=d.fecha||hoyISO();
+  let a=d.alumnoId&&alumnosDisc[d.alumnoId];
+  if(!a)a=listaAlumnos().find(x=>mismoAlumno({alumno:d.alumno,grupo:d.grupo},{alumno:x.nombre,grupo:x.grupo}));
+  if(a){$('dr_grupo').value=grupoKey(a);llenarAlumnosSel();$('dr_alumno').value=a.id}
+  else if(!d.nivel)toast(`Para clasificarlo, primero capture a «${d.alumno||'el alumno'}» en Mis alumnos (o elíjalo si ya está).`);
+  if(d.nivel){const rb=document.querySelector(`input[name=dr_nivel][value="${d.nivel}"]`);if(rb)rb.checked=true}
+  llenarCodigos();$('dr_codigo').value=d.codigo||'';
+  $('dr_otra_wrap').style.display=esOtra(d.codigo)?'':'none';$('dr_otra').value=esOtra(d.codigo)?(d.falta||''):'';
+  llenarConsecuencias(d.consecuencias||[]);
+  $('au_incidente').value=d.incidente||'';
+  $('dr_consOtra').value=d.consOtra||'';
+  $('dr_seg').value=(d.seguimiento&&d.seguimiento.compromiso)||'';
+  $('dr_segFecha').value=(d.seguimiento&&d.seguimiento.fecha)||'';
+  $('dr_aviso').checked=!!(d.aviso&&d.aviso.dado);$('dr_avisoDet').value=(d.aviso&&d.aviso.detalle)||'';
+  $('au_responsable').value=d.responsable||miIdentidad();
+  infoAlumno();actualizarSemaforo();
+  switchTab('aula');switchDsub('reg');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+/* ── Diálogo genérico ── */
+function abrirDlg(titulo,cuerpo,botones){
+  $('dlg-title').textContent=titulo;$('dlg-body').innerHTML=cuerpo;$('dlg-foot').innerHTML='';
+  botones.forEach(([txt,cls,fn])=>{const b=document.createElement('button');b.type='button';b.className='btn btn-sm '+cls;b.textContent=txt;b.onclick=fn;$('dlg-foot').appendChild(b)});
+  $('dlg').classList.add('open');
+}
+function cerrarDlg(){$('dlg').classList.remove('open')}
+$('dlg-x').onclick=cerrarDlg;
+$('dlg').addEventListener('click',e=>{if(e.target.id==='dlg')cerrarDlg()});
+
+/* ── Seguimiento ── */
+window.abrirSeguimiento=id=>{
+  const r=regsAula.find(x=>x.id===id);if(!r)return;
+  const s=r.data.seguimiento||{};
+  const notas=(s.notas||[]).map(n=>`<div><b>${esc(fechaCorta(n.fecha))} · ${esc(n.estado||'')}</b> — ${esc(n.texto)}</div>`).join('');
+  abrirDlg(`Seguimiento · registro ${r.folio||''} · ${codLabel(r.data)}`,`
+    <p style="font-size:.82rem;margin-bottom:10px"><b>${esc(r.data.alumno)}</b> · ${esc(r.data.grado)} «${esc(r.data.grupo)}»<br>Compromiso: ${esc(s.compromiso||'—')}${s.fecha?' · verificar el '+esc(fechaCorta(s.fecha)):''}</p>
+    ${notas?`<div class="seg-notas">${notas}</div>`:''}
+    <div class="field"><label>Estado del seguimiento</label>
+      <select id="sg_estado" class="tool-sel" style="width:100%">${['Pendiente','Cumplido','No cumplido','Turnado a dirección'].map(e=>`<option${e===(s.estado||'Pendiente')?' selected':''}>${e}</option>`).join('')}</select></div>
+    <div class="field"><label>Nueva fecha para verificar (opcional)</label><input type="date" id="sg_fecha" class="tool-sel" style="width:100%" value="${esc(s.fecha||'')}"></div>
+    <div class="field"><label>Nota de seguimiento</label><textarea id="sg_nota" rows="3" class="tool-sel" style="width:100%" placeholder="p. ej. No se cumplió; se realiza nuevamente la petición con nueva fecha"></textarea></div>`,
+  [['Cancelar','btn-ghost',cerrarDlg],['💾 Guardar seguimiento','btn-gold',async()=>{
+    const estado=$('sg_estado').value,texto=$('sg_nota').value.trim();
+    const nuevo={compromiso:s.compromiso||'',fecha:$('sg_fecha').value,estado,notas:(s.notas||[]).slice()};
+    if(texto||estado!==(s.estado||'Pendiente'))nuevo.notas.push({fecha:hoyISO(),estado,texto:texto||('Cambio de estado: '+estado)});
+    try{await db.ref('reportesAula/'+currentUser.uid+'/'+id+'/data/seguimiento').set(nuevo);cerrarDlg();toast('✔ Seguimiento actualizado')}
+    catch(err){toast('No se pudo guardar: '+err.message,'err')}
+  }]]);
+};
+
+/* ── Comité disciplinario (Anexo B) ── */
+window.abrirComite=id=>{
+  const r=regsAula.find(x=>x.id===id);if(!r)return;
+  const c=r.data.comite||{},dir=(cfg.directivos&&cfg.directivos[0])?cfg.directivos[0].nombre:'';
+  const ac=(c.acuerdos||[]).concat([{},{},{},{},{}]).slice(0,5);
+  const inp=(id,lab,val,type='text')=>`<div class="field"><label>${lab}</label><input type="${type}" id="${id}" class="tool-sel" style="width:100%" value="${esc(val||'')}"></div>`;
+  abrirDlg(`Comité Disciplinario · registro ${r.folio||''} · ${codLabel(r.data)}`,`
+    <p class="hint" style="margin-bottom:12px">Debe sesionar antes de 24 horas. Ratifica o rectifica la clasificación, revisa antecedentes y testimonios, y acuerda acciones de reparación del daño con fechas de entrega.</p>
+    <div class="grid2">
+      ${inp('cm_fecha','Fecha de la sesión',c.fecha||hoyISO(),'date')}${inp('cm_hora','Hora de inicio',c.hora,'time')}
+    </div>
+    ${inp('cm_lugar','Ciudad / localidad',c.lugar||cfg.escuela.muni)}
+    ${inp('cm_dir','Director(a) de la escuela (preside)',c.director||dir)}
+    ${inp('cm_asesor','Asesor de conducta / psicopedagógico',c.asesor)}
+    ${inp('cm_prof','Profesor(a) con conocimiento del caso',c.profesor||(currentUser&&currentUser.nombre))}
+    ${inp('cm_neutral','Profesor(a) con postura neutra y empática',c.neutral)}
+    ${inp('cm_padres','Presidente(a) del comité de padres de familia',c.padres)}
+    <div class="field"><label>Clasificación tras la sesión</label>
+      <select id="cm_clasif" class="tool-sel" style="width:100%">${[['','Se ratifica la clasificación'],['I','Se rectifica: era intermedia (regresa al docente y al asesor)'],['G','Se clasifica como grave'],['E','Se clasifica como extraordinaria']].map(([v,t])=>`<option value="${v}"${(c.clasif||'')===v?' selected':''}>${t}</option>`).join('')}</select></div>
+    <label style="font-weight:600;font-size:.83rem;color:var(--green-900)">Acuerdos</label>
+    ${ac.map((a,i)=>`<div class="grid2" style="grid-template-columns:1fr 150px;gap:8px;margin:6px 0"><input type="text" id="cm_ac${i}" class="tool-sel" placeholder="Acuerdo ${i+1}" value="${esc(a.texto||'')}"><input type="date" id="cm_af${i}" class="tool-sel" value="${esc(a.fecha||'')}" title="Fecha de entrega"></div>`).join('')}
+    ${inp('cm_fin','Hora de conclusión',c.horaFin,'time')}`,
+  [['Cancelar','btn-ghost',cerrarDlg],['💾 Guardar','btn-green',()=>guardarComite(id,false)],['💾 Guardar e imprimir acta','btn-gold',()=>guardarComite(id,true)]]);
+};
+async function guardarComite(id,imprimir){
+  const v=x=>($(x).value||'').trim();
+  const acuerdos=[0,1,2,3,4].map(i=>({texto:v('cm_ac'+i),fecha:v('cm_af'+i)})).filter(a=>a.texto);
+  const c={fecha:v('cm_fecha'),hora:v('cm_hora'),lugar:v('cm_lugar'),director:v('cm_dir'),asesor:v('cm_asesor'),profesor:v('cm_prof'),
+    neutral:v('cm_neutral'),padres:v('cm_padres'),clasif:v('cm_clasif'),acuerdos,horaFin:v('cm_fin')};
+  try{
+    await db.ref('reportesAula/'+currentUser.uid+'/'+id+'/data/comite').set(c);
+    cerrarDlg();toast('✔ Acta del comité guardada');
+    if(imprimir){const r=regsAula.find(x=>x.id===id);if(r)abrirDoc(buildActaComite(Object.assign({},r,{data:Object.assign({},r.data,{comite:c})})),`ACTA DEL COMITÉ · REGISTRO ${r.folio||''}`)}
+  }catch(err){toast('No se pudo guardar: '+err.message,'err')}
+}
+
+/* ═════════ HOJA SEMANAL (Anexo) ═════════ */
+function datosSemana(){
+  const g=gruposDisc().find(x=>x.key===$('sem_grupo').value)||null;
+  const lun=lunesDe($('sem_fecha').value||hoyISO());
+  const dias=[0,1,2,3,4].map(i=>{const d=new Date(lun);d.setDate(d.getDate()+i);return isoLocal(d)});
+  return {g,dias};
+}
+function celdasAlumno(a,dias){
+  const regs=regsDeAlumno(a).filter(r=>r.data.nivel&&dias.includes(r.data.fecha));
+  const celda=(n,dia)=>regs.filter(r=>r.data.nivel===n&&r.data.fecha===dia);
+  const desc=ordenCrono(regs)
+    .map(r=>`${DIAS[dias.indexOf(r.data.fecha)]} ${codLabel(r.data)}${reincidencia(r)?' ('+reincidencia(r)+')':''}: ${r.data.falta||''}`).join(' · ');
+  return {celda,desc};
+}
+function renderSemana(){
+  llenarGruposSel($('sem_grupo'),false);
+  if(!$('sem_grupo').value){const gs=gruposDisc();if(gs.length)$('sem_grupo').value=gs[0].key}
+  if(!$('sem_fecha').value)$('sem_fecha').value=hoyISO();
+  const {g,dias}=datosSemana();
+  if(!g){$('sem-body').innerHTML='<div class="card in"><div class="empty"><div class="big">🗓</div><p><b>No hay alumnos capturados.</b><br>Agregue su lista en «Mis alumnos» para ver la hoja semanal.</p></div></div>';return}
+  const head=`<tr><th rowspan="2">Núm.</th><th rowspan="2">${esc(gLabel(g))} · Nombre del alumno</th>${ORDEN_NIV.map(n=>`<th colspan="5" style="background:${NIVELES[n].color};color:${NIVELES[n].txt}">${NIVELES[n].plural}</th>`).join('')}<th rowspan="2">Descripción</th></tr>
+    <tr>${ORDEN_NIV.map(()=>DIAS.map((d,i)=>`<th title="${fechaCorta(dias[i])}">${d}</th>`).join('')).join('')}</tr>`;
+  const body=g.alumnos.map((a,i)=>{const {celda,desc}=celdasAlumno(a,dias);
+    return `<tr><td class="num">${pad2(i+1)}</td><td class="nom">${esc(a.nombre)}</td>${ORDEN_NIV.map(n=>dias.map(dia=>{
+      const rs=celda(n,dia);
+      return rs.length?`<td class="c lv${n} on" title="${esc(rs.map(r=>codLabel(r.data)+' · '+(r.data.falta||'')).join('\n'))}" onclick="verRegistroAula('${rs[0].id}')">${esc(rs.map(r=>codLabel(r.data).replace(/^[LIGE]-/,'')).join(','))}</td>`
+        :`<td class="c lv${n}" title="Registrar falta ${NIVELES[n].nombre.toLowerCase()} · ${fechaCorta(dia)}" onclick="irARegistrar('${a.id}','${dia}','${n}')"></td>`}).join('')).join('')}<td class="desc">${esc(desc)}</td></tr>`}).join('');
+  $('sem-body').innerHTML=`<p style="font-size:.82rem;margin-bottom:8px"><b>Semana del ${fechaCorta(dias[0])} al ${fechaCorta(dias[4])}</b> · ${esc(g.turno||'')}</p>
+    <div class="wk-scroll"><table class="wk"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+$('sem_grupo').onchange=renderSemana;$('sem_fecha').onchange=renderSemana;
+$('sem_prev').onclick=()=>{const d=lunesDe($('sem_fecha').value||hoyISO());d.setDate(d.getDate()-7);$('sem_fecha').value=isoLocal(d);renderSemana()};
+$('sem_next').onclick=()=>{const d=lunesDe($('sem_fecha').value||hoyISO());d.setDate(d.getDate()+7);$('sem_fecha').value=isoLocal(d);renderSemana()};
+$('sem_print').onclick=()=>{
+  const {g,dias}=datosSemana();
+  if(!g){toast('No hay alumnos capturados en ese grupo.','err');return}
+  abrirDoc(buildHojaSemanal(g,dias),`HOJA SEMANAL · ${gLabel(g)}`,true);
+};
+
+/* ═════════ MIS ALUMNOS ═════════ */
+let editAlumnoId=null;
+function leerAlumnoForm(){
+  const g=id=>($(id).value||'').trim().replace(/\s+/g,' ');
+  return {nombre:g('al_nombre'),grado:g('al_grado'),grupo:g('al_grupo').toUpperCase(),turno:g('al_turno'),
+    tutor:g('al_tutor'),tel:g('al_tel'),obs:g('al_obs'),acuse:$('al_acuse').checked};
+}
+function duplicado(a,ignorarId){return listaAlumnos().some(x=>x.id!==ignorarId&&normNom(x.nombre)===normNom(a.nombre)&&grupoKey(x)===grupoKey(a))}
+async function guardarAlumno(){
+  const a=leerAlumnoForm();
+  const bad=[];if(a.nombre.length<5)bad.push('nombre completo');if(!a.grupo)bad.push('grupo');
+  $('al_nombre').closest('.field').classList.toggle('invalid',a.nombre.length<5);
+  $('al_grupo').closest('.field').classList.toggle('invalid',!a.grupo);
+  if(bad.length){toast('⚠ Complete: '+bad.join(', '),'err');return}
+  if(duplicado(a,editAlumnoId)){toast('Ese alumno ya está en '+a.grado+' «'+a.grupo+'».','err');return}
+  const id=editAlumnoId||db.ref('alumnosDisc/'+currentUser.uid).push().key;
+  const prev=alumnosDisc[id]||{};
+  const rec=Object.assign({},prev,a,{id,updatedAt:new Date().toISOString()});
+  if(!prev.createdAt)rec.createdAt=rec.updatedAt;
+  try{
+    await db.ref('alumnosDisc/'+currentUser.uid+'/'+id).set(rec);
+    toast(editAlumnoId?'✔ Datos del alumno actualizados':'✔ Alumno agregado a '+a.grado+' «'+a.grupo+'»');
+    limpiarAlumnoForm(true);
+  }catch(err){toast('No se pudo guardar: '+err.message,'err')}
+}
+function limpiarAlumnoForm(conservarGrupo){
+  editAlumnoId=null;
+  ['al_nombre','al_tutor','al_tel','al_obs'].forEach(id=>$(id).value='');
+  if(!conservarGrupo){$('al_grupo').value=''}
+  $('al_acuse').checked=false;
+  $('al_titulo').textContent='Agregar alumno';$('btn-al-save').textContent='➕ Agregar alumno';$('btn-al-cancel').style.display='none';
+  document.querySelectorAll('#dsub-alu .field.invalid').forEach(f=>f.classList.remove('invalid'));
+  $('al_nombre').focus();
+}
+$('btn-al-save').onclick=guardarAlumno;
+$('btn-al-cancel').onclick=()=>limpiarAlumnoForm(false);
+$('al_nombre').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();guardarAlumno()}});
+$('btn-al-varios').onclick=async()=>{
+  const base=leerAlumnoForm();
+  if(!base.grupo){toast('Escriba primero el grupo (y revise grado y turno).','err');$('al_grupo').focus();return}
+  const nombres=$('al_varios').value.split(/\n+/).map(s=>s.trim().replace(/\s+/g,' ')).filter(s=>s.length>=5);
+  if(!nombres.length){toast('Escriba al menos un nombre completo por renglón.','err');return}
+  const upd={},vistos=new Set();let omitidos=0;const ahora=new Date().toISOString();
+  nombres.forEach(n=>{
+    const a={nombre:n,grado:base.grado,grupo:base.grupo,turno:base.turno,tutor:'',tel:'',obs:'',acuse:false};
+    if(duplicado(a,null)||vistos.has(normNom(n))){omitidos++;return}
+    vistos.add(normNom(n));
+    const id=db.ref('alumnosDisc/'+currentUser.uid).push().key;
+    upd[id]=Object.assign(a,{id,createdAt:ahora,updatedAt:ahora});
+  });
+  if(!Object.keys(upd).length){toast('Todos esos alumnos ya estaban capturados.','err');return}
+  try{
+    await db.ref('alumnosDisc/'+currentUser.uid).update(upd);
+    $('al_varios').value='';
+    toast(`✔ ${Object.keys(upd).length} alumno(s) agregados a ${base.grado} «${base.grupo}»${omitidos?` · ${omitidos} repetido(s) omitido(s)`:''}`);
+  }catch(err){toast('No se pudo guardar: '+err.message,'err')}
+};
+window.editarAlumno=id=>{
+  const a=alumnosDisc[id];if(!a)return;
+  editAlumnoId=id;
+  $('al_nombre').value=a.nombre||'';$('al_grado').value=a.grado||'3°';$('al_grupo').value=a.grupo||'';$('al_turno').value=a.turno||'Matutino';
+  $('al_tutor').value=a.tutor||'';$('al_tel').value=a.tel||'';$('al_obs').value=a.obs||'';$('al_acuse').checked=!!a.acuse;
+  $('al_titulo').textContent='Editar alumno';$('btn-al-save').textContent='💾 Guardar cambios';$('btn-al-cancel').style.display='';
+  switchDsub('alu');window.scrollTo({top:0,behavior:'smooth'});
+};
+window.eliminarAlumno=async id=>{
+  const a=alumnosDisc[id];if(!a)return;
+  const n=regsDeAlumno(a).length;
+  if(n){toast(`No se puede eliminar: ${a.nombre} tiene ${n} registro(s) en la bitácora.`,'err');return}
+  if(!confirm(`¿Eliminar a ${a.nombre} de su lista?`))return;
+  try{await db.ref('alumnosDisc/'+currentUser.uid+'/'+id).remove();toast('Alumno eliminado de la lista')}
+  catch(err){toast('No se pudo eliminar: '+err.message,'err')}
+};
+window.verAlumno=id=>{
+  const a=alumnosDisc[id];if(!a)return;
+  const l=ordenCrono(regsDeAlumno(a));
+  abrirDlg(`${a.nombre} · ${a.grado} «${a.grupo}»`,`
+    <p style="font-size:.82rem;margin-bottom:10px">Núm. ${pad2(numLista(a))} · ${esc(a.turno||'')} · Tutor: ${esc(a.tutor||'—')} · Tel. ${esc(a.tel||'—')} · Acuse: ${a.acuse?'✔ firmado':'pendiente'}</p>
+    ${l.length?`<table class="hist"><thead><tr><th>No.</th><th>Fecha</th><th>Falta</th><th>Seguimiento</th><th></th></tr></thead><tbody>${l.map(r=>`<tr>
+      <td><span class="folio-tag">${esc(r.folio||'—')}</span></td><td>${esc(fechaCorta(r.data.fecha))}</td>
+      <td>${nivTag(r.data.nivel)} ${codTag(r.data)} ${reincidencia(r)?`<b>${reincidencia(r)}</b>`:''}<div style="font-size:.74rem">${esc(tipoAulaLabel(r.data))}</div></td>
+      <td>${r.data.nivel?estadoTag(r.data.seguimiento):''}</td>
+      <td><button class="icon-btn" onclick="cerrarDlg();verRegistroAula('${r.id}')">👁</button></td></tr>`).join('')}</tbody></table>`
+      :'<p class="hint">Sin faltas registradas.</p>'}`,
+  [['🖨 Acuse de padres (Anexo C)','btn-ghost',()=>{cerrarDlg();abrirDoc(buildAcuse(a),'ACUSE DE CONOCIMIENTO DEL PROTOCOLO')}],
+   ['➕ Registrar falta','btn-gold',()=>{cerrarDlg();irARegistrar(a.id)}]]);
+};
+window.cerrarDlg=cerrarDlg;
+function renderAlumnos(){
+  const gs=gruposDisc(),total=listaAlumnos().length;
+  $('count-alumnos').textContent=total;
+  llenarGruposSel($('al_filtro'),true);
+  const f=$('al_filtro').value,q=normNom($('al_buscar').value);
+  if(!total){$('al-body').innerHTML='<div class="card in"><div class="empty"><div class="big">👥</div><p><b>Aún no ha capturado alumnos.</b><br>Use el formulario de arriba para agregar a los alumnos de sus grupos.</p></div></div>';return}
+  $('al-body').innerHTML=gs.filter(g=>!f||g.key===f).map(g=>{
+    const filas=g.alumnos.map((a,i)=>({a,i})).filter(({a})=>!q||normNom(a.nombre).includes(q));
+    if(!filas.length)return '';
+    return `<div class="grp-title">${esc(gLabel(g))} <small>${esc(g.turno||'')} · ${g.alumnos.length} alumno(s)</small></div>
+    <div style="overflow-x:auto"><table class="hist"><thead><tr><th>Núm.</th><th>Nombre del alumno</th><th>Turno</th><th>Tutor · teléfono</th><th>Acuse</th><th>Faltas</th><th style="text-align:right">Acciones</th></tr></thead><tbody>
+    ${filas.map(({a,i})=>`<tr>
+      <td><b>${pad2(i+1)}</b></td><td style="text-transform:uppercase;font-size:.82rem">${esc(a.nombre)}</td><td>${esc(a.turno||'—')}</td>
+      <td style="font-size:.78rem">${esc(a.tutor||'—')}${a.tel?'<br>'+esc(a.tel):''}</td>
+      <td>${a.acuse?'<span class="estado Cumplido">Firmado</span>':'<span class="estado Pendiente">Pendiente</span>'}</td>
+      <td>${miniCounts(conteoNiveles(regsDeAlumno(a)))}</td>
+      <td><div class="row-acts" style="justify-content:flex-end">
+        <button class="icon-btn" title="Historial y acuse" onclick="verAlumno('${a.id}')">👁</button>
+        <button class="icon-btn" title="Registrar falta" onclick="irARegistrar('${a.id}')">➕</button>
+        <button class="icon-btn" title="Editar" onclick="editarAlumno('${a.id}')">✎</button>
+        <button class="icon-btn x" title="Eliminar de la lista" onclick="eliminarAlumno('${a.id}')">🗑</button>
+      </div></td></tr>`).join('')}</tbody></table></div>`;
+  }).join('')||'<p class="hint">Ningún alumno coincide con la búsqueda.</p>';
+}
+$('al_filtro').onchange=renderAlumnos;$('al_buscar').oninput=renderAlumnos;
+function renderDisc(){
+  renderAlumnos();
+  llenarGruposSel($('dr_grupo'),false);llenarAlumnosSel();
+  renderAula();
+  if($('dsub-sem').classList.contains('active'))renderSemana();
+}
+
+/* ═════════ CATÁLOGO Y PROTOCOLO ═════════ */
+function renderCatalogo(){
+  const col=(n,titulo,items)=>`<div class="cat-col"><h4 style="background:${NIVELES[n].color};color:${NIVELES[n].txt}">${titulo}</h4><ol>${items}</ol></div>`;
+  $('cat-body').innerHTML=`
+    <h3 class="cat-sec">Catálogo oficial de faltas y códigos</h3>
+    <div class="cat-grid">${ORDEN_NIV.map(n=>col(n,'Faltas '+NIVELES[n].plural.toLowerCase(),CATALOGO[n].map(([c,t])=>`<li><b>${c}</b><span>${esc(t)}</span></li>`).join(''))).join('')}</div>
+    <p class="hint" style="margin:-10px 0 22px">Reincidencia: R-L, R-I, R-G o R-E seguido del número de faltas de ese nivel del alumno (se calcula automáticamente).</p>
+    <h3 class="cat-sec">Semáforo de intervención y responsable inmediato</h3>
+    <div class="cat-grid">${ORDEN_NIV.map(n=>`<div class="semaforo-box" style="background:${NIVELES[n].suave};border-color:${NIVELES[n].color}"><b>${NIVELES[n].nombre} · ${NIVELES[n].interv}</b><br>${esc(NIVELES[n].resp)}</div>`).join('')}</div>
+    <h3 class="cat-sec">Catálogo de consecuencias</h3>
+    <div class="cat-grid">${[['L','Faltas leves',CONSECUENCIAS.L],['I','Faltas intermedias',CONSECUENCIAS.I],['G','Faltas graves y extraordinarias',CONSECUENCIAS.GE]].map(([n,t,l])=>col(n,t,l.map(x=>`<li><span>• ${esc(x)}</span></li>`).join(''))).join('')}</div>
+    <h3 class="cat-sec">Criterios de uso de la bitácora</h3>
+    <div class="legal-box" style="margin-bottom:22px"><ul>
+      <li>Sólo tiene acceso el titular de cada sesión y quien éste autorice.</li>
+      <li>Ninguna persona no autorizada, incluidos otros maestros, puede consultarla, para evitar malos usos.</li>
+      <li>Las faltas graves y extraordinarias son responsabilidad del Comité Disciplinario; ningún docente decide de forma unilateral.</li>
+      <li>El catálogo de faltas intermedias, graves y extraordinarias debe socializarse con los padres de familia (acuse de conocimiento, Anexo C).</li>
+      <li>Las firmas de la bitácora y del acta tienen carácter simbólico y formativo.</li></ul></div>
+    <h3 class="cat-sec">Fundamento legal</h3>
+    <div class="legal-box"><ul>
+      <li><b>Constitución Política de los Estados Unidos Mexicanos</b>, art. 1° (obligación de promover, respetar, proteger y garantizar los derechos humanos) y art. 3° (educación humanista, cultura de paz e interés superior de niñas, niños y adolescentes).</li>
+      <li><b>Ley General de Educación</b>, arts. 15 y 16 (formación humanista y respeto a la dignidad), art. 73 (medidas de protección; la disciplina escolar debe ser compatible con la edad; aviso inmediato a la autoridad ante un posible delito) y art. 74 (protocolos de actuación ante la violencia escolar).</li>
+      <li><b>Ley General de los Derechos de Niñas, Niños y Adolescentes</b>, arts. 1 y 6 (principios rectores), 46 (vida libre de violencia), 57 (educación de calidad, convivencia armónica y resolución pacífica de conflictos) y 59 (ambientes escolares libres de violencia).</li>
+      <li><b>Protocolo de Erradicación del Acoso Escolar en Educación Básica del Estado de Oaxaca</b> (IEEPO, 2024): registro de incidentes en bitácora, medidas formativas y notificación a madres, padres o tutores.</li>
+      <li><b>Guía protocolaria rápida «Conducta Inteligente»</b>, edición 2026-2027 · Mtro. Psic. Vladimir Domínguez Ramírez.</li></ul></div>`;
+}
+
+/* ═════════ DOCUMENTOS IMPRIMIBLES ═════════ */
+function abrirDoc(html,tag,horizontal,modo){
+  previewMode=modo||'view-aula';
+  $('doc').className='doc-sheet'+(horizontal?' landscape':'');
+  $('doc').innerHTML=html;
+  $('ov-tag').textContent=tag;
+  $('overlay').classList.add('open');
+  document.body.classList.add('preview-open');
+  document.body.style.overflow='hidden';
+}
+function encabezadoDoc(){
+  const e=cfg.escuela;
+  return `<div class="doc-topline">${esc(e.autoridad||'Autoridad Educativa Estatal')} · ${esc(e.nivel||'')}</div>
+  <div class="doc-inst">${esc(e.nombre||'Nombre de la escuela')}</div>
+  <div class="doc-meta">CCT: <b>${esc(e.cct||'—')}</b> · Ciclo Escolar: ${esc(e.ciclo||'—')}</div>`;
+}
+const pieProtocolo=()=>`<div class="doc-legal">Protocolo para abordar el comportamiento inaceptable, disruptivo y con necesidad en el autocontrol y emociones · Guía protocolaria rápida «Conducta Inteligente» (Mtro. Psic. Vladimir Domínguez Ramírez). Fundamento: CPEUM arts. 1° y 3°; LGE arts. 15, 16, 73 y 74; LGDNNA arts. 6, 46, 57 y 59. Las firmas tienen carácter simbólico y formativo. Documento confidencial · ${esc(cfg.escuela.nombre||'')}</div>`;
+function buildFichaDisc(r){
+  const d=r.data,N=NIVELES[d.nivel],s=d.seguimiento||{},ri=reincidencia(r);
+  const cons=(d.consecuencias||[]).concat(d.consOtra?[d.consOtra]:[]);
+  return `${encabezadoDoc()}
+  <div class="doc-title-row">
+    <div class="doc-folio">No. FALTA<b>${esc(r.folio||'—')}</b></div>
+    <div class="doc-title">BITÁCORA DISCIPLINARIA</div>
+  </div>
+  <div class="doc-subtitle">Protocolo «Conducta Inteligente» · registro de falta</div>
+  <div class="doc-sec"><div class="doc-kv">
+    <dt>Alumno(a)</dt><dd>${esc(d.alumno)}</dd>
+    <dt>Grado y grupo</dt><dd>${esc(d.grado)} «${esc(d.grupo)}» · Turno ${esc(d.turno||'—')}</dd>
+    <dt>Fecha</dt><dd>${esc(fechaCorta(d.fecha))}</dd>
+    <dt>Tipo de falta</dt><dd><b style="color:${d.nivel==='I'?'#7a5600':N.color}">${N.nombre.toUpperCase()}</b> · código ${esc(codLabel(d))}${ri?` · reincidencia <b>${ri}</b>`:''}</dd>
+    <dt>Falta</dt><dd>${esc(d.falta)}</dd>
+    <dt>Intervención</dt><dd>${N.interv} — ${esc(N.resp)}</dd>
+  </div></div>
+  <table class="doc-3col"><thead><tr><th>Descripción</th><th>Consecuencias</th><th>Seguimiento</th></tr></thead><tbody><tr>
+    <td>${esc(d.incidente)}</td>
+    <td>${cons.length?`<ul>${cons.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`:'—'}</td>
+    <td>${esc(s.compromiso||'—')}${s.fecha?`\n\nVerificar el: <b>${esc(fechaCorta(s.fecha))}</b>`:''}\n\nEstado: <b>${esc(s.estado||'Pendiente')}</b>${(s.notas||[]).map(n=>`\n• ${esc(fechaCorta(n.fecha))} — ${esc(n.texto)}`).join('')}</td>
+  </tr></tbody></table>
+  ${d.nivel==='E'?`<div class="doc-conf" style="margin-top:14px">Aviso a la autoridad competente (LGE art. 73): <b>${d.aviso&&d.aviso.dado?'Sí':'Pendiente'}</b>${d.aviso&&d.aviso.detalle?' · '+esc(d.aviso.detalle):''}</div>`:''}
+  ${d.comite?`<div class="doc-conf" style="margin-top:14px">Comité Disciplinario sesionó el ${esc(fechaCorta(d.comite.fecha))}${d.comite.hora?' a las '+esc(d.comite.hora):''} · ${(d.comite.acuerdos||[]).length} acuerdo(s). Ver acta (Anexo B).</div>`:''}
+  <div class="sigs">
+    <div class="sig"><div class="line"></div><b>Profesor(a) responsable</b><i>${esc(d.responsable||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Vo. Bo. Dirección</b><i>&nbsp;</i></div>
+  </div>
+  ${pieProtocolo()}`;
 }
 function buildDocAula(d,folio){
-  const e=cfg.escuela;
-  return `
-  <div class="doc-topline">${esc(e.autoridad||'Autoridad Educativa Estatal')} · ${esc(e.nivel||'')}</div>
-  <div class="doc-inst">${esc(e.nombre||'Nombre de la escuela')}</div>
-  <div class="doc-meta">CCT: <b>${esc(e.cct||'—')}</b> · Ciclo Escolar: ${esc(e.ciclo||'—')}</div>
+  return `${encabezadoDoc()}
   <div class="doc-title-row">
     <div class="doc-folio">REGISTRO AULA<b>${esc(folio||'—')}</b></div>
     <div class="doc-title">REPORTE DE AULA</div>
   </div>
   <div class="doc-subtitle">Registro de falta cotidiana dentro del salón de clases</div>
-  <div class="doc-conf" style="background:#eef4ee;border-left-color:var(--green-700);color:#1f4d2e">📋 Este documento es un <b>REPORTE DE AULA</b>, para el seguimiento de faltas cotidianas y menores del salón de clases. No sustituye un Reporte de Incidencia formal.</div>
-
+  <div class="doc-conf" style="background:#eef4ee;border-left-color:var(--green-700);color:#1f4d2e">📋 Este documento es un <b>REPORTE DE AULA</b> anterior a la bitácora disciplinaria. Puede clasificarlo con el catálogo oficial desde «Registros» (✎).</div>
   <div class="doc-sec"><h3>Datos del reporte</h3>
     <div class="doc-kv">
       <dt>Fecha</dt><dd>${esc(d.fecha)||'—'}</dd>
@@ -1253,43 +2041,90 @@ function buildDocAula(d,folio){
       <dt>Incidente / falta cometida</dt><dd>${esc(tipoAulaLabel(d))}</dd>
       <dt>Profesor(a) responsable</dt><dd>${esc(d.responsable)||'—'}</dd>
     </div></div>
-
   <div class="doc-sec"><h3>Descripción de los hechos</h3>
     <div class="doc-box">${esc(d.incidente)||'—'}</div></div>
-
   <div class="sigs">
     <div class="sig"><div class="line"></div><b>Nombre y firma del profesor(a) responsable</b><i>${esc(d.responsable||'')}</i></div>
   </div>
-
-  <div class="doc-legal">Reporte de aula ${esc(folio||'')} · ${esc(e.nombre||'')}</div>`;
+  <div class="doc-legal">Reporte de aula ${esc(folio||'')} · ${esc(cfg.escuela.nombre||'')}</div>`;
+}
+function buildHojaSemanal(g,dias){
+  const e=cfg.escuela;
+  const filas=g.alumnos.map((a,i)=>{const {celda,desc}=celdasAlumno(a,dias);
+    return `<tr><td>${pad2(i+1)}</td><td class="nom">${esc(a.nombre.toUpperCase())}</td>${ORDEN_NIV.map(n=>dias.map(dia=>{const rs=celda(n,dia);
+      return `<td class="lv${n}${rs.length?' on':''}">${esc(rs.map(r=>codLabel(r.data)).join(','))}</td>`}).join('')).join('')}<td class="desc">${esc(desc)}</td></tr>`}).join('');
+  return `<div style="text-align:center;font-family:var(--body)">
+    <div style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">${esc(e.nombre||'')} · CCT ${esc(e.cct||'—')} · Ciclo ${esc(e.ciclo||'—')}</div>
+    <div style="font-family:var(--disp);font-size:1.05rem;font-weight:800;margin:4px 0">BITÁCORA DISCIPLINARIA</div></div>
+  <table class="wk-print" style="margin-bottom:4px"><tr>
+    <td style="text-align:left;border:none"><b>${esc(currentUser&&currentUser.nombre||'')}</b> · ${esc(gLabel(g))} · ${esc(g.turno||'')}</td>
+    <td style="text-align:right;border:none">SEMANA DEL <b>${fechaCorta(dias[0])}</b> AL <b>${fechaCorta(dias[4])}</b></td></tr></table>
+  <table class="wk-print"><thead>
+    <tr><th rowspan="2">NÚM.</th><th rowspan="2">${esc(gLabel(g))} NOMBRE DEL ALUMNO</th>${ORDEN_NIV.map(n=>`<th colspan="5" class="lv${n} on">${NIVELES[n].plural.toUpperCase()}</th>`).join('')}<th rowspan="2" style="width:28%">DESCRIPCIÓN</th></tr>
+    <tr>${ORDEN_NIV.map(n=>DIAS.map(d=>`<th class="lv${n}">${d}</th>`).join('')).join('')}</tr></thead>
+    <tbody>${filas}</tbody></table>
+  <div class="sigs" style="margin-top:22px"><div class="sig"><div class="line"></div><b>Docente titular</b><i>${esc(currentUser&&currentUser.nombre||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Vo. Bo.</b><i>&nbsp;</i></div></div>
+  <div class="doc-legal" style="margin-top:10px">Códigos: catálogo oficial de faltas «Conducta Inteligente» (L leves · I intermedias · G graves · E extraordinarias). Documento confidencial.</div>`;
+}
+function buildActaComite(r){
+  const d=r.data,c=d.comite||{},e=cfg.escuela;
+  const f=v=>`<span class="fill">${esc(v||'__________')}</span>`;
+  const fe=deISO(c.fecha||hoyISO());
+  const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const clas={I:'intermedia (se rectifica)',G:'grave',E:'extraordinaria'}[c.clasif]||NIVELES[d.nivel].nombre.toLowerCase();
+  return `${encabezadoDoc()}
+  <div class="doc-title-row"><div class="doc-folio">ANEXO B<b>${esc(r.folio||'')}</b></div>
+    <div class="doc-title" style="font-size:1.05rem">ACTA DEL COMITÉ DISCIPLINARIO ESCOLAR</div></div>
+  <div class="doc-subtitle">Guía protocolaria rápida «Conducta Inteligente»</div>
+  <div class="acta">
+  <p>En la ciudad de ${f(c.lugar||e.muni)}, siendo las ${f(c.hora)} hrs. del día ${f(fe.getDate())} de ${f(MESES[fe.getMonth()])} de ${f(fe.getFullYear())}, en la escuela ${f(e.nombre)}, con CCT ${f(e.cct)}, en apego a lo establecido en la Guía protocolaria rápida «Conducta Inteligente», se reúne el COMITÉ ESCOLAR «CONDUCTA INTELIGENTE», presidido por el director(a) de la escuela ${f(c.director)} y conformado por el asesor de conducta ${f(c.asesor)}, el profesor(a) con conocimiento del caso ${f(c.profesor)}, el profesor(a) con postura neutra y empática ${f(c.neutral)} y el presidente(a) del comité de padres de familia ${f(c.padres)}.</p>
+  <p>El propósito del comité es ser la instancia de comunicación y coordinación que facilita y promueve de manera responsable la ejecución de medidas, estrategias, derivaciones y canalizaciones correspondientes en la escuela, y dar seguimiento y supervisión operativa para el mejor desarrollo de los implicados, ponderando el interés superior de la niñez y el desarrollo de habilidades socioemocionales en la comunidad escolar.</p>
+  <p>Se atiende el caso de ${f(d.alumno)}, de ${f(d.grado+' «'+d.grupo+'»')}, quien presenta bitácora disciplinaria con fecha ${f(fechaCorta(d.fecha))}, registro No. ${f(r.folio)}, por la falta ${f(codLabel(d)+' · '+d.falta)}, clasificada por el comité como falta de tipo ${f(clas)}. Se establecen los siguientes acuerdos:</p>
+  <ol style="font-size:.86rem;line-height:1.8;margin:0 0 .8rem 1.2rem">${(c.acuerdos&&c.acuerdos.length?c.acuerdos:[{},{},{}]).map(a=>`<li>${f(a.texto)} con fecha de entrega ${f(a.fecha?fechaCorta(a.fecha):'')}</li>`).join('')}</ol>
+  <p>No habiendo otro punto que tratar, se da por concluida la presente acta siendo las ${f(c.horaFin)} hrs. del mismo día de su inicio, firmando los que en ella intervinieron al margen y calce.</p></div>
+  <div class="sigs">
+    <div class="sig"><div class="line"></div><b>Director(a)</b><i>${esc(c.director||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Asesor(a) de conducta</b><i>${esc(c.asesor||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Profesor(a) con conocimiento del caso</b><i>${esc(c.profesor||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Profesor(a) neutral</b><i>${esc(c.neutral||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Presidente(a) del comité de padres</b><i>${esc(c.padres||'')}</i></div>
+    <div class="sig"><div class="line"></div><b>Madre, padre o tutor</b><i>&nbsp;</i></div>
+  </div>
+  ${pieProtocolo()}`;
+}
+function buildAcuse(a){
+  const e=cfg.escuela;
+  return `${encabezadoDoc()}
+  <div class="doc-title-row"><div class="doc-folio">ANEXO C<b>${esc(a.grado)}${esc(a.grupo)}</b></div>
+    <div class="doc-title" style="font-size:1rem">ACUSE DE CONOCIMIENTO DEL PROTOCOLO LOCAL DE ACTUACIÓN DISCIPLINARIA</div></div>
+  <div class="doc-subtitle">Para madres, padres o tutores responsables de niñas, niños y adolescentes</div>
+  <div class="acta" style="margin-top:20px">
+  <p style="text-align:right">${esc((e.muni||'Oaxaca')+', Oax.')}, a ____ de ________________ de ______</p>
+  <p>Yo, <span class="fill">${esc(a.tutor||'__________________________________')}</span>, madre, padre o tutor de <span class="fill">${esc(a.nombre)}</span>, alumno(a) de ${esc(a.grado)} «${esc(a.grupo)}», turno ${esc(a.turno||'')}, acuso de tener conocimiento y participación en la información y taller referente al protocolo local de actuación disciplinaria de la escuela ${esc(e.nombre||'')}.</p>
+  <p>Conozco y entiendo cuáles son los procedimientos y responsabilidades de las figuras educativas con relación a su prevención, atención y medidas de no repetición, así como el catálogo de faltas y consecuencias vigente para el presente ciclo escolar.</p>
+  <p>He formado parte de esta acción para erradicar la violencia escolar y me comprometo a hacerme corresponsable de las medidas que ahí se disponen.</p></div>
+  <div class="sigs" style="grid-template-columns:1fr;max-width:340px;margin:60px auto 0"><div class="sig"><div class="line"></div><b>Nombre y firma del responsable</b><i>${esc(a.tutor||'')}</i></div></div>
+  ${pieProtocolo()}`;
 }
 window.verRegistroAula=id=>{
   const r=regsAula.find(x=>x.id===id);if(!r)return;
-  previewMode='view-aula';
-  $('doc').innerHTML=buildDocAula(r.data,r.folio);
-  $('ov-tag').textContent=`REPORTE DE AULA ${r.folio||''} · GUARDADO`;
-  $('overlay').classList.add('open');
-  document.body.classList.add('preview-open');
-  document.body.style.overflow='hidden';
+  if(r.data&&r.data.nivel)abrirDoc(buildFichaDisc(r),`BITÁCORA DISCIPLINARIA · No. ${r.folio||''} · GUARDADO`);
+  else abrirDoc(buildDocAula(r.data||{},r.folio),`REPORTE DE AULA ${r.folio||''} · GUARDADO`);
 };
-window.editarRegistroAula=id=>{
-  const r=regsAula.find(x=>x.id===id);if(!r)return;
-  editIdAula=id;
-  $('au_fecha').value=r.data.fecha||'';$('au_grado').value=r.data.grado||'';$('au_grupo').value=r.data.grupo||'';
-  $('au_alumno').value=r.data.alumno||'';$('au_incidente').value=r.data.incidente||'';
-  $('au_tipo').value=r.data.tipo||'';$('au_tipoOtro').value=r.data.tipoOtro||'';
-  $('au_tipoOtro_wrap').style.display=r.data.tipo==='Otros'?'':'none';
-  $('au_responsable').value=r.data.responsable||miIdentidad();
-  switchTab('aula');
-  toast(`✎ Editando el reporte de aula ${r.folio||''}`);
-  window.scrollTo({top:0,behavior:'smooth'});
+$('btn-prev-aula').onclick=()=>{
+  const d=collectAula();const errs=validateAula(d);
+  if(errs.length){toast('⚠ Para la vista previa complete: '+errs.join(', '),'err');return}
+  const rec=editIdAula?Object.assign({},regsAula.find(r=>r.id===editIdAula),{data:d}):{id:'_nuevo',folio:pad3(nextFolioAula),savedAt:ULTIMO,data:d};
+  abrirDoc(buildFichaDisc(rec),editIdAula?'VISTA PREVIA · EDICIÓN SIN GUARDAR':'VISTA PREVIA · SIN GUARDAR',false,'prev-disc');
 };
 $('btn-save-aula').onclick=()=>guardarRegistroAula();
 $('btn-clear-aula').onclick=()=>resetFormAula();
-$('aula-search').oninput=renderAula;
-document.getElementById('aula-form').addEventListener('input',()=>{
-  document.querySelectorAll('#aula-form .field.invalid').forEach(f=>f.classList.remove('invalid'));
+document.getElementById('aula-form').addEventListener('input',e=>{
+  if(e.target.closest('.field'))e.target.closest('.field').classList.remove('invalid');
+  if(e.target.closest('#dr_cons'))$('dr_cons').classList.remove('invalid-box');
 });
+renderCatalogo();
 
 /* ═══════════════ DOCUMENTO IMPRESO ═══════════════ */
 function mark(map,vals){
@@ -1401,6 +2236,7 @@ function showPreview(data,opts={}){
 }
 function closePreview(){
   $('overlay').classList.remove('open');
+  $('doc').classList.remove('landscape');
   document.body.classList.remove('preview-open');
   document.body.style.overflow='';
 }
@@ -1408,9 +2244,10 @@ $('ov-close').onclick=closePreview;
 $('ov-print').onclick=()=>window.print();
 $('ov-save').onclick=async()=>{
   if(previewMode==='view'||previewMode==='view-aula'){toast('Este registro ya está guardado. Use ✎ Editar para modificarlo.');return}
+  if(previewMode==='prev-disc'){if(await guardarRegistroAula())closePreview();return}
   if(await guardarRegistro())closePreview();
 };
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePreview()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if($('dlg').classList.contains('open'))cerrarDlg();else closePreview()}});
 
 /* ═══════════════ HISTORIAL ═══════════════ */
 const mask=n=>n.split(/\s+/).filter(Boolean).map(w=>w[0].toUpperCase()+'.').join(' ');
@@ -1453,9 +2290,10 @@ $('hist-search').oninput=renderHist;
 
 /* Respaldo */
 $('btn-export').onclick=()=>{
-  const blob=new Blob([JSON.stringify({cfg,nextFolio,regs,regsAula,exportado:new Date().toISOString()},null,2)],{type:'application/json'});
+  const cfgSinClave=JSON.parse(JSON.stringify(cfg));if(cfgSinClave.ia)cfgSinClave.ia.apiKey='';
+  const blob=new Blob([JSON.stringify({cfg:cfgSinClave,nextFolio,nextFolioAula,regs,regsAula,alumnosDisc:listaAlumnos(),exportado:new Date().toISOString()},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`respaldo_incidencias_${new Date().toISOString().slice(0,10)}.json`;a.click();
+  a.download=`respaldo_incidencias_${hoyISO()}.json`;a.click();
   toast('⬇ Respaldo descargado. Consérvelo en la Dirección.')};
 $('btn-import').onclick=()=>{
   if(!esAdmin()){toast('Solo un administrador puede importar un respaldo.','err');return}
@@ -1465,15 +2303,26 @@ $('import-file').onchange=e=>{
   const f=e.target.files[0];if(!f)return;const rd=new FileReader();
   rd.onload=async()=>{try{const j=JSON.parse(rd.result);
     if(!j.cfg||!Array.isArray(j.regs))throw 0;
-    if(!confirm('Esto reemplazará la configuración de la escuela, SU bitácora personal y SUS reportes de aula con el contenido del respaldo. ¿Continuar?'))return;
+    if(!confirm('Se cargará la configuración de la escuela y se AGREGARÁN a su bitácora los reportes y alumnos del respaldo (los reportes que ya tiene no se borran). ¿Continuar?'))return;
+    const claveActual=(cfg.ia&&cfg.ia.apiKey)||'';
     cfg=j.cfg;if(!cfg.ia)cfg.ia={};
     cfg.ia=Object.assign({on:true,apiKey:'',model:'llama-3.3-70b-versatile',voz:true},cfg.ia);
+    if(!cfg.ia.apiKey)cfg.ia.apiKey=claveActual;   // los respaldos ya no traen la clave
     vozOn=cfg.ia.voz!==false;
-    const nuevosRegs={};(j.regs||[]).forEach(r=>{nuevosRegs[r.id]=r});
-    const nuevosAula={};(j.regsAula||[]).forEach(r=>{nuevosAula[r.id]=r});
+    const upReg={};(j.regs||[]).forEach(r=>{if(r&&r.id)upReg[r.id]=r});
+    const upAula={};(j.regsAula||[]).forEach(r=>{if(r&&r.id)upAula[r.id]=r});
     await saveCfgRemoto();
-    await db.ref('reportes/'+currentUser.uid).set(nuevosRegs);
-    if(Object.keys(nuevosAula).length)await db.ref('reportesAula/'+currentUser.uid).set(nuevosAula);
+    if(Object.keys(upReg).length)await db.ref('reportes/'+currentUser.uid).update(upReg);
+    if(Object.keys(upAula).length)await db.ref('reportesAula/'+currentUser.uid).update(upAula);
+    const upAlu={};(j.alumnosDisc||[]).forEach(a=>{if(a&&a.id)upAlu[a.id]=a});
+    if(Object.keys(upAlu).length)await db.ref('alumnosDisc/'+currentUser.uid).update(upAlu);
+    // Contadores de folio: nunca retroceden y quedan después del folio más alto existente
+    const maxDe=lista=>lista.reduce((m,r)=>Math.max(m,parseInt(r&&r.folio,10)||0),0);
+    const todosReg=[...regs,...Object.values(upReg)], todosAula=[...regsAula,...Object.values(upAula)];
+    const sigReg=Math.max(nextFolio||1,+j.nextFolio||1,maxDe(todosReg)+1);
+    const sigAula=Math.max(nextFolioAula||1,+j.nextFolioAula||1,maxDe(todosAula)+1);
+    await db.ref('usuarios/'+currentUser.uid+'/proximoFolio').transaction(v=>Math.max(v||1,sigReg));
+    await db.ref('usuarios/'+currentUser.uid+'/proximoFolioAula').transaction(v=>Math.max(v||1,sigAula));
     loadCfgForm();updateAIvisibility();toast('⬆ Respaldo importado correctamente');
   }catch(err){toast('El archivo no es un respaldo válido, o falló la escritura: '+(err.message||''),'err')}};
   rd.readAsText(f);e.target.value='';};
@@ -1949,7 +2798,7 @@ if('speechSynthesis' in window){
 
 /* ── MODO GUIADO PASO A PASO ── */
 function parseFecha(t){
-  t=t.toLowerCase().trim();
+  t=normalizarNumeros(t).trim();
   const hoy=new Date();const iso=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
   if(/\bhoy\b/.test(t))return iso(hoy);
   if(/anteayer/.test(t)){const d=new Date(hoy);d.setDate(d.getDate()-2);return iso(d)}
@@ -1964,9 +2813,34 @@ function parseFecha(t){
   const d=new Date(t);
   return isNaN(d)?null:iso(d);
 }
+/* Convierte números dichos con palabras a dígitos: «diez treinta y cinco» → «10 35», «cero cinco» → «05» */
+const NUM_UNI={cero:0,un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,
+  'dieciséis':16,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20,veintiuno:21,'veintiún':21,'veintidós':22,veintidos:22,'veintitrés':23,veintitres:23,
+  veinticuatro:24,veinticinco:25,'veintiséis':26,veintiseis:26,veintisiete:27,veintiocho:28,veintinueve:29};
+const NUM_DEC={treinta:30,cuarenta:40,cincuenta:50};
+function normalizarNumeros(t){
+  t=t.toLowerCase().replace(/diagonal/g,'/');
+  t=t.replace(/\b(treinta|cuarenta|cincuenta)(?:\s+y\s+([a-záéíóúñ]+))?\b/g,(m,d,u)=>{
+    const vu=u!==undefined?NUM_UNI[u]:0;
+    if(u!==undefined&&(vu===undefined||vu>9))return NUM_DEC[d]+' y '+u;
+    return String(NUM_DEC[d]+(vu||0));
+  });
+  t=t.replace(/[a-záéíóúñ]+/g,w=>NUM_UNI[w]!==undefined?String(NUM_UNI[w]):w);
+  t=t.replace(/\b2\s*mil(?:\s+(\d{1,2}))?\b/g,(m,n)=>String(2000+(+n||0)));
+  t=t.replace(/\b0\s+(\d)\b/g,'0$1');
+  return t;
+}
+/* Extrae varias horas de un texto: «10:20, 10 35 y 11 05» → ['10:20','10:35','11:05'] */
+function extraerHoras(t){
+  const n=normalizarNumeros(t),out=[];
+  const re=/(\d{1,2})\s*(?:[:\.h]|\s)\s*(\d{2})\b/g;let m;
+  while((m=re.exec(n))!==null){const h=+m[1],mi=+m[2];if(h<=23&&mi<=59)out.push(pad2(h)+':'+pad2(mi));}
+  if(!out.length){n.split(/[,;]|\by\b/).forEach(seg=>{const h=parseHora(seg);if(h)out.push(h)});}
+  return out;
+}
 function parseHora(t){
-  t=t.toLowerCase();
-  let m=t.match(/(\d{1,2})\s*[:\.h]\s*(\d{2})/),h,min;
+  t=normalizarNumeros(t);
+  let m=t.match(/(\d{1,2})\s*(?:[:\.h]|\s)\s*(\d{2})\b/),h,min;
   if(m){h=+m[1];min=+m[2]}
   else{
     m=t.match(/(\d{1,2})/);if(!m)return null;
@@ -1980,8 +2854,11 @@ function parseHora(t){
 }
 function parseFechaHora(t){
   const f=parseFecha(t);if(!f)return null;
-  const hs=t.match(/\d{1,2}:\d{2}/);
-  return f+'T'+(hs?hs[0]:'12:00');
+  const sinFecha=normalizarNumeros(t)
+    .replace(/\d{1,2}\s*[\/\-.]\s*\d{1,2}(\s*[\/\-.]\s*\d{2,4})?/g,' ')
+    .replace(/\d{1,2}\s*de\s*[a-záéíóú]+(\s*(de|del)\s*\d{4})?/g,' ');
+  const hs=extraerHoras(sinFecha);
+  return f+'T'+(hs[0]||'12:00');
 }
 function parseLugar(t){
   const bajo=t.toLowerCase();
@@ -2008,7 +2885,8 @@ function parseSexo(t){
 function parseGrado(t){
   const m=t.match(/(1|2|3|primero|segundo|tercero|primer|tercer)\s*(?:°|º|er|o)?\s*([a-zA-Z0-9]+)?/i);
   if(!m)return null;
-  return {g:m[1],gr:(m[2]||'').toUpperCase()};
+  if(!m[2])return null;
+  return {g:m[1],gr:m[2].toUpperCase()};
 }
 function parseTurno(t){
   const bajo=t.toLowerCase();
@@ -2066,7 +2944,7 @@ const PASOS=[
   pregunta:'Sección uno, Control del reporte. ¿Qué día ocurrió el incidente? Acepto: hoy, ayer, catorce de mayo, o catorce diagonal cero cinco diagonal dos mil veinticinco.',
   ok:v=>`✔ Fecha del incidente: ${v}`, parse:t=>parseFecha(t),
   invalida:'No entendí la fecha. Prueba con hoy, ayer, o un formato como catorce diagonal cero cinco diagonal dos mil veinticinco.'},
- {campo:'f_hora',
+ {campo:'f_hora',opcional:false,
   pregunta:'¿A qué hora ocurrió aproximadamente? Por ejemplo: siete de la mañana, o diez y media.',
   ok:v=>`✔ Hora: ${v}`, parse:t=>parseHora(t),
   invalida:'No logré leer la hora. Di algo como diez treinta, o diez y media.'},
@@ -2075,7 +2953,7 @@ const PASOS=[
   ok:v=>`✔ La escuela se enteró: ${v.replace('T',' · ')}`,
   parse:t=>parseFechaHora(t),
   invalida:'Di fecha y hora, por ejemplo: hoy diez treinta.'},
- {campo:'f_lugar',
+ {campo:'f_lugar',opcional:false,
   pregunta:'¿Dónde sucedió? Opciones: aula, patio, baños, pasillos, entrada o salida, alrededores, ciberespacio, u otro.',
   ok:v=>`✔ Lugar: ${v}`, parse:t=>parseLugar(t),
   invalida:'Elige una opción: aula, patio, baños, pasillos, entrada, alrededores, ciberespacio u otro.'},
@@ -2101,7 +2979,7 @@ const PASOS=[
   ok:v=>`✔ Condición: ${v}`, parse:t=>parseSexo(t),
   apply:v=>{document.querySelectorAll('input[name=sexo]').forEach(r=>r.checked=r.value===v);updateChecklist();},
   invalida:'Di: niña, niño o adolescente.'},
- {campo:'a_grado',
+ {campo:'a_grado',opcional:false,
   pregunta:'Grado y grupo. Por ejemplo: dos B, o tercero C.',
   ok:v=>`✔ Grado y grupo: ${v.g} · ${v.gr||'—'}`, parse:t=>parseGrado(t),
   apply:v=>{setCampo('a_grado',v.g);setCampo('a_grupo',v.gr)},
@@ -2109,7 +2987,7 @@ const PASOS=[
  {campo:'a_turno',
   pregunta:'¿Turno del alumno? Matutino o mixto.',
   ok:v=>`✔ Turno: ${v}`, parse:t=>parseTurno(t),
-  invalida:'Di: matutino, vespertino o tiempo completo.'},
+  invalida:'Di: matutino o mixto.'},
  {campo:'a_lenguaCual',
   pregunta:'¿Es hablante de lengua indígena? Di no, o el nombre de la lengua, por ejemplo zapoteco. Si requiere intérprete, agrégalo.',
   ok:v=>v.habla?`✔ Habla ${v.cual}${v.interprete?' · requiere intérprete':''}`:'✔ No habla lengua indígena',
@@ -2155,7 +3033,7 @@ const PASOS=[
     try{const ops=await pedirOpciones(t);ind.remove();return {opciones:ops};}
     catch(e){ind.remove();aiAdd('err','⚠ No pude mejorar la redacción ('+e.message+'). Colocaré tu texto original.');return t;}
   }},
- {campo:null,
+ {campo:null,opcional:false,
   pregunta:'¿Qué tipo de conducta fue? Puedes indicar varias: física, verbal, psicológica, ciberacoso, sexual, sustancias, robo o daños, discriminación, u otra.',
   ok:v=>`✔ Tipificación: ${v.map(x=>TIPOS[x]).join(', ')}`, parse:t=>parseTipos(t),
   apply:v=>{document.querySelectorAll('input[name=tipos]').forEach(c=>{if(v.includes(c.value))c.checked=true});updateAlerta();updateChecklist();},
@@ -2178,9 +3056,9 @@ const PASOS=[
  {campo:'notif_llamada',
   pregunta:'Notificación a los padres. Di las horas de la llamada, de la respuesta y de la llegada, separadas por coma. Por ejemplo: diez veinte, diez treinta y cinco, once cero cinco.',
   ok:v=>`✔ Notificación: llamada ${v[0]||'—'} · respuesta ${v[1]||'—'} · llegada ${v[2]||'—'}`,
-  parse:t=>{const hs=t.match(/\d{1,2}:\d{2}/g);return hs&&hs.length?hs.slice(0,3):null},
+  parse:t=>{const hs=extraerHoras(t);return hs.length?hs.slice(0,3):null},
   apply:v=>{setCampo('notif_llamada',v[0]||'');setCampo('notif_respuesta',v[1]||'');setCampo('notif_llegada',v[2]||'')},
-  invalida:'Di las horas en formato como diez veinte, diez treinta y cinco, once cero cinco.'},
+  invalida:'No logré leer las horas. Dilas separadas por coma, por ejemplo: diez veinte, diez treinta y cinco, once cero cinco.'},
  {campo:'notif_obs',
   pregunta:'Observaciones de la atención a los padres: cómo llegaron, su actitud durante y después del incidente, acuerdos verbales. Opcional.',
   ok:()=>'✔ Observaciones registradas',
@@ -2269,7 +3147,7 @@ async function guiaResponder(text){
     return;
   }
   const p=PASOS[guia.paso];
-  const saltar=/^(saltar|omitir|skip|s)\b/.test(bajo)||bajo==='x';
+  const saltar=/^(saltar|omitir|skip)\b/.test(bajo)||bajo==='x';
   if(saltar){
     if(p.opcional===false){
       aiAdd('bot','⛔ Este dato es obligatorio para poder guardar el reporte. Inténtalo de nuevo, o escribe cancelar.');
@@ -2397,10 +3275,10 @@ document.querySelectorAll('input[name=tipos]').forEach(c=>c.addEventListener('ch
 $('x_activar').onchange=()=>$('anexo-fields').style.display=$('x_activar').checked?'block':'none';
 
 const SEC_FIELDS={
-  s1:['f_fecha','f_hora','f_fechaEnt','f_lugar','f_lugarDetalle'],
+  s1:['f_hora','f_fechaEnt','f_lugar','f_lugarDetalle'],
   s2:['a_nombre','a_edad','a_grado','a_grupo','a_turno','p_nombre','p_tel'],
   s3:['n_descripcion'],s4:['acc_detalle','notif_llamada','notif_obs','canal_detalle'],
-  s5:['h_previas','h_compromisos'],s6:['g_alumno','g_padres','g_escuela','persona_reporta']};
+  s5:['h_previas','h_compromisos'],s6:['g_alumno','g_padres','g_escuela']};
 function updateChecklist(){
   Object.entries(SEC_FIELDS).forEach(([sec,ids])=>{
     let ok=ids.some(id=>$(id).value.trim());
@@ -2479,11 +3357,12 @@ $('login-form').onsubmit=async e=>{
 };
 $('btn-logout').onclick=()=>{if(confirm('¿Cerrar sesión?'))auth.signOut()};
 
-let refConfig=null, refReportes=null, refReportesAula=null, refMiUsuario=null, refUsuarios=null, primerUsoAvisado=false;
+let refConfig=null, refReportes=null, refReportesAula=null, refAlumnosDisc=null, refMiUsuario=null, refUsuarios=null, primerUsoAvisado=false;
 function detenerEscucha(){
   if(refConfig){refConfig.off();refConfig=null}
   if(refReportes){refReportes.off();refReportes=null}
   if(refReportesAula){refReportesAula.off();refReportesAula=null}
+  if(refAlumnosDisc){refAlumnosDisc.off();refAlumnosDisc=null}
   if(refMiUsuario){refMiUsuario.off();refMiUsuario=null}
   if(refUsuarios){refUsuarios.off();refUsuarios=null}
 }
@@ -2518,12 +3397,25 @@ function escucharDatos(){
     const v=snap.val()||{};
     if(await migrarFoliosAula(v))return; // ya asignó folios faltantes; el listener se vuelve a disparar
     regsAula=Object.values(v).sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||''));
-    renderAula();
+    renderDisc();
+  });
+  // Lista de alumnos de la bitácora disciplinaria: privada del usuario en sesión
+  refAlumnosDisc=db.ref('alumnosDisc/'+currentUser.uid);
+  refAlumnosDisc.on('value',snap=>{
+    alumnosDisc=snap.val()||{};
+    renderDisc();
   });
   // Mi propio registro de usuario: mantiene mi folio y mi rol al día
   refMiUsuario=db.ref('usuarios/'+currentUser.uid);
   refMiUsuario.on('value',snap=>{
-    const u=snap.val();if(!u)return;
+    const u=snap.val();
+    const esMaestro=(currentUser.email||'').toLowerCase()===ADMIN_MAESTRO.toLowerCase();
+    if(!esMaestro&&(!u||u.activo===false)){
+      const msg=u?'Su cuenta fue desactivada. Contacte al administrador.':'Su cuenta fue dada de baja. Contacte al administrador.';
+      auth.signOut().then(()=>mostrarLogin(msg));
+      return;
+    }
+    if(!u)return;
     nextFolio=u.proximoFolio||1;
     nextFolioAula=u.proximoFolioAula||1;
     currentUser.rol=(currentUser.email||'').toLowerCase()===ADMIN_MAESTRO.toLowerCase()?'admin':(u.rol||currentUser.rol);
@@ -2543,7 +3435,7 @@ function escucharDatos(){
 auth.onAuthStateChanged(async user=>{
   if(!user){
     detenerEscucha();
-    currentUser=null;regs=[];regsAula=[];usuarios={};
+    currentUser=null;regs=[];regsAula=[];alumnosDisc={};usuarios={};
     document.querySelector('.tab[data-tab="config"]').style.display='none';
     mostrarLogin();
     return;
